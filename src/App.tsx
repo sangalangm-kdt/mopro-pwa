@@ -6,7 +6,6 @@ const App: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold">QR Code Scanner PWA</h1>
       <QrScanner onDetected={(code) => setScannedCode(code)} />
       {scannedCode && (
         <p className="mt-4 text-green-600">Scanned: {scannedCode}</p>
