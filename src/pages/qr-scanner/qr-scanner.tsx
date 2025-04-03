@@ -1,39 +1,63 @@
-import React, { useEffect, useRef } from "react";
-import QrScanner from "qr-scanner";
+import { useState } from "react";
+import { useQrScanner } from "../../constants/qr-scanner";
 
-QrScanner.WORKER_PATH = "https://unpkg.com/qr-scanner/qr-scanner-worker.min.js";
+const QRScanner = () => {
+  const [qrData, setQrData] = useState<string | null>(null);
 
-interface QRScannerProps {
-  onScan: (result: string) => void;
-}
+  const { videoRef, canvasRef, overlayRef, scanBoxRef, handleRescan } =
+    useQrScanner({
+      onResult: (data) => {
+        console.log("✅ Scanned:", data);
+        setQrData(data); // store it in local state
+      },
+    });
 
-const QRScanner: React.FC<QRScannerProps> = ({ onScan }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const scannerRef = useRef<QrScanner | null>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      const scanner = new QrScanner(
-        videoRef.current,
-        (result) => {
-          onScan(result.data);
-        },
-        {
-          highlightScanRegion: true,
-          highlightCodeOutline: true,
-        }
-      );
-
-      scannerRef.current = scanner;
-      scanner.start();
-
-      return () => {
-        scanner.stop();
-      };
-    }
-  }, []);
-
-  return <video ref={videoRef} style={{ width: "100%", borderRadius: 8 }} />;
+  return (
+    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+      <video
+        ref={videoRef}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        autoPlay
+        muted
+        playsInline
+      />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+      <canvas
+        ref={overlayRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      />
+      <canvas
+        ref={scanBoxRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      />
+      {qrData && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 40,
+            left: "50%",
+            transform: "translateX(-50%)",
+            color: "#fff",
+          }}
+        >
+          ✅ {qrData}
+          <button onClick={handleRescan}>🔄 Rescan</button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default QRScanner;
