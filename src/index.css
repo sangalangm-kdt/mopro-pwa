@@ -1,14 +1,136 @@
+@import "tailwindcss";
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
+  /* color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Raleway";
+  src: url("/fonts/Raleway-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Raleway";
+  src: url("/fonts/Raleway-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+@theme {
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-primary-950: var(--primary-950);
+
+  --color-secondary-1: var(--secondary-1);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-bg-color: var(--bg-color);
+
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: "Raleway", system-ui, sans-serif;
+
+  --breakpoint-xs: 300px;
+
+  --bg-background: #18181b;
+  --animate-fade-in-up: "fadeInUp 0.6s ease-out";
+}
+
+:root {
+  --primary-50: #f9fbea;
+  --primary-100: #f2f6d1;
+  --primary-200: #e3eda9;
+  --primary-300: #cfe076;
+  --primary-400: #b9d04b;
+  --primary-500: #9bb52d;
+  --primary-600: #799020;
+  --primary-700: #5c6e1d;
+  --primary-800: #4a581c;
+  --primary-900: #3f4b1c;
+  --primary-950: #4a581c;
+  /* --primary-950: #20290a; */
+
+  --secondary-1: #bc6c25;
+
+  --success: #4caf50;
+  --warning: #e7b644;
+  --danger: #d9534f;
+  --info: #4a90e2;
+  --bg-color: #fafafa;
+
+  --color: #ffff;
+}
+
+.dark {
+  --primary-50: #20290a;
+  --primary-100: #3f4b1c;
+  --primary-200: #4a581c;
+  --primary-300: #5c6e1d;
+  --primary-400: #799020;
+  --primary-500: #9bb52d;
+  --primary-600: #b9d04b;
+  --primary-700: #cfe076;
+  --primary-800: #9bb52d;
+  --primary-900: #ffff;
+  --primary-950: #f9fbea;
+  --success: #4caf50;
+  --warning: #f8d88c;
+  --danger: #f36f6b;
+  --info: #4a90e2;
+  --bg-color: #18181b;
+}
+
+html {
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+@keyframes dominoFade {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.domino-path {
+  animation: dominoFade 1.5s ease-in-out infinite;
 }

@@ -1,0 +1,25 @@
+{
+  "title": "ログイン",
+  "subheader": "ようこそ、<0>MoPro</0>へ。",
+  "subheading": "<0>MoPro</0>でいつでもどこでも進捗を確認して、生産性を維持しましょう。",
+  "email": "メールアドレス",
+  "password": "パスワード",
+  "placeholder": {
+    "email": "メールアドレスを入力してください",
+    "password": "パスワードを入力してください"
+  },
+  "submit": "ログイン",
+  "loading": "ログイン中...",
+  "error": {
+    "email": {
+      "required": "メールアドレスは必須です",
+      "invalid": "有効なメールアドレスを入力してください"
+    },
+    "password": {
+      "required": "パスワードは必須です"
+    }
+  },
+  "rememberMe": "ログイン状態を保持する",
+  "forgotPassword": "パスワードをお忘れですか？",
+  "requestAccount": "アカウントをリクエストする"
+}
