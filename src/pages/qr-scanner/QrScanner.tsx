@@ -19,47 +19,47 @@ const QRScanner = () => {
   });
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="fixed inset-0 z-[9999] bg-black overflow-hidden">
       {/* Live video */}
       <video
         ref={videoRef}
-        className="w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
         autoPlay
         muted
         playsInline
       />
 
-      {/* Hidden processing canvas */}
+      {/* Hidden canvas for processing */}
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* QR bounding box (yellow) */}
+      {/* Yellow bounding box */}
       <canvas
         ref={overlayRef}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        className="absolute inset-0 w-full h-full pointer-events-none"
       />
 
-      {/* Scan box overlay (corner brackets & mask) */}
+      {/* Scan box overlay with corner brackets */}
       <canvas
         ref={scanBoxRef}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        className="absolute inset-0 w-full h-full pointer-events-none"
       />
 
-      {/* QR result */}
+      {/* Detected QR result */}
       {qrData && (
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-60 px-4 py-2 rounded-lg flex items-center gap-4">
-          <span>✅ {qrData}</span>
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg">
+          <span className="text-sm">✅ {qrData}</span>
           <button
             onClick={handleRescan}
-            className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
+            className="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
           >
             🔄 Rescan
           </button>
         </div>
       )}
 
-      {/* Detecting indicator */}
+      {/* Detecting Indicator */}
       {detecting && !qrData && (
-        <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold animate-pulse shadow-md">
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded font-semibold animate-pulse shadow-md">
           🟡 Detecting QR Code...
         </div>
       )}

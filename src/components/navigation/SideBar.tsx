@@ -1,0 +1,141 @@
+import { LogOut, X } from "lucide-react";
+import MenuLinks from "@/components/navigation/MenuLinks";
+import PreferencesSection from "@/components/navigation/PreferencesSection";
+import { useAuth } from "@/context/useAuth";
+import { ROUTES } from "@/constants";
+import { SIDEBAR_MENU_BUTTON_CLASSES } from "@/constants/classes";
+
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ open, onClose }: SidebarProps) {
+  const { user, logout } = useAuth();
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    onClose();
+  };
+
+  useEffect(() => {
+    if (!open) return;
+
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") return onClose();
+
+      if (e.key === "Tab" && sidebarRef.current) {
+        const focusables = sidebarRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (!first || !last) return;
+
+        if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
+
+  return (
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/5 z-40"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        ref={sidebarRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Main Menu"
+        className={`fixed top-0 left-0 w-64 h-full bg-white dark:bg-zinc-800 z-50 shadow-lg transition-transform duration-300 flex flex-col ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-zinc-700">
+          <span className="text-lg font-semibold text-primary-800 dark:text-white">
+            Menu
+          </span>
+          <button
+            ref={closeButtonRef}
+            onClick={onClose}
+            aria-label="Close Sidebar"
+            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500"
+          >
+            <X className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+          </button>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 text-sm text-gray-800 dark:text-white space-y-6">
+          {/* User Info */}
+          <div>
+            <p className="font-semibold text-primary-800 dark:text-white">
+              {user?.firstName} {user?.lastName}
+            </p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+              {user?.email}
+            </p>
+          </div>
+
+          <MenuLinks onClose={onClose} />
+          <PreferencesSection />
+        </div>
+
+        {/* Footer */}
+        <div className="px-4 pb-4 space-y-3">
+          <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1">
+            Account
+          </h2>
+
+          {/* Profile Settings Button */}
+          <button
+            onClick={() => {
+              onClose(); // close sidebar before navigating
+              navigate(ROUTES.PROFILE); // or use ROUTES.PROFILE if defined
+            }}
+            className={SIDEBAR_MENU_BUTTON_CLASSES}
+          >
+            Profile Settings
+          </button>
+
+          {/* Log Out Button */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 border border-red-200 dark:border-zinc-700 rounded-md hover:bg-red-50 dark:hover:bg-zinc-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+          >
+            <LogOut className="h-4 w-4" />
+            Log Out
+          </button>
+
+          {/* Footer Text */}
+          <p className="text-xs text-gray-500 border-t pt-4 lg:hidden border-gray-200 dark:border-zinc-700">
+            © {new Date().getFullYear()} MoPro. All rights reserved.
+          </p>
+        </div>
+      </aside>
+    </>
+  );
+}

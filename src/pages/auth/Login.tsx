@@ -1,5 +1,4 @@
-import { useTranslation, Trans } from "react-i18next";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Trans } from "react-i18next";
 import TextInput from "@/components/Input";
 import BoardingScreen from "@/components/BoardingScreen";
 import LargeHeader from "@/components/Header";
@@ -11,69 +10,36 @@ import PWAButton from "@/components/PWAButton";
 import Logo from "@assets/logo/logo v2.svg?react";
 import { LOGIN_FIELDS } from "@constants/variables/fieldNames";
 import { PLACEHOLDERS } from "@constants/variables/placeholder";
-import { REGEX, ROUTES } from "@constants/index";
-import { useAuth } from "@/context/useAuth";
-import { toast } from "react-toastify";
-import ThemeToggle from "@/components/ThemeToggle";
+import { BUTTON_TEXT } from "@constants/variables/text";
+import { ROUTES } from "@constants/index";
+import CurvedLine from "@assets/curved-line.svg?react";
+import { useLoginForm } from "./useLoginForm";
 
 export default function Login() {
-  const { t } = useTranslation("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof typeof LOGIN_FIELDS, string>>
-  >({});
-  const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || ROUTES.HOME;
-
-  const { login, isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
-    }
-    console.log("👀 waiting for beforeinstallprompt...");
-  }, [from, isAuthenticated, navigate]);
-
-  const validate = () => {
-    const newErrors: typeof errors = {};
-    if (!email) newErrors.email = t(`error.${LOGIN_FIELDS.email}.required`);
-    else if (!REGEX.EMAIL.test(email))
-      newErrors.email = t(`error.${LOGIN_FIELDS.email}.invalid`);
-    if (!password)
-      newErrors.password = t(`error.${LOGIN_FIELDS.password}.required`);
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
-    const success = await login(email, password);
-    if (!success) {
-      toast.error("Invalid email or password", { position: "top-right" });
-      setLoading(false);
-      return;
-    }
-    navigate(from, { replace: true });
-    setLoading(false);
-  };
+  const {
+    t,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    errors,
+    loading,
+    handleLogin,
+    navigate,
+  } = useLoginForm();
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left: Form */}
+    <div className="flex min-h-screen relative">
+      <div className="absolute inset-0 z-10 pointer-events-none left-0 top-34 overflow-hidden">
+        <CurvedLine className="w-[250%] sm:w-[150%] md:w-full h-auto" />
+      </div>
+
       <div className="relative w-full md:w-[45%] lg:w-[40%] xl:w-[35%] flex items-center justify-center p-6 dark:bg-bg-color">
         <div className="w-full max-w-sm animate-fade-in-up pt-28">
           {/* Logo + Controls */}
           <div className="absolute top-6 left-0 right-0 px-6 flex items-center justify-between">
             <Logo className="h-20 w-auto" />
-            <div className="absolute right-6 flex items-center gap-2 top-0">
-              <ThemeToggle />
+            <div className="flex flex-col sm:flex-row xs:flex-row md items-center gap-2 sm:gap-3">
               <LanguageDropdown />
               <PWAButton />
             </div>
@@ -149,7 +115,8 @@ export default function Login() {
                 {loading ? t("loading") : t("submit")}
               </Button>
             </form>
-            <div className="flex items-center my-4">
+
+            <div className="flex items-center my-4 py-4">
               <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
               <span className="mx-2 text-sm text-gray-500 dark:text-gray-400">
                 or
@@ -164,14 +131,16 @@ export default function Login() {
               className="mt-2"
               onClick={() => navigate(ROUTES.REQUEST_ACCOUNT)}
             >
-              {t("requestAccount", { defaultValue: "Request account" })}
+              {t("requestAccount", {
+                defaultValue: BUTTON_TEXT.REQUEST_ACCOUNT,
+              })}
             </Button>
           </div>
         </div>
       </div>
 
       {/* Right: Visual */}
-      <div className="hidden md:flex flex-1 bg-gray-100 dark:bg-zinc-800 items-center justify-center p-4">
+      <div className="hidden md:flex flex-1 bg-gradient-to-tl from-lime-800 to-lime-950 items-center justify-center p-4">
         <BoardingScreen />
       </div>
     </div>

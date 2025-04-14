@@ -79,7 +79,7 @@ export default function Preloader() {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-zinc-900">
       <svg width="94" height="94" viewBox="0 0 94 94" className="w-24 h-24">
         {paths.map((path, idx) => (
           <path

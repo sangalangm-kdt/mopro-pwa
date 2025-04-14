@@ -1,0 +1,24 @@
+<svg
+  viewBox="0 0 1920 243"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  preserveAspectRatio="xMidYMid meet"
+  className="w-full h-auto"
+>
+  <path
+    d="M2 68.9999C116.167 38.1666 387.8 1.69994 561 102.5C777.5 228.5 1006.5 299.5 1195 160.5C1383.5 21.4998 1439 -86.0002 1671.5 124.5C1857.5 292.9 1914.33 181.333 1919.5 104.5"
+    stroke="var(--color-primary-500)" 
+    strokeOpacity="0.6"
+    strokeWidth="12"
+    strokeLinecap="round"
+    strokeDasharray="47 47"
+  >
+    <animate
+      attributeName="stroke-dashoffset"
+      from="0"
+      to="-94"
+      dur="2s"
+      repeatCount="indefinite"
+    />
+  </path>
+</svg>

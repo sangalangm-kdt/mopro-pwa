@@ -3,3 +3,7 @@ export const LOGIN_MESSAGES = {
   requiredPassword: "Password is required",
   loginFailed: "Login failed. Please try again.",
 };
+
+export const TOAST_MESSAGES = {
+  INVALID_CREDENTIALS: "Invalid email or password",
+};
