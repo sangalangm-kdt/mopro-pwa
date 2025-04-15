@@ -6,7 +6,7 @@ import Home from "@pages/home/Home";
 import Profile from "@pages/profile/Profile";
 import Login from "@pages/auth/Login";
 import PrivateRoute from "./PrivateRoute";
-import { AuthProvider } from "@/context/AuthProvider";
+import { AuthProvider } from "@/context/auth/AuthProvider";
 import { ROUTES } from "@constants/routes";
 import PublicRoute from "./PublicRoute";
 

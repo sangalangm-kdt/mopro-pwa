@@ -1,0 +1,10 @@
+{
+  "title": "設定",
+  "language": "言語",
+  "theme": "テーマ",
+  "current": "現在: {{theme}}",
+  "themeModes": {
+    "light": "ライト",
+    "dark": "ダーク"
+  }
+}

@@ -1,18 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@constants/index"; // Make sure this has SCANNER defined
+import { ROUTES, BUTTON_TEXT } from "@constants/index";
+import Button from "@/components/Button";
 
 const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 ">
-      <h1 className="color">Home</h1>
-      <button
-        onClick={() => navigate(ROUTES.SCANNER)}
-        className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded transition"
-      >
-        Go to QR Scanner
-      </button>
+    <div className="flex flex-col items-center justify-center p-4">
+      <h1 className="text-base font-semibold mb-6 text-primary-800 dark:text-white">
+        Home
+      </h1>
+
+      <Button onClick={() => navigate(ROUTES.SCANNER)}>
+        {BUTTON_TEXT.SCAN}
+      </Button>
     </div>
   );
 };

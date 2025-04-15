@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { useQrScanner } from "./qr-scanner";
+import { useQrScanner } from "@/hooks/qr-scanner";
+import Header from "@/components/navigation/Header";
+import { Flashlight, FlashlightOff } from "lucide-react";
+import { toggleFlashlight } from "@/utils/flashlight";
 
 const QRScanner = () => {
   const [qrData, setQrData] = useState<string | null>(null);
+  const [torchOn, setTorchOn] = useState(false);
 
   const {
     videoRef,
@@ -18,33 +22,50 @@ const QRScanner = () => {
     },
   });
 
+  const handleToggleFlashlight = async () => {
+    try {
+      await toggleFlashlight(!torchOn);
+      setTorchOn((prev) => !prev);
+    } catch {
+      alert("🔦 Flashlight not supported.");
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[9999] bg-black overflow-hidden">
-      {/* Live video */}
+      <div className="relative z-20">
+        <Header
+          title="QR Scanner"
+          rightElement={
+            <button onClick={handleToggleFlashlight}>
+              {torchOn ? (
+                <FlashlightOff className="text-white" />
+              ) : (
+                <Flashlight className="text-white" />
+              )}
+            </button>
+          }
+        />
+      </div>
+
       <video
         ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover z-10"
         autoPlay
         muted
         playsInline
       />
 
-      {/* Hidden canvas for processing */}
       <canvas ref={canvasRef} className="hidden" />
-
-      {/* Yellow bounding box */}
       <canvas
         ref={overlayRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
       />
-
-      {/* Scan box overlay with corner brackets */}
       <canvas
         ref={scanBoxRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
       />
 
-      {/* Detected QR result */}
       {qrData && (
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg">
           <span className="text-sm">✅ {qrData}</span>
@@ -57,9 +78,8 @@ const QRScanner = () => {
         </div>
       )}
 
-      {/* Detecting Indicator */}
       {detecting && !qrData && (
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded font-semibold animate-pulse shadow-md">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded font-semibold animate-pulse shadow-md">
           🟡 Detecting QR Code...
         </div>
       )}

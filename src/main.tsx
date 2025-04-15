@@ -5,7 +5,7 @@ import "@/i18n.ts";
 import "react-toastify/dist/ReactToastify.css";
 
 import App from "./App.tsx";
-import { AuthProvider } from "./context/AuthProvider.tsx";
+import { AuthProvider } from "./context/auth/AuthProvider.tsx";
 import { ThemeProvider } from "./context/theme/ThemeContext.tsx";
 
 registerSW();

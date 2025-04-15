@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { LOGIN_FIELDS } from "@constants/variables/fieldNames";
 import { REGEX, ROUTES } from "@constants/index";
 import { TOAST_MESSAGES } from "@constants/messages";

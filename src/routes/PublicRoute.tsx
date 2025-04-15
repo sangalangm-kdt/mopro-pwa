@@ -1,5 +1,5 @@
 import { ROUTES } from "@/constants";
-import { useAuth } from "@/context/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { JSX } from "react";
 
 export default function PublicRoute({ children }: { children: JSX.Element }) {

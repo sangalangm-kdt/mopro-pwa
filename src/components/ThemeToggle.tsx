@@ -1,18 +1,16 @@
 import { Sun, Moon } from "lucide-react";
-import { useTheme } from "@/context/theme/useTheme";
+import { useTheme } from "@/context/theme/ThemeContext";
 import clsx from "clsx";
 
 export default function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
-
-  const toggle = () => setTheme(isDark ? "light" : "dark");
 
   return (
     <button
-      onClick={toggle}
+      onClick={toggleTheme}
       className={clsx(
-        "relative xs:w-12 lg:w-14 h-6  rounded-full flex items-center px-1 my-2 transition-colors duration-300",
+        "relative xs:w-12 lg:w-14 h-6 rounded-full flex items-center p-2 transition-colors duration-300",
         isDark ? "bg-primary-700" : "bg-gray-300"
       )}
       aria-label="Toggle theme"

@@ -1,9 +1,12 @@
-import { LogOut, X } from "lucide-react";
+import { LogOut, Settings, X } from "lucide-react";
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import MenuLinks from "@/components/navigation/MenuLinks";
 import PreferencesSection from "@/components/navigation/PreferencesSection";
-import { useAuth } from "@/context/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { ROUTES } from "@/constants";
 import { SIDEBAR_MENU_BUTTON_CLASSES } from "@/constants/classes";
+import { useSidebarControls } from "@/hooks/sidebar-controls";
 
 interface SidebarProps {
   open: boolean;
@@ -14,7 +17,6 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const { user, logout } = useAuth();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -22,37 +24,8 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     onClose();
   };
 
-  useEffect(() => {
-    if (!open) return;
-
-    closeButtonRef.current?.focus();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") return onClose();
-
-      if (e.key === "Tab" && sidebarRef.current) {
-        const focusables = sidebarRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-
-        if (!first || !last) return;
-
-        if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+  //  Hook handles swipe and accessibility
+  useSidebarControls(open, onClose, sidebarRef, closeButtonRef);
 
   return (
     <>
@@ -90,38 +63,49 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-4 text-sm text-gray-800 dark:text-white space-y-6">
-          {/* User Info */}
-          <div>
-            <p className="font-semibold text-primary-800 dark:text-white">
-              {user?.firstName} {user?.lastName}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-              {user?.email}
-            </p>
-          </div>
-
           <MenuLinks onClose={onClose} />
           <PreferencesSection />
         </div>
 
-        {/* Footer */}
+        {/* Footer: Account Section */}
         <div className="px-4 pb-4 space-y-3">
           <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1">
             Account
           </h2>
 
-          {/* Profile Settings Button */}
-          <button
-            onClick={() => {
-              onClose(); // close sidebar before navigating
-              navigate(ROUTES.PROFILE); // or use ROUTES.PROFILE if defined
-            }}
-            className={SIDEBAR_MENU_BUTTON_CLASSES}
-          >
-            Profile Settings
-          </button>
+          {/* User Info */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-800 text-primary-700 dark:text-primary-100 font-semibold text-sm">
+              {user?.firstName?.[0]}
+              {user?.lastName?.[0]}
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold text-primary-800 dark:text-white truncate">
+                {user?.firstName} {user?.lastName}
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                {user?.email}
+              </p>
+            </div>
+          </div>
 
-          {/* Log Out Button */}
+          {/* Profile Settings Button */}
+          <div className="text-gray-800 dark:text-white">
+            <button
+              onClick={() => {
+                onClose();
+                navigate(ROUTES.PROFILE);
+              }}
+              className={SIDEBAR_MENU_BUTTON_CLASSES}
+            >
+              <span className="flex items-center gap-2 text-sm">
+                <Settings className="w-4 h-4" />
+                Profile Settings
+              </span>
+            </button>
+          </div>
+
+          {/* Logout */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 border border-red-200 dark:border-zinc-700 rounded-md hover:bg-red-50 dark:hover:bg-zinc-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "./icons/Icons";
-import { useAuth } from "@/context/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 
 const LANGUAGES = [
   { code: "ja", label: "日本語", short: "JA" },
@@ -90,12 +90,12 @@ export default function LanguageDropdown() {
     <div className="w-full text-primary-900">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-2 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
+        className="w-full flex items-center justify-between px-2 py-2 text-sm  dark:border-gray-600 rounded-md hover:bg-primary-100 dark:hover:bg-zinc-700 transition"
       >
         <div className="flex items-center gap-2">
           <Icon name="languages" className="w-4 h-4 text-primary-800" />
-          <span className="block sm:hidden">{currentLang.short}</span>
-          <span className="hidden sm:block">{currentLang.label}</span>
+          {/* <span className="block sm:hidden">{currentLang.short}</span> */}
+          <span>{currentLang.label}</span>
         </div>
         <svg
           className={`h-4 w-4 transition-transform ${
@@ -125,8 +125,7 @@ export default function LanguageDropdown() {
                   : ""
               }`}
             >
-              <span className="block sm:hidden">{lang.short}</span>
-              <span className="hidden sm:block">{lang.label}</span>
+              <span>{lang.label}</span>
             </button>
           ))}
         </div>

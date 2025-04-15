@@ -8,12 +8,14 @@ import Icon from "@/components/icons/Icons";
 import LanguageDropdown from "@/components/LanguageSwitcher";
 import PWAButton from "@/components/PWAButton";
 import Logo from "@assets/logo/logo v2.svg?react";
-import { LOGIN_FIELDS } from "@constants/variables/fieldNames";
-import { PLACEHOLDERS } from "@constants/variables/placeholder";
-import { BUTTON_TEXT } from "@constants/variables/text";
-import { ROUTES } from "@constants/index";
+import {
+  ROUTES,
+  LOGIN_FIELDS,
+  PLACEHOLDERS,
+  BUTTON_TEXT,
+} from "@constants/index";
 import CurvedLine from "@assets/curved-line.svg?react";
-import { useLoginForm } from "./useLoginForm";
+import { useLoginForm } from "@/hooks/login-form";
 
 export default function Login() {
   const {

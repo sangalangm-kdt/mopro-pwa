@@ -2,7 +2,7 @@ import { useState } from "react";
 import Logo from "@assets/logo/logo v2.svg?react";
 import Sidebar from "@/components/navigation/SideBar";
 import { Menu } from "lucide-react";
-import { useAuth } from "@/context/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);

@@ -32,7 +32,8 @@
       "@router/*": ["router/*"],
       "@locales/*": ["locales/*"],
       "@assets/*": ["assets/*"],
-      "@hooks/*": ["hooks/*"]
+      "@hooks/*": ["hooks/*"],
+      "@context/*": ["context/*"]
     }
   },
   "include": ["src", "i18n.ts", "src/types"]

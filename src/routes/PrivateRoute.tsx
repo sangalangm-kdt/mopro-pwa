@@ -1,5 +1,5 @@
 import { ROUTES } from "@/constants";
-import { useAuth } from "@/context/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 
 export default function PrivateRoute() {
   const { isAuthenticated, loading } = useAuth();

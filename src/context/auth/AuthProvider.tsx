@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AuthContext } from "./useAuth";
+import { AuthContext } from "@context/auth/useAuth";
 
 const DUMMY_USER = {
   email: "demo@sample.com",

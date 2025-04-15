@@ -1,0 +1,10 @@
+{
+  "title": "Preferences",
+  "language": "Language",
+  "theme": "Theme",
+  "current": "Current: {{theme}}",
+  "themeModes": {
+    "light": "Light",
+    "dark": "Dark"
+  }
+}
