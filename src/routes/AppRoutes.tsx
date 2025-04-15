@@ -1,12 +1,12 @@
 // src/router/AppRoutes.tsx
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "@layouts/MainLayout";
-import QRScanner from "@/pages/qr-scanner/QrScanner";
-import Home from "@pages/home/Home";
-import Profile from "@pages/profile/Profile";
-import Login from "@pages/auth/Login";
+import QRScanner from "@/pages/QrScanner";
+import Home from "@/pages/Home";
+import Profile from "@/pages/Profile";
+import Login from "@/pages/Login";
 import PrivateRoute from "./PrivateRoute";
-import { AuthProvider } from "@/context/auth/AuthProvider";
+import { AuthProvider } from "@context/auth/AuthProvider";
 import { ROUTES } from "@constants/routes";
 import PublicRoute from "./PublicRoute";
 

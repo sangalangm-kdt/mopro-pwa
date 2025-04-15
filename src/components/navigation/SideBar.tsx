@@ -6,7 +6,7 @@ import PreferencesSection from "@/components/navigation/PreferencesSection";
 import { useAuth } from "@/context/auth/useAuth";
 import { ROUTES } from "@/constants";
 import { SIDEBAR_MENU_BUTTON_CLASSES } from "@/constants/classes";
-import { useSidebarControls } from "@/hooks/sidebar-controls";
+import { useSidebarControls } from "@/utils/sidebar-controls";
 
 interface SidebarProps {
   open: boolean;
