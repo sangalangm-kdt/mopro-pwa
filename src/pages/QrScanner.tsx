@@ -1,26 +1,38 @@
 import { useState } from "react";
 import { useQrScanner } from "@/hooks/qr-scanner";
 import Header from "@/components/navigation/Header";
+import Button from "@/components/Button";
 import { Flashlight, FlashlightOff } from "lucide-react";
 import { toggleFlashlight } from "@/utils/flashlight";
 
 const QRScanner = () => {
-  const [qrData, setQrData] = useState<string | null>(null);
   const [torchOn, setTorchOn] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
+  const [scannedData, setScannedData] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     videoRef,
     canvasRef,
     overlayRef,
     scanBoxRef,
+    scanning,
     handleRescan,
-    detecting,
+    setScanning,
   } = useQrScanner({
     onResult: (data) => {
-      console.log("✅ Scanned:", data);
-      setQrData(data);
+      setLoading(true);
+      setTimeout(() => {
+        setScannedData(data);
+        setLoading(false);
+      }, 600);
     },
   });
+
+  const startScan = () => {
+    handleRescan();
+    setScanning(true);
+  };
 
   const handleToggleFlashlight = async () => {
     try {
@@ -31,8 +43,13 @@ const QRScanner = () => {
     }
   };
 
+  const handleManualSubmit = () => {
+    // console.log("📝 Manual entry submitted:", manualForm);
+    setManualMode(false);
+  };
+
   return (
-    <div className="fixed inset-0 z-[9999] bg-black overflow-hidden">
+    <div className="fixed inset-0 z-40 bg-black overflow-hidden">
       <div className="relative z-20">
         <Header
           title="QR Scanner"
@@ -50,12 +67,11 @@ const QRScanner = () => {
 
       <video
         ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover "
+        className="absolute inset-0 w-full h-full object-cover"
         autoPlay
         muted
         playsInline
       />
-
       <canvas ref={canvasRef} className="hidden" />
       <canvas
         ref={overlayRef}
@@ -66,23 +82,77 @@ const QRScanner = () => {
         className="absolute inset-0 w-full h-full pointer-events-none"
       />
 
-      {qrData && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg">
-          <span className="text-sm">✅ {qrData}</span>
-          <button
-            onClick={handleRescan}
-            className="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
-          >
-            🔄 Rescan
-          </button>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center z-30 bg-black/60">
+          <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
-      {detecting && !qrData && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded font-semibold animate-pulse shadow-md">
-          🟡 Detecting QR Code...
-        </div>
-      )}
+      <div className="fixed bottom-0 left-0 right-0 z-[9999] bg-bg-color text-black rounded-t-2xl px-4 pt-4 pb-6 shadow-xl max-h-[40vh] overflow-y-auto">
+        {!manualMode ? (
+          <div className="text-center space-y-4">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+              QR Scan Result
+            </h2>
+            {scannedData ? (
+              <p className="text-sm text-gray-800 break-words">
+                ✅ <strong>Data:</strong> {scannedData}
+              </p>
+            ) : (
+              <p className="text-sm text-gray-600">No data scanned.</p>
+            )}
+            <div className="space-y-3">
+              <Button
+                onClick={startScan}
+                disabled={scanning}
+                className={`w-full ${
+                  scanning
+                    ? "bg-primary-300 cursor-not-allowed"
+                    : "bg-primary-600 hover:bg-primary-700 text-white"
+                }`}
+              >
+                {scanning ? "Scanning..." : "Scan"}
+              </Button>
+
+              <Button
+                onClick={() => setManualMode(true)}
+                variant="outlined"
+                fullWidth
+              >
+                Add manually
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-center">Manual Entry</h2>
+            <input
+              type="text"
+              placeholder="Serial No"
+              className="w-full border text-base px-3 py-2 rounded"
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              className="w-full border text-base px-3 py-2 rounded"
+            />
+            <div className="flex justify-center gap-3 pt-2">
+              <Button
+                onClick={() => setManualMode(false)}
+                className="bg-gray-200 hover:bg-gray-300 text-black"
+              >
+                Back
+              </Button>
+              <Button
+                onClick={handleManualSubmit}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

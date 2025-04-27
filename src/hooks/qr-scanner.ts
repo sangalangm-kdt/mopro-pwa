@@ -15,7 +15,8 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
   const overlayRef = useRef<HTMLCanvasElement | null>(null);
   const scanBoxRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [scanning, setScanning] = useState(true);
+  const [scanning, setScanning] = useState(false); // ⛔ start paused by default
+
   const [result, setResult] = useState<string | null>(null);
   const [detecting, setDetecting] = useState<boolean>(false);
 
@@ -27,9 +28,9 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
 
   const getScanBoxRect = useCallback(() => {
     const { width, height } = screenSize;
-    const size = Math.min(width, height) * 0.6;
+    const size = Math.min(width, height) * 0.45; // Smaller box (was 0.6)
     const x = (width - size) / 2;
-    const y = (height - size) / 2;
+    const y = (height - size) / 2 - height * 0.1; // Shift up by 10%
     return { x, y, width: size, height: size };
   }, [screenSize]);
 
@@ -48,7 +49,7 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(x, y, width, height);
 
-    // ✨ Draw corner lines instead of full border
+    //  Draw corner lines instead of full border
     const cornerLength = 30;
     const color = "white";
     const lineWidth = 3;
@@ -280,5 +281,6 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     detecting,
     result,
     handleRescan,
+    setScanning, // 🔑 expose so the caller can control it
   };
 };

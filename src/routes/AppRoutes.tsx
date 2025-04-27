@@ -9,6 +9,7 @@ import PrivateRoute from "./PrivateRoute";
 import { AuthProvider } from "@context/auth/AuthProvider";
 import { ROUTES } from "@constants/routes";
 import PublicRoute from "./PublicRoute";
+import ScanResult from "@/pages/ScanResult";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         children: [
           { path: ROUTES.HOME, element: <Home /> },
           { path: ROUTES.SCANNER, element: <QRScanner /> },
+          { path: ROUTES.SCAN_RESULT, element: <ScanResult /> },
           { path: ROUTES.PROFILE, element: <Profile /> },
         ],
       },

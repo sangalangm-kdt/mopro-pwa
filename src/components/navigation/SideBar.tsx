@@ -24,7 +24,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     onClose();
   };
 
-  //  Hook handles swipe and accessibility
+  //  hooks for the sidebar controls
   useSidebarControls(open, onClose, sidebarRef, closeButtonRef);
 
   return (
@@ -47,7 +47,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-zinc-700">
+        <div className="flex items-center justify-between px-4 py-[22px] xs:py-[18px] border-b border-gray-200 dark:border-zinc-700">
           <span className="text-lg font-semibold text-primary-800 dark:text-white">
             Menu
           </span>

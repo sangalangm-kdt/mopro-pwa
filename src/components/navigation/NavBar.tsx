@@ -10,7 +10,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="w-full px-4 sm:px-6 py-4 grid grid-cols-3 items-center bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-700 shadow-sm fixed top-0 left-0 right-0 z-50">
+      <header className="w-full px-4 sm:px-6 py-4 grid grid-cols-3 items-center bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-700 shadow-sm fixed top-0 left-0 right-0 z-30">
         {/* Left */}
         <div className="flex justify-start">
           <button
