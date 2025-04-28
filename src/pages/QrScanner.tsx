@@ -96,7 +96,7 @@ const QRScanner = () => {
       {/* 🧩 Show Modal if scanned */}
       {qrData && <ScanResult qrData={qrData} onClose={handleCloseModal} />}
 
-      <div className="fixed bottom-0 left-0 right-0 z-[9999] bg-bg-color text-black rounded-t-2xl px-4 pt-4 pb-6 shadow-xl max-h-[40vh] overflow-y-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-[150] bg-bg-color text-black rounded-t-2xl px-4 pt-4 pb-6 shadow-xl max-h-[40vh] overflow-y-auto">
         {!manualMode ? (
           <div className="text-center space-y-4">
             <p className="text-sm text-gray-600">Scan a QR code to continue.</p>

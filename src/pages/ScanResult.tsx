@@ -42,7 +42,7 @@ export default function ScanResult({ qrData, onClose }: ScanResultModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/40 flex justify-center items-end overflow-hidden">
+    <div className="fixed inset-0 z-[200] bg-black/40 flex justify-center items-end overflow-hidden">
       <div
         ref={sheetRef}
         onTouchStart={handleTouchStart}
