@@ -229,10 +229,19 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
           if (lastDetectedCode?.data !== code.data) {
             lastDetectedCode = code;
           } else {
+            // ✅ Vibrate
+            if (navigator.vibrate) {
+              navigator.vibrate(200);
+            }
+
             setResult(code.data);
             setScanning(false);
             setDetecting(false);
             onResult(code.data);
+
+            // ✅ Stop the camera stream
+            const stream = video?.srcObject as MediaStream;
+            stream?.getTracks().forEach((track) => track.stop());
           }
         } else {
           setDetecting(false);
