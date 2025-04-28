@@ -4,11 +4,13 @@ import Header from "@/components/navigation/Header";
 import Button from "@/components/Button";
 import { Flashlight, FlashlightOff } from "lucide-react";
 import { toggleFlashlight } from "@/utils/flashlight";
+import { useNavigate } from "react-router-dom"; // ✨
 
 const QRScanner = () => {
+  const navigate = useNavigate(); // ✨
+
   const [torchOn, setTorchOn] = useState(false);
   const [manualMode, setManualMode] = useState(false);
-  const [scannedData, setScannedData] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -23,9 +25,9 @@ const QRScanner = () => {
     onResult: (data) => {
       setLoading(true);
       setTimeout(() => {
-        setScannedData(data);
-        setLoading(false);
-      }, 600);
+        // ✨ When scanned, navigate to result page
+        navigate("/scan-result", { state: { qrData: data } });
+      }, 200);
     },
   });
 
@@ -44,7 +46,6 @@ const QRScanner = () => {
   };
 
   const handleManualSubmit = () => {
-    // console.log("📝 Manual entry submitted:", manualForm);
     setManualMode(false);
   };
 
@@ -91,16 +92,8 @@ const QRScanner = () => {
       <div className="fixed bottom-0 left-0 right-0 z-[9999] bg-bg-color text-black rounded-t-2xl px-4 pt-4 pb-6 shadow-xl max-h-[40vh] overflow-y-auto">
         {!manualMode ? (
           <div className="text-center space-y-4">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-              QR Scan Result
-            </h2>
-            {scannedData ? (
-              <p className="text-sm text-gray-800 break-words">
-                ✅ <strong>Data:</strong> {scannedData}
-              </p>
-            ) : (
-              <p className="text-sm text-gray-600">No data scanned.</p>
-            )}
+            <p className="text-sm text-gray-600">Scan a QR code to continue.</p>
+
             <div className="space-y-3">
               <Button
                 onClick={startScan}
@@ -111,7 +104,7 @@ const QRScanner = () => {
                     : "bg-primary-600 hover:bg-primary-700 text-white"
                 }`}
               >
-                {scanning ? "Scanning..." : scannedData ? "Scan Again" : "Scan"}
+                {scanning ? "Scanning..." : "Start Scan"}
               </Button>
 
               <Button
