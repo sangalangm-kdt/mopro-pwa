@@ -15,14 +15,12 @@ interface BeforeInstallPromptEvent extends Event {
 export default function PWAButton() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setIsVisible(true);
       console.log("🔥 beforeinstallprompt event captured");
     };
 
@@ -34,7 +32,10 @@ export default function PWAButton() {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      alert("Installation not available right now."); // fallback message
+      return;
+    }
 
     deferredPrompt.prompt();
     const result = await deferredPrompt.userChoice;
@@ -46,10 +47,7 @@ export default function PWAButton() {
     }
 
     setDeferredPrompt(null);
-    setIsVisible(false);
   };
-
-  if (!isVisible) return null;
 
   return isAuthenticated ? (
     <>
@@ -58,14 +56,15 @@ export default function PWAButton() {
       </span>
       <button
         onClick={handleInstall}
-        className="w-full flex items-center gap-2 px-3 py-2 border border-primary-600 rounded text-sm font-semibold text-primary-800 hover:bg-primary-100 dark:hover:bg-zinc-700 transition"
+        className="w-full flex items-center gap-2 px-3 py-2 border border-primary-600 rounded text-sm font-semibold text-primary-800 hover:bg-primary-100 dark:hover:bg-zinc-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!deferredPrompt} // <--- disable if not ready
       >
         <Download className="h-4 w-4" />
         Install App
       </button>
     </>
   ) : (
-    <Button onClick={handleInstall} fullWidth>
+    <Button onClick={handleInstall} fullWidth disabled={!deferredPrompt}>
       <div className="flex items-center gap-2 justify-center">
         <Download className="h-4 w-4" />
         Install App

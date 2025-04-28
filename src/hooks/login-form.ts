@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth/useAuth";
+import { useToast } from "@/components/toast/useToast"; // <-- ADD THIS
 import { LOGIN_FIELDS } from "@constants/variables/fieldNames";
 import { REGEX, ROUTES } from "@constants/index";
 import { TOAST_MESSAGES } from "@constants/messages";
-import { toast } from "react-toastify";
 
 export function useLoginForm() {
   const { t } = useTranslation("login");
@@ -21,6 +21,7 @@ export function useLoginForm() {
   const from = location.state?.from?.pathname || ROUTES.HOME;
 
   const { login, isAuthenticated } = useAuth();
+  const { showToast } = useToast(); // <-- ADD THIS
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -45,14 +46,18 @@ export function useLoginForm() {
     setLoading(true);
     const success = await login(email, password);
     if (!success) {
-      toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS, {
-        position: "top-right",
-      });
+      showToast(TOAST_MESSAGES.INVALID_CREDENTIALS, "error");
       setLoading(false);
       return;
     }
-    navigate(from, { replace: true });
-    setLoading(false);
+
+    showToast(TOAST_MESSAGES.LOGIN_SUCCESS, "success");
+
+    // Delay navigation by 500ms
+    setTimeout(() => {
+      navigate(from, { replace: true });
+      setLoading(false);
+    }, 500);
   };
 
   return {
