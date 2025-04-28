@@ -4,14 +4,13 @@ import Header from "@/components/navigation/Header";
 import Button from "@/components/Button";
 import { Flashlight, FlashlightOff } from "lucide-react";
 import { toggleFlashlight } from "@/utils/flashlight";
-import { useNavigate } from "react-router-dom"; // ✨
+import ScanResult from "./ScanResult";
 
 const QRScanner = () => {
-  const navigate = useNavigate(); // ✨
-
   const [torchOn, setTorchOn] = useState(false);
   const [manualMode, setManualMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [qrData, setQrData] = useState<string | null>(null); // <-- for modal
 
   const {
     videoRef,
@@ -25,8 +24,8 @@ const QRScanner = () => {
     onResult: (data) => {
       setLoading(true);
       setTimeout(() => {
-        // ✨ When scanned, navigate to result page
-        navigate("/scan-result", { state: { qrData: data } });
+        setQrData(data); // instead of navigate, open modal
+        setLoading(false);
       }, 200);
     },
   });
@@ -47,6 +46,11 @@ const QRScanner = () => {
 
   const handleManualSubmit = () => {
     setManualMode(false);
+  };
+
+  const handleCloseModal = () => {
+    setQrData(null);
+    handleRescan(); // Optionally reset scanning after closing result
   };
 
   return (
@@ -88,6 +92,9 @@ const QRScanner = () => {
           <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
         </div>
       )}
+
+      {/* 🧩 Show Modal if scanned */}
+      {qrData && <ScanResult qrData={qrData} onClose={handleCloseModal} />}
 
       <div className="fixed bottom-0 left-0 right-0 z-[9999] bg-bg-color text-black rounded-t-2xl px-4 pt-4 pb-6 shadow-xl max-h-[40vh] overflow-y-auto">
         {!manualMode ? (

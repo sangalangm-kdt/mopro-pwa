@@ -60,7 +60,14 @@ const router = createBrowserRouter([
       },
       {
         path: ROUTES.SCAN_RESULT,
-        element: <ScanResult />,
+        element: (
+          <ScanResult
+            qrData={""}
+            onClose={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
+        ),
       },
       {
         path: ROUTES.PROFILE,
