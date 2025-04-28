@@ -14,7 +14,20 @@ const Login = lazy(() => import("@/pages/Login"));
 const ScanResult = lazy(() => import("@/pages/ScanResult"));
 
 // Fallback UI while loading
-const LoadingScreen = () => <div>Loading...</div>;
+import SkeletonLoader from "@/components/SkeletonLoader";
+
+const LoadingScreen = () => (
+  <div className="flex justify-center items-center min-h-screen p-8 bg-bg-color">
+    <SkeletonLoader
+      blocks={[
+        { type: "title" },
+        { type: "text" },
+        { type: "text" },
+        { type: "rect", height: "48" },
+      ]}
+    />
+  </div>
+);
 
 const router = createBrowserRouter([
   {
@@ -29,49 +42,29 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <PrivateRoute />,
+    element: (
+      <PrivateRoute>
+        <Suspense fallback={<LoadingScreen />}>
+          <MainLayout />
+        </Suspense>
+      </PrivateRoute>
+    ),
     children: [
       {
-        path: "/",
-        element: (
-          <Suspense fallback={<LoadingScreen />}>
-            <MainLayout />
-          </Suspense>
-        ),
-        children: [
-          {
-            path: ROUTES.HOME,
-            element: (
-              <Suspense fallback={<LoadingScreen />}>
-                <Home />
-              </Suspense>
-            ),
-          },
-          {
-            path: ROUTES.SCANNER,
-            element: (
-              <Suspense fallback={<LoadingScreen />}>
-                <QRScanner />
-              </Suspense>
-            ),
-          },
-          {
-            path: ROUTES.SCAN_RESULT,
-            element: (
-              <Suspense fallback={<LoadingScreen />}>
-                <ScanResult />
-              </Suspense>
-            ),
-          },
-          {
-            path: ROUTES.PROFILE,
-            element: (
-              <Suspense fallback={<LoadingScreen />}>
-                <Profile />
-              </Suspense>
-            ),
-          },
-        ],
+        path: ROUTES.HOME,
+        element: <Home />, // No need to wrap in Suspense again
+      },
+      {
+        path: ROUTES.SCANNER,
+        element: <QRScanner />,
+      },
+      {
+        path: ROUTES.SCAN_RESULT,
+        element: <ScanResult />,
+      },
+      {
+        path: ROUTES.PROFILE,
+        element: <Profile />,
       },
     ],
   },

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import AppRoutes from "@/routes/AppRoutes";
-import { ToastProvider } from "@/components/toast/ToastProvider";
+import { Toaster } from "sonner"; // <<< Use Sonner
 import Preloader from "@/components/Preloader";
 
 export default function App() {
@@ -20,9 +20,10 @@ export default function App() {
       {loading ? (
         <Preloader />
       ) : (
-        <ToastProvider>
+        <>
           <AppRoutes />
-        </ToastProvider>
+          <Toaster position="top-right" richColors expand theme="light" />
+        </>
       )}
     </>
   );

@@ -111,7 +111,7 @@ const QRScanner = () => {
                     : "bg-primary-600 hover:bg-primary-700 text-white"
                 }`}
               >
-                {scanning ? "Scanning..." : "Scan"}
+                {scanning ? "Scanning..." : scannedData ? "Scan Again" : "Scan"}
               </Button>
 
               <Button

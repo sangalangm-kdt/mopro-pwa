@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth/useAuth";
-import { useToast } from "@/components/toast/useToast"; // <-- ADD THIS
 import { LOGIN_FIELDS } from "@constants/variables/fieldNames";
 import { REGEX, ROUTES } from "@constants/index";
 import { TOAST_MESSAGES } from "@constants/messages";
+import { toast } from "sonner";
 
 export function useLoginForm() {
   const { t } = useTranslation("login");
@@ -21,7 +21,6 @@ export function useLoginForm() {
   const from = location.state?.from?.pathname || ROUTES.HOME;
 
   const { login, isAuthenticated } = useAuth();
-  const { showToast } = useToast(); // <-- ADD THIS
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -46,12 +45,12 @@ export function useLoginForm() {
     setLoading(true);
     const success = await login(email, password);
     if (!success) {
-      showToast(TOAST_MESSAGES.INVALID_CREDENTIALS, "error");
+      toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS);
       setLoading(false);
       return;
     }
 
-    showToast(TOAST_MESSAGES.LOGIN_SUCCESS, "success");
+    toast.success(TOAST_MESSAGES.LOGIN_SUCCESS);
 
     // Delay navigation by 500ms
     setTimeout(() => {
