@@ -1,22 +1,29 @@
-// src/router/AppRoutes.tsx
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainLayout from "@layouts/MainLayout";
-import QRScanner from "@/pages/QrScanner";
-import Home from "@/pages/Home";
-import Profile from "@/pages/Profile";
-import Login from "@/pages/Login";
+import { lazy, Suspense } from "react";
 import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 import { AuthProvider } from "@context/auth/AuthProvider";
 import { ROUTES } from "@constants/routes";
-import PublicRoute from "./PublicRoute";
-import ScanResult from "@/pages/ScanResult";
+
+// Lazy load pages
+const MainLayout = lazy(() => import("@layouts/MainLayout"));
+const QRScanner = lazy(() => import("@/pages/QrScanner"));
+const Home = lazy(() => import("@/pages/Home"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const Login = lazy(() => import("@/pages/Login"));
+const ScanResult = lazy(() => import("@/pages/ScanResult"));
+
+// Fallback UI while loading
+const LoadingScreen = () => <div>Loading...</div>;
 
 const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
     element: (
       <PublicRoute>
-        <Login />
+        <Suspense fallback={<LoadingScreen />}>
+          <Login />
+        </Suspense>
       </PublicRoute>
     ),
   },
@@ -26,12 +33,44 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <MainLayout />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <MainLayout />
+          </Suspense>
+        ),
         children: [
-          { path: ROUTES.HOME, element: <Home /> },
-          { path: ROUTES.SCANNER, element: <QRScanner /> },
-          { path: ROUTES.SCAN_RESULT, element: <ScanResult /> },
-          { path: ROUTES.PROFILE, element: <Profile /> },
+          {
+            path: ROUTES.HOME,
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <Home />
+              </Suspense>
+            ),
+          },
+          {
+            path: ROUTES.SCANNER,
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <QRScanner />
+              </Suspense>
+            ),
+          },
+          {
+            path: ROUTES.SCAN_RESULT,
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <ScanResult />
+              </Suspense>
+            ),
+          },
+          {
+            path: ROUTES.PROFILE,
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <Profile />
+              </Suspense>
+            ),
+          },
         ],
       },
     ],
