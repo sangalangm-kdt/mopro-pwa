@@ -16,16 +16,17 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
   const scanBoxRef = useRef<HTMLCanvasElement | null>(null);
 
   const [scanning, setScanning] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [detecting, setDetecting] = useState<boolean>(false);
+  const [detecting, setDetecting] = useState(false);
   const [noQrDetected, setNoQrDetected] = useState(false);
-  const scanTimer = useRef<number | null>(null);
-  const noQrTimeout = useRef<number | null>(null);
-
   const [screenSize, setScreenSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+
+  const scanTimer = useRef<number | null>(null);
+  const noQrTimeout = useRef<number | null>(null);
 
   const getScanBoxRect = useCallback(() => {
     const { width, height } = screenSize;
@@ -53,20 +54,23 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     ctx.strokeStyle = "white";
     ctx.lineWidth = 3;
 
-    // Draw corners
     ctx.beginPath();
+    // 4 corners
     ctx.moveTo(x, y);
     ctx.lineTo(x + cornerLength, y);
     ctx.moveTo(x, y);
     ctx.lineTo(x, y + cornerLength);
+
     ctx.moveTo(x + width, y);
     ctx.lineTo(x + width - cornerLength, y);
     ctx.moveTo(x + width, y);
     ctx.lineTo(x + width, y + cornerLength);
+
     ctx.moveTo(x, y + height);
     ctx.lineTo(x + cornerLength, y + height);
     ctx.moveTo(x, y + height);
     ctx.lineTo(x, y + height - cornerLength);
+
     ctx.moveTo(x + width, y + height);
     ctx.lineTo(x + width - cornerLength, y + height);
     ctx.moveTo(x + width, y + height);
@@ -128,6 +132,7 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     [screenSize]
   );
 
+  // Handle window resizing
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({
@@ -135,42 +140,59 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
         height: window.innerHeight,
       });
     };
+
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
+  // Start camera once
   useEffect(() => {
+    const video = videoRef.current;
+
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
+
+        if (video) {
+          video.srcObject = stream;
+          await new Promise<void>((resolve) => {
+            video.onloadedmetadata = () => {
+              video.play().then(resolve).catch(resolve);
+            };
+          });
+          setCameraReady(true);
+        }
+      } catch (error) {
+        console.error("Camera error:", error);
+      }
+    };
+
+    startCamera();
+    drawScanBoxOverlay();
+
+    return () => {
+      if (scanTimer.current) window.clearInterval(scanTimer.current);
+      const stream = video?.srcObject as MediaStream;
+      stream?.getTracks().forEach((track) => track.stop());
+    };
+  }, [drawScanBoxOverlay]);
+
+  // Handle scanning when scanning becomes true
+  useEffect(() => {
+    if (!scanning) return;
+
     const video = videoRef.current;
     const canvas = canvasRef.current;
 
-    const startCamera = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-
-      if (video) {
-        video.srcObject = stream;
-        await new Promise<void>((resolve) => {
-          video.onloadedmetadata = () => {
-            video.play().then(resolve).catch(resolve);
-          };
-        });
-      }
-
-      // Start no QR fallback timer
-      if (noQrTimeout.current) window.clearTimeout(noQrTimeout.current);
-      noQrTimeout.current = window.setTimeout(() => {
-        if (scanning) {
-          setNoQrDetected(true);
-          setScanning(false);
-        }
-      }, 10000); // 10 seconds
-    };
-
-    let lastDetectedCode: QRCode | null = null;
+    if (!video || !canvas) return;
 
     const scan = () => {
-      if (!video || !canvas || !scanning || video.readyState < 2) return;
+      if (video.readyState < 2) return;
       const videoWidth = video.videoWidth;
       const videoHeight = video.videoHeight;
       if (videoWidth === 0 || videoHeight === 0) return;
@@ -197,21 +219,15 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
           drawBoundingBox(code.location, sx, sy);
           setDetecting(true);
 
-          if (lastDetectedCode?.data !== code.data) {
-            lastDetectedCode = code;
-          } else {
-            if (navigator.vibrate) navigator.vibrate(200);
-            setResult(code.data);
-            setScanning(false);
-            setDetecting(false);
-            setNoQrDetected(false);
-            onResult(code.data);
+          if (navigator.vibrate) navigator.vibrate(200);
 
-            if (noQrTimeout.current) window.clearTimeout(noQrTimeout.current);
+          setResult(code.data);
+          setScanning(false);
+          setDetecting(false);
+          setNoQrDetected(false);
+          onResult(code.data);
 
-            const stream = video?.srcObject as MediaStream;
-            stream?.getTracks().forEach((track) => track.stop());
-          }
+          if (noQrTimeout.current) window.clearTimeout(noQrTimeout.current);
         } else {
           setDetecting(false);
         }
@@ -220,23 +236,20 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
       }
     };
 
-    startCamera();
-    drawScanBoxOverlay();
     scanTimer.current = window.setInterval(scan, SCAN_INTERVAL);
+
+    noQrTimeout.current = window.setTimeout(() => {
+      if (scanning) {
+        setNoQrDetected(true);
+        setScanning(false);
+      }
+    }, 10000);
 
     return () => {
       if (scanTimer.current) window.clearInterval(scanTimer.current);
-      const stream = video?.srcObject as MediaStream;
-      stream?.getTracks().forEach((track) => track.stop());
+      if (noQrTimeout.current) window.clearTimeout(noQrTimeout.current);
     };
-  }, [
-    scanning,
-    onResult,
-    drawScanBoxOverlay,
-    screenSize,
-    getScanBoxRect,
-    drawBoundingBox,
-  ]);
+  }, [scanning, onResult, getScanBoxRect, drawBoundingBox, screenSize]);
 
   const handleRescan = () => {
     setResult(null);
@@ -262,5 +275,6 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     handleRescan,
     setScanning,
     noQrDetected,
+    cameraReady,
   };
 };
