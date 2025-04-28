@@ -15,10 +15,12 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
   const overlayRef = useRef<HTMLCanvasElement | null>(null);
   const scanBoxRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [scanning, setScanning] = useState(false);
-  const [detecting, setDetecting] = useState(false);
-  const scanTimer = useRef<number | null>(null);
+  const [scanning, setScanning] = useState(false); // ⛔ start paused by default
 
+  const [result, setResult] = useState<string | null>(null);
+  const [detecting, setDetecting] = useState<boolean>(false);
+
+  const scanTimer = useRef<number | null>(null);
   const [screenSize, setScreenSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -26,9 +28,9 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
 
   const getScanBoxRect = useCallback(() => {
     const { width, height } = screenSize;
-    const size = Math.min(width, height) * 0.45;
+    const size = Math.min(width, height) * 0.45; // Smaller box (was 0.6)
     const x = (width - size) / 2;
-    const y = (height - size) / 2 - height * 0.1;
+    const y = (height - size) / 2 - height * 0.1; // Shift up by 10%
     return { x, y, width: size, height: size };
   }, [screenSize]);
 
@@ -42,37 +44,50 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     canvas.width = screenSize.width;
     canvas.height = screenSize.height;
 
+    // Mask outside scan area
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(x, y, width, height);
 
+    //  Draw corner lines instead of full border
     const cornerLength = 30;
     const color = "white";
     const lineWidth = 3;
+
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
 
-    // Draw corners
-    const drawCorner = (
-      startX: number,
-      startY: number,
-      dx: number,
-      dy: number
-    ) => {
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(startX + dx * cornerLength, startY + dy * cornerLength);
-      ctx.stroke();
-    };
+    // Top-left
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + cornerLength, y);
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + cornerLength);
+    ctx.stroke();
 
-    drawCorner(x, y, 1, 0); // top-left horizontal
-    drawCorner(x, y, 0, 1); // top-left vertical
-    drawCorner(x + width, y, -1, 0); // top-right horizontal
-    drawCorner(x + width, y, 0, 1); // top-right vertical
-    drawCorner(x, y + height, 1, 0); // bottom-left horizontal
-    drawCorner(x, y + height, 0, -1); // bottom-left vertical
-    drawCorner(x + width, y + height, -1, 0); // bottom-right horizontal
-    drawCorner(x + width, y + height, 0, -1); // bottom-right vertical
+    // Top-right
+    ctx.beginPath();
+    ctx.moveTo(x + width, y);
+    ctx.lineTo(x + width - cornerLength, y);
+    ctx.moveTo(x + width, y);
+    ctx.lineTo(x + width, y + cornerLength);
+    ctx.stroke();
+
+    // Bottom-left
+    ctx.beginPath();
+    ctx.moveTo(x, y + height);
+    ctx.lineTo(x + cornerLength, y + height);
+    ctx.moveTo(x, y + height);
+    ctx.lineTo(x, y + height - cornerLength);
+    ctx.stroke();
+
+    // Bottom-right
+    ctx.beginPath();
+    ctx.moveTo(x + width, y + height);
+    ctx.lineTo(x + width - cornerLength, y + height);
+    ctx.moveTo(x + width, y + height);
+    ctx.lineTo(x + width, y + height - cornerLength);
+    ctx.stroke();
   }, [screenSize, getScanBoxRect]);
 
   const drawBoundingBox = useCallback(
@@ -126,10 +141,10 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
         ctx.stroke();
       };
 
-      drawCorner(points.tl, points.tr, true);
-      drawCorner(points.tr, points.br, false);
-      drawCorner(points.br, points.bl, true);
-      drawCorner(points.bl, points.tl, false);
+      drawCorner(points.tl, points.tr, true); // top-left
+      drawCorner(points.tr, points.br, false); // top-right
+      drawCorner(points.br, points.bl, true); // bottom-right
+      drawCorner(points.bl, points.tl, false); // bottom-left
     },
     [screenSize]
   );
@@ -144,7 +159,10 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
 
     window.addEventListener("resize", handleResize);
     handleResize();
-    return () => window.removeEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -155,6 +173,7 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" },
       });
+
       if (video) {
         video.srcObject = stream;
         await new Promise<void>((resolve) => {
@@ -164,6 +183,8 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
         });
       }
     };
+
+    let lastDetectedCode: QRCode | null = null;
 
     const scan = () => {
       if (!video || !canvas || !scanning || video.readyState < 2) return;
@@ -204,20 +225,17 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
         if (code) {
           drawBoundingBox(code.location, sx, sy);
           setDetecting(true);
+
+          if (lastDetectedCode?.data !== code.data) {
+            lastDetectedCode = code;
+          } else {
+            setResult(code.data);
+            setScanning(false);
+            setDetecting(false);
+            onResult(code.data);
+          }
         } else {
           setDetecting(false);
-
-          const overlayCanvas = overlayRef.current;
-          if (overlayCanvas) {
-            const overlayCtx = overlayCanvas.getContext("2d");
-            if (overlayCtx)
-              overlayCtx.clearRect(
-                0,
-                0,
-                overlayCanvas.width,
-                overlayCanvas.height
-              );
-          }
         }
       } catch (error) {
         console.error("Scan error:", error);
@@ -235,13 +253,15 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     };
   }, [
     scanning,
+    onResult,
+    drawScanBoxOverlay,
     screenSize,
     getScanBoxRect,
     drawBoundingBox,
-    drawScanBoxOverlay,
   ]);
 
   const handleRescan = () => {
+    setResult(null);
     setScanning(true);
     setDetecting(false);
 
@@ -252,49 +272,6 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     }
   };
 
-  const manualScan = () => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas) return;
-
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx) return;
-
-    const videoWidth = video.videoWidth;
-    const videoHeight = video.videoHeight;
-
-    canvas.width = videoWidth;
-    canvas.height = videoHeight;
-
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const { x, y, width, height } = getScanBoxRect();
-    const sx = Math.floor((x / screenSize.width) * canvas.width);
-    const sy = Math.floor((y / screenSize.height) * canvas.height);
-    const sw = Math.floor((width / screenSize.width) * canvas.width);
-    const sh = Math.floor((height / screenSize.height) * canvas.height);
-
-    if (
-      sw <= 0 ||
-      sh <= 0 ||
-      sx < 0 ||
-      sy < 0 ||
-      sx + sw > canvas.width ||
-      sy + sh > canvas.height
-    ) {
-      return;
-    }
-
-    const imageData = ctx.getImageData(sx, sy, sw, sh);
-    const code = jsQR(imageData.data, sw, sh);
-
-    if (code) {
-      onResult(code.data);
-    } else {
-      console.log("No QR detected manually");
-    }
-  };
-
   return {
     videoRef,
     canvasRef,
@@ -302,8 +279,8 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     scanBoxRef,
     scanning,
     detecting,
+    result,
     handleRescan,
-    manualScan,
-    setScanning,
+    setScanning, // 🔑 expose so the caller can control it
   };
 };
