@@ -195,3 +195,31 @@ html {
 .animate-slide-in {
   animation: slideIn 0.3s ease forwards;
 }
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade {
+  animation: fade 0.3s ease-out forwards;
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.4s ease-out forwards;
+}

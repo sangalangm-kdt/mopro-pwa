@@ -1,0 +1,10 @@
+{
+  "app": "App",
+  "install_app": "Install App",
+  "how_to_install": "How to Install",
+  "pwa": "PWA",
+  "how_to_install_app": "How to Install App",
+  "instruction_share": "1. Tap the Share icon in Safari (bottom menu)",
+  "instruction_add_home": "2. Tap Add to Home Screen",
+  "got_it": "Got it!"
+}
