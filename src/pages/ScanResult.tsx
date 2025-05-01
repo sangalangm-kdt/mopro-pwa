@@ -82,13 +82,13 @@ export default function ScanResult({ qrData, onClose }: ScanResultProps) {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!startY.current) return;
+    if (startY.current === null) return;
+
     const endY = e.changedTouches[0].clientY;
     const diffY = endY - startY.current;
 
-    if (diffY > SCAN_RESULT_CONFIG.COLLAPSE_THRESHOLD) {
-      if (expanded) setExpanded(false);
-      else onClose();
+    if (!expanded && diffY > SCAN_RESULT_CONFIG.COLLAPSE_THRESHOLD) {
+      onClose(); // Only close when it's still collapsed
     } else if (diffY < SCAN_RESULT_CONFIG.EXPAND_THRESHOLD) {
       setExpanded(true);
     }
