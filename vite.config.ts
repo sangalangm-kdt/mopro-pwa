@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import AutoImport from "unplugin-auto-import/vite";
 import svgr from "vite-plugin-svgr";
+import { allIcons } from "./src/assets/icons";
 
 // Fix __dirname for ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -25,16 +26,7 @@ export default defineConfig({
         theme_color: "#ffffff",
         background_color: "#ffffff",
         display: "standalone",
-        icons: [
-          { src: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
-          { src: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
-          {
-            src: "/icon-1024x1024.png",
-            sizes: "1024x1024",
-            type: "image/png",
-            purpose: "any maskable",
-          },
-        ],
+        icons: allIcons,
       },
       workbox: {
         clientsClaim: true,

@@ -23,8 +23,8 @@ export default function Navbar() {
         </div>
 
         {/* Center */}
-        <div className="flex justify-center text-sm sm:text-base font-medium text-gray-700 dark:text-white truncate">
-          Hello,{" "}
+        <div className="flex justify-center text-base sm:text-sm font-medium text-gray-700 dark:text-white truncate">
+          Hello,&nbsp;
           <span className="text-primary-800 font-semibold">
             {user?.firstName || "User"}
           </span>

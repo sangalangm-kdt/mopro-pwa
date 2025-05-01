@@ -5,5 +5,5 @@ export const ROUTES = {
   SCANNER: "/qr-scanner",
   SCAN_RESULT: "/scan-result",
   REQUEST_ACCOUNT: "/request-account",
-  EDIT_PROGRESS: "/edit-progress",
+  EDIT_PROGRESS: "/edit-progress/:serialNumber",
 };

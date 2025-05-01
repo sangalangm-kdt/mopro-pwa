@@ -1,0 +1,10 @@
+{
+  "title": "QRスキャナー",
+  "scan_prompt": "QRコードをスキャンして続行してください。",
+  "start_scan": "スキャン開始",
+  "scan_again": "もう一度スキャン",
+  "scanning": "スキャン中...",
+  "add_manually": "手動で追加",
+  "flashlight_not_supported": "🔦 フラッシュライトはサポートされていません。",
+  "open_manual_modal": "🚀 手動エントリーモーダルを開く"
+}

@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import jsQR, { QRCode } from "jsqr";
+import { toast } from "sonner";
+import { stopCamera } from "@/utils/stop-camera";
 
+// Interval in ms between scan attempts
 const SCAN_INTERVAL = 500;
 
 interface UseQrScannerProps {
@@ -10,30 +13,57 @@ interface UseQrScannerProps {
 type Point = { x: number; y: number };
 
 export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
+  // Refs for video and canvas elements
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const overlayRef = useRef<HTMLCanvasElement | null>(null);
   const scanBoxRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [scanning, setScanning] = useState(false); // ⛔ start paused by default
-
+  // State to manage scanning session
+  const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [detecting, setDetecting] = useState<boolean>(false);
 
   const scanTimer = useRef<number | null>(null);
+  const noResultTimeout = useRef<number | null>(null);
+
+  // Track current screen size for overlay calculations
   const [screenSize, setScreenSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
 
+  // Trigger error toast if no QR is detected after 10s
+  const startNoResultTimer = () => {
+    if (noResultTimeout.current) {
+      clearTimeout(noResultTimeout.current);
+    }
+    noResultTimeout.current = window.setTimeout(() => {
+      setScanning(false);
+      setDetecting(false);
+      console.warn("⚠️ No QR code detected within timeout.");
+      toast.error("No QR code detected. Please try again.");
+    }, 10000);
+  };
+
+  // Clear timeout if QR is detected or scanning ends
+  const clearNoResultTimer = () => {
+    if (noResultTimeout.current) {
+      clearTimeout(noResultTimeout.current);
+      noResultTimeout.current = null;
+    }
+  };
+
+  // Calculate center scan box rectangle based on screen size
   const getScanBoxRect = useCallback(() => {
     const { width, height } = screenSize;
-    const size = Math.min(width, height) * 0.45; // Smaller box (was 0.6)
+    const size = Math.min(width, height) * 0.45;
     const x = (width - size) / 2;
-    const y = (height - size) / 2 - height * 0.1; // Shift up by 10%
+    const y = (height - size) / 2 - height * 0.1;
     return { x, y, width: size, height: size };
   }, [screenSize]);
 
+  // Draw dark overlay with transparent scan box and white corners
   const drawScanBoxOverlay = useCallback(() => {
     const canvas = scanBoxRef.current;
     if (!canvas) return;
@@ -44,12 +74,10 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     canvas.width = screenSize.width;
     canvas.height = screenSize.height;
 
-    // Mask outside scan area
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(x, y, width, height);
 
-    //  Draw corner lines instead of full border
     const cornerLength = 30;
     const color = "white";
     const lineWidth = 3;
@@ -57,39 +85,38 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
 
-    // Top-left
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + cornerLength, y);
-    ctx.moveTo(x, y);
-    ctx.lineTo(x, y + cornerLength);
-    ctx.stroke();
-
-    // Top-right
-    ctx.beginPath();
-    ctx.moveTo(x + width, y);
-    ctx.lineTo(x + width - cornerLength, y);
-    ctx.moveTo(x + width, y);
-    ctx.lineTo(x + width, y + cornerLength);
-    ctx.stroke();
-
-    // Bottom-left
-    ctx.beginPath();
-    ctx.moveTo(x, y + height);
-    ctx.lineTo(x + cornerLength, y + height);
-    ctx.moveTo(x, y + height);
-    ctx.lineTo(x, y + height - cornerLength);
-    ctx.stroke();
-
-    // Bottom-right
-    ctx.beginPath();
-    ctx.moveTo(x + width, y + height);
-    ctx.lineTo(x + width - cornerLength, y + height);
-    ctx.moveTo(x + width, y + height);
-    ctx.lineTo(x + width, y + height - cornerLength);
-    ctx.stroke();
+    // Draw 4 corner brackets around scan box
+    const corners = [
+      [x, y, x + cornerLength, y, x, y + cornerLength],
+      [x + width, y, x + width - cornerLength, y, x + width, y + cornerLength],
+      [
+        x,
+        y + height,
+        x + cornerLength,
+        y + height,
+        x,
+        y + height - cornerLength,
+      ],
+      [
+        x + width,
+        y + height,
+        x + width - cornerLength,
+        y + height,
+        x + width,
+        y + height - cornerLength,
+      ],
+    ];
+    corners.forEach(([moveX, moveY, line1X, line1Y, line2X, line2Y]) => {
+      ctx.beginPath();
+      ctx.moveTo(moveX, moveY);
+      ctx.lineTo(line1X, line1Y);
+      ctx.moveTo(moveX, moveY);
+      ctx.lineTo(line2X, line2Y);
+      ctx.stroke();
+    });
   }, [screenSize, getScanBoxRect]);
 
+  // Draw bounding box on top of detected QR code
   const drawBoundingBox = useCallback(
     (loc: QRCode["location"], offsetX = 0, offsetY = 0) => {
       const canvas = overlayRef.current;
@@ -114,11 +141,9 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
       const drawCorner = (p1: Point, p2: Point, horizontalFirst = true) => {
         const x = p1.x + offsetX;
         const y = p1.y + offsetY;
-
         const dx = p2.x - p1.x;
         const dy = p2.y - p1.y;
         const length = Math.sqrt(dx * dx + dy * dy);
-
         const ux = dx / length;
         const uy = dy / length;
 
@@ -141,14 +166,15 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
         ctx.stroke();
       };
 
-      drawCorner(points.tl, points.tr, true); // top-left
-      drawCorner(points.tr, points.br, false); // top-right
-      drawCorner(points.br, points.bl, true); // bottom-right
-      drawCorner(points.bl, points.tl, false); // bottom-left
+      drawCorner(points.tl, points.tr, true);
+      drawCorner(points.tr, points.br, false);
+      drawCorner(points.br, points.bl, true);
+      drawCorner(points.bl, points.tl, false);
     },
     [screenSize]
   );
 
+  // Update overlay size when screen resizes
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({
@@ -159,12 +185,10 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
 
     window.addEventListener("resize", handleResize);
     handleResize();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Main camera & scanning logic
   useEffect(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -183,8 +207,6 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
         });
       }
     };
-
-    let lastDetectedCode: QRCode | null = null;
 
     const scan = () => {
       if (!video || !canvas || !scanning || video.readyState < 2) return;
@@ -207,6 +229,7 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
       const sw = Math.floor((width / screenSize.width) * canvas.width);
       const sh = Math.floor((height / screenSize.height) * canvas.height);
 
+      // Skip scan if scan area is out of bounds
       if (
         sw <= 0 ||
         sh <= 0 ||
@@ -223,17 +246,28 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
         const code = jsQR(imageData.data, sw, sh);
 
         if (code) {
-          drawBoundingBox(code.location, sx, sy);
+          const loc = code.location;
+
+          // Validate QR size
+          const boxWidth = Math.hypot(
+            loc.topRightCorner.x - loc.topLeftCorner.x,
+            loc.topRightCorner.y - loc.topLeftCorner.y
+          );
+          const boxHeight = Math.hypot(
+            loc.bottomLeftCorner.x - loc.topLeftCorner.x,
+            loc.bottomLeftCorner.y - loc.topLeftCorner.y
+          );
+          const MIN_BOX_SIZE = 50;
+          if (boxWidth < MIN_BOX_SIZE || boxHeight < MIN_BOX_SIZE) return;
+
+          drawBoundingBox(loc, sx, sy);
           setDetecting(true);
 
-          if (lastDetectedCode?.data !== code.data) {
-            lastDetectedCode = code;
-          } else {
-            setResult(code.data);
-            setScanning(false);
-            setDetecting(false);
-            onResult(code.data);
-          }
+          clearNoResultTimer();
+          setResult(code.data);
+          setScanning(false);
+          setDetecting(false);
+          onResult(code.data); // ETO YUNG RESULT
         } else {
           setDetecting(false);
         }
@@ -248,8 +282,8 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
 
     return () => {
       if (scanTimer.current) window.clearInterval(scanTimer.current);
-      const stream = video?.srcObject as MediaStream;
-      stream?.getTracks().forEach((track) => track.stop());
+      clearNoResultTimer();
+      stopCamera(video);
     };
   }, [
     scanning,
@@ -260,9 +294,16 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     drawBoundingBox,
   ]);
 
+  // Start timeout when scanning begins
+  useEffect(() => {
+    if (scanning) startNoResultTimer();
+    else clearNoResultTimer();
+  }, [scanning]);
+
+  // Reset scanner state and clear overlay
   const handleRescan = () => {
     setResult(null);
-    setScanning(true);
+    setScanning(false);
     setDetecting(false);
 
     const canvas = overlayRef.current;
@@ -272,6 +313,7 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     }
   };
 
+  // Return scanner control and refs
   return {
     videoRef,
     canvasRef,
@@ -281,6 +323,6 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
     detecting,
     result,
     handleRescan,
-    setScanning, // 🔑 expose so the caller can control it
+    setScanning,
   };
 };

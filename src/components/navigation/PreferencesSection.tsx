@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp, Globe, SunMoon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import ThemeToggle from "@/components/ThemeToggle";
-import PWAButton from "@/components/PWAButton";
+import PWAButton from "@/components/buttons/PWAButton";
 
 import {
   SIDEBAR_PREFERENCES_CONTAINER_CLASSES,

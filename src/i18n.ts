@@ -2,8 +2,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import loginEN from "@locales/en/login/en.json";
-import loginJA from "@locales/ja/login/ja.json";
+import loginEN from "@locales/en/login.json";
+import loginJA from "@locales/ja/login.json";
 import navigationEN from "@/locales/en/navigation/sidebar.navigation.json";
 import preferencesEN from "@/locales/en/navigation/sidebar.preferences.json";
 import appEN from "@/locales/en/navigation/sidebar.app.json";
@@ -14,6 +14,8 @@ import appJA from "@/locales/ja/navigation/sidebar.app.json";
 import accountJA from "@/locales/ja/navigation/sidebar.account.json";
 import pwaEN from "@/locales/en/pwa.json";
 import pwaJA from "@/locales/ja/pwa.json";
+import qrScannerEN from "@locales/en/qrscanner/scan.json";
+import qrScannerJA from "@locales/ja/qrscanner/scan.json";
 
 i18n
   .use(LanguageDetector)
@@ -28,7 +30,8 @@ i18n
         preferences: preferencesEN,
         app: appEN,
         account: accountEN,
-        pwa: pwaEN, // <-- ADD THIS
+        pwa: pwaEN,
+        scan: qrScannerEN,
       },
       ja: {
         translation: {},
@@ -37,11 +40,12 @@ i18n
         preferences: preferencesJA,
         app: appJA,
         account: accountJA,
-        pwa: pwaJA, // <-- ADD THIS
+        pwa: pwaJA,
+        scan: qrScannerJA,
       },
     },
 
-    ns: ["login", "navigation", "preferences", "app", "account", "pwa"],
+    ns: ["login", "navigation", "preferences", "app", "account", "pwa", "scan"],
     defaultNS: "translation", // ✅ Optional, but recommended
     fallbackLng: "ja",
     interpolation: {

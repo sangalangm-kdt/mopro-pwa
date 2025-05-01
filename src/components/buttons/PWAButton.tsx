@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "@/components/Button";
+import Button from "./Button";
 import { useAuth } from "@/context/auth/useAuth";
 import { Download, X } from "lucide-react";
+import { PWA_TEXT_KEYS } from "@/constants";
 
-// Type-safe custom event for beforeinstallprompt
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{
@@ -76,21 +76,23 @@ export default function PWAButton() {
       {isAuthenticated ? (
         <>
           <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
-            {t("app")}
+            {t(PWA_TEXT_KEYS.INSTALL_APP)}
           </span>
           <button
             onClick={handleInstall}
             className="w-full flex items-center gap-2 px-3 py-2 border border-primary-600 rounded text-sm font-semibold text-primary-800 hover:bg-primary-100 dark:hover:bg-zinc-700 transition"
           >
             <Download className="h-4 w-4" />
-            {isSafari ? t("how_to_install") : t("install_app")}
+            {isSafari
+              ? t(PWA_TEXT_KEYS.HOW_TO_INSTALL)
+              : t(PWA_TEXT_KEYS.INSTALL_APP)}
           </button>
         </>
       ) : (
         <Button onClick={handleInstall} fullWidth>
           <div className="flex items-center gap-2 justify-center">
             <Download className="h-4 w-4" />
-            {t("pwa")}
+            {t(PWA_TEXT_KEYS.PWA_GENERIC_LABEL)}
           </div>
         </Button>
       )}
@@ -101,9 +103,8 @@ export default function PWAButton() {
           onClick={() => setShowInstructions(false)}
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity animate-fade"
         >
-          {/* Modal Card */}
           <div
-            onClick={(e) => e.stopPropagation()} // prevent backdrop closing when clicking inside modal
+            onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center relative animate-fade-up"
           >
             <button
@@ -113,16 +114,16 @@ export default function PWAButton() {
               <X className="w-5 h-5" />
             </button>
             <h2 className="text-lg font-semibold mb-4">
-              {t("how_to_install_app")}
+              {t(PWA_TEXT_KEYS.HOW_TO_INSTALL_APP)}
             </h2>
             <p className="text-sm text-gray-600 mb-2">
-              {t("instruction_share")}
+              {t(PWA_TEXT_KEYS.INSTRUCTION_SHARE)}
             </p>
             <p className="text-sm text-gray-600 mb-4">
-              {t("instruction_add_home")}
+              {t(PWA_TEXT_KEYS.INSTRUCTION_ADD_HOME)}
             </p>
             <Button onClick={() => setShowInstructions(false)} fullWidth>
-              {t("got_it")}
+              {t(PWA_TEXT_KEYS.GOT_IT)}
             </Button>
           </div>
         </div>

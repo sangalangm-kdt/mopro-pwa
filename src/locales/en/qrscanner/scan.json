@@ -1,0 +1,10 @@
+{
+  "title": "QR Scanner",
+  "scan_prompt": "Scan a QR code to continue.",
+  "start_scan": "Start Scan",
+  "scan_again": "Scan Again",
+  "scanning": "Scanning...",
+  "add_manually": "Add manually",
+  "flashlight_not_supported": "🔦 Flashlight not supported.",
+  "open_manual_modal": "🚀 Open Manual Entry Modal"
+}

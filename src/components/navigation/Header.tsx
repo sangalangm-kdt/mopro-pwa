@@ -5,29 +5,33 @@ interface HeaderProps {
   title: string;
   showBack?: boolean;
   rightElement?: React.ReactNode;
+  textColorClass?: string; // ✅ NEW: Customizable text color
 }
 
 export default function Header({
   title,
   showBack = true,
   rightElement,
+  textColorClass = "text-white", // ✅ Default still white
 }: HeaderProps) {
   const navigate = useNavigate();
 
   return (
-    <header className="flex items-center justify-between px-4 py-6 bg-transparent backdrop-blur-sm text-white">
+    <header
+      className={`flex items-center justify-between px-4 py-6 bg-transparent backdrop-blur-sm ${textColorClass}`}
+    >
       {/* Back button */}
       <div className="w-1/5">
         {showBack && (
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center space-x-1 text-white hover:text-primary-300 transition-colors duration-200 group"
+            className={`flex items-center space-x-1 ${textColorClass} hover:text-primary-300 transition-colors duration-200 group`}
           >
             <ArrowLeft
               size={24}
               className="group-hover:-translate-x-1 transition-transform duration-200"
             />
-            <span className="text-sm font-medium">Back</span>
+            {/* <span className="text-sm font-medium">Back</span> */}
           </button>
         )}
       </div>

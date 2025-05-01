@@ -12,9 +12,10 @@ const Home = lazy(() => import("@/pages/Home"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const Login = lazy(() => import("@/pages/Login"));
 const ScanResult = lazy(() => import("@/pages/ScanResult"));
+const EditProgress = lazy(() => import("@pages/EditProgress"));
 
 // Fallback UI while loading
-import SkeletonLoader from "@/components/SkeletonLoader";
+import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
 
 const LoadingScreen = () => (
   <div className="flex justify-center items-center min-h-screen p-8 bg-bg-color">
@@ -69,6 +70,11 @@ const router = createBrowserRouter([
           />
         ),
       },
+      {
+        path: ROUTES.EDIT_PROGRESS,
+        element: <EditProgress />,
+      },
+
       {
         path: ROUTES.PROFILE,
         element: <Profile />,
