@@ -80,10 +80,6 @@ export default function ProcessDropdown({
 
   return (
     <div className="space-y-1 relative" ref={dropdownRef}>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-        Process
-      </label>
-
       {/* Input container */}
       <div
         className="flex items-center w-full px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-800 dark:text-white shadow-sm focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500"

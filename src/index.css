@@ -326,7 +326,7 @@ input[type="range"].progress-slider::-webkit-slider-thumb {
   background: white;
   border: 2px solid #9bb52d; /* lime-500 */
   border-radius: 9999px;
-  margin-top: -17px;
+  margin-top: -18px;
 }
 
 input[type="range"].progress-slider::-moz-range-thumb {
