@@ -6,7 +6,8 @@ export function isMatchingSerial(
     str
       .trim()
       .replace(/[\u200B-\u200D\uFEFF]/g, "")
-      .normalize();
+      .normalize()
+      .toLowerCase();
 
   return clean(scannedSerial) === clean(dbSerial);
 }

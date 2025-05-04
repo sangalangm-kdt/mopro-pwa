@@ -12,7 +12,6 @@ import EditProgressSkeleton from "@/components/skeletons/EditProgressSkeleton";
 import { Loader2 } from "lucide-react";
 import SuccessModal from "@/components/modals/SuccessModal";
 
-// This component allows editing of product progress and current process selection
 const EditProgress = () => {
   // Extract serial number from route params
   const { serialNumber = "" } = useParams<{ serialNumber: string }>();
