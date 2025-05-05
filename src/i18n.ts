@@ -16,6 +16,7 @@ import pwaEN from "@/locales/en/pwa.json";
 import pwaJA from "@/locales/ja/pwa.json";
 import qrScannerEN from "@locales/en/qrscanner/scan.json";
 import qrScannerJA from "@locales/ja/qrscanner/scan.json";
+import commonEN from "@locales/en/common.json";
 
 i18n
   .use(LanguageDetector)
@@ -32,6 +33,7 @@ i18n
         account: accountEN,
         pwa: pwaEN,
         scan: qrScannerEN,
+        common: commonEN,
       },
       ja: {
         translation: {},
@@ -45,7 +47,16 @@ i18n
       },
     },
 
-    ns: ["login", "navigation", "preferences", "app", "account", "pwa", "scan"],
+    ns: [
+      "login",
+      "navigation",
+      "preferences",
+      "app",
+      "account",
+      "pwa",
+      "scan",
+      "common",
+    ],
     defaultNS: "translation", // ✅ Optional, but recommended
     fallbackLng: "ja",
     interpolation: {

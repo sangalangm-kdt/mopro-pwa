@@ -119,7 +119,7 @@ const QRScanner = () => {
 
       {qrData && <ScanResult qrData={qrData} onClose={handleCloseModal} />}
 
-      {/* ⬇️ Manual entry modal (conditionally rendered) */}
+      {/* Manual entry modal */}
       {showManualModal && (
         <ManualEntryModal
           onClose={() => setShowManualModal(false)}
@@ -160,7 +160,7 @@ const QRScanner = () => {
             </Button>
 
             <Button
-              onClick={() => setShowManualModal(true)} // ✅ show modal on click
+              onClick={() => setShowManualModal(true)}
               variant="outlined"
               fullWidth
             >
