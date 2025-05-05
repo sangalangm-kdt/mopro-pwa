@@ -1,10 +1,10 @@
 export const allIcons = [
-  // Android required sizes
+  // ✅ Android required sizes (for splash + install prompt)
   {
     src: "/android/android-launchericon-192-192.png",
     sizes: "192x192",
     type: "image/png",
-    purpose: "any maskable", // enables Chrome splash with circle crop
+    purpose: "any maskable", // allows rounded adaptive icons on Android
   },
   {
     src: "/android/android-launchericon-512-512.png",
@@ -13,7 +13,7 @@ export const allIcons = [
     purpose: "any maskable",
   },
 
-  // iOS recommended sizes
+  // ✅ iOS recommended sizes
   {
     src: "/ios/120.png",
     sizes: "120x120",
@@ -40,7 +40,7 @@ export const allIcons = [
     type: "image/png",
   },
 
-  // Optional: Fallback for older Android or Windows
+  // ✅ Optional: fallback for older Android or Windows
   {
     src: "/ios/144.png",
     sizes: "144x144",
