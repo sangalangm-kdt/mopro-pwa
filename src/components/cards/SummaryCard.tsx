@@ -1,6 +1,7 @@
 import { Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import RadialProgress from "../RadialProgress";
+import ScanHistorySkeleton from "@components/skeletons/ScanHistorySkeleton"; // 🆕
 import { formatDate } from "@/utils/format-date";
 
 export interface ScanEntry {
@@ -16,12 +17,14 @@ interface ScanHistoryCardProps {
   history: ScanEntry[];
   scrollable?: boolean;
   onLoadMore?: () => void;
+  loading?: boolean; // 🆕
 }
 
 export default function ScanHistoryCard({
   history,
   scrollable = true,
   onLoadMore,
+  loading = false, // 🆕
 }: ScanHistoryCardProps) {
   const { t, i18n } = useTranslation("common");
   const locale = i18n.language || "en";
@@ -38,7 +41,9 @@ export default function ScanHistoryCard({
       </h2>
       <hr className="border-t border-gray-200 dark:border-zinc-700 my-2" />
 
-      {history.length > 0 ? (
+      {loading ? (
+        <ScanHistorySkeleton />
+      ) : history.length > 0 ? (
         <ul className="divide-y divide-gray-100 dark:divide-zinc-700 text-sm">
           {history.map((entry) => (
             <li
@@ -68,14 +73,16 @@ export default function ScanHistoryCard({
         </p>
       )}
 
-      <div className="mt-2 text-center">
-        <button
-          onClick={onLoadMore}
-          className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
-        >
-          {t("scanHistory.loadMore", "Load more...")}
-        </button>
-      </div>
+      {!loading && (
+        <div className="mt-2 text-center">
+          <button
+            onClick={onLoadMore}
+            className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+          >
+            {t("scanHistory.loadMore", "Load more...")}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

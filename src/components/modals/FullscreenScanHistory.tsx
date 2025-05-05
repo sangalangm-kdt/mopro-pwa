@@ -3,15 +3,8 @@ import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import RadialProgress from "../RadialProgress";
 import { formatDate } from "@/utils/format-date";
-
-export interface ScanEntry {
-  id: number;
-  drawingNumber: string;
-  productName: string;
-  date: string;
-  progress: number;
-  process: string;
-}
+import ScanHistorySkeleton from "@/components/skeletons/ScanHistorySkeleton";
+import type { ScanEntry } from "../cards/SummaryCard";
 
 interface FullscreenScanHistoryProps {
   data: ScanEntry[];
@@ -26,8 +19,12 @@ export default function FullscreenScanHistory({
   const locale = i18n.language || "en";
 
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     setVisible(true);
+    const timeout = setTimeout(() => setLoading(false), 800); // ⏱ simulate delay
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleClose = () => {
@@ -54,9 +51,11 @@ export default function FullscreenScanHistory({
         </button>
       </div>
 
-      {/* List */}
+      {/* Content */}
       <div className="p-4 h-[calc(100vh-60px)] overflow-y-auto">
-        {data.length > 0 ? (
+        {loading ? (
+          <ScanHistorySkeleton count={data.length || 5} />
+        ) : data.length > 0 ? (
           <ul className="divide-y divide-gray-200 dark:divide-zinc-700 text-sm">
             {data.map((entry) => (
               <li
