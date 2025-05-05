@@ -52,7 +52,7 @@ const Home = () => {
       </div>
 
       {/* 🔍 Scan QR Section */}
-      <div className="w-full max-w-md rounded-lg flex items-center justify-between bg-gray-100 dark:bg-zinc-800 p-5 shadow border border-gray-200 dark:border-zinc-700">
+      <div className="w-full max-w-md rounded-lg flex items-center justify-between bg-gray-50 dark:bg-zinc-800 p-5 shadow border border-gray-200 dark:border-zinc-700">
         {loading ? (
           <SectionSkeleton
             lines={2}

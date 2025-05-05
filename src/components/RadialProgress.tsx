@@ -47,7 +47,7 @@ export default function RadialProgress({
           cy={size / 2}
           r={radius}
           fill="transparent"
-          className="text-secondary-1 transition-[stroke-dashoffset] duration-700 ease-out"
+          className="text-primary-500 dark:text-primary-500 transition-[stroke-dashoffset] duration-700 ease-out"
           stroke="currentColor"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
@@ -57,7 +57,7 @@ export default function RadialProgress({
       </svg>
 
       {/* Centered Label */}
-      <div className="absolute text-xs font-medium text-gray-800 dark:text-white">
+      <div className="absolute text-xs font-semibold text-gray-700 dark:text-white">
         {percentage}%
       </div>
 
