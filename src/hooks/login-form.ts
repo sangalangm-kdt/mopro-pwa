@@ -8,62 +8,64 @@ import { TOAST_MESSAGES } from "@constants/messages";
 import { toast } from "react-toastify";
 
 export function useLoginForm() {
-  const { t } = useTranslation("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof typeof LOGIN_FIELDS, string>>
-  >({});
-  const [loading, setLoading] = useState(false);
+    const { t } = useTranslation("login");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState<
+        Partial<Record<keyof typeof LOGIN_FIELDS, string>>
+    >({});
+    const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || ROUTES.HOME;
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || ROUTES.HOME;
 
-  const { login, isAuthenticated } = useAuth();
+    const { login, user } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
-    }
-  }, [from, isAuthenticated, navigate]);
+    // useEffect(() => {
+    //     if (user) {
+    //         navigate(from, { replace: true });
+    //     }
+    // }, [from, user, navigate]);
 
-  const validate = () => {
-    const newErrors: typeof errors = {};
-    if (!email) newErrors.email = t(`error.${LOGIN_FIELDS.email}.required`);
-    else if (!REGEX.EMAIL.test(email))
-      newErrors.email = t(`error.${LOGIN_FIELDS.email}.invalid`);
-    if (!password)
-      newErrors.password = t(`error.${LOGIN_FIELDS.password}.required`);
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    console.log(user);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    setLoading(true);
-    const success = await login(email, password);
-    if (!success) {
-      toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS, {
-        position: "top-right",
-      });
-      setLoading(false);
-      return;
-    }
-    navigate(from, { replace: true });
-    setLoading(false);
-  };
+    const validate = () => {
+        const newErrors: typeof errors = {};
+        if (!email) newErrors.email = t(`error.${LOGIN_FIELDS.email}.required`);
+        else if (!REGEX.EMAIL.test(email))
+            newErrors.email = t(`error.${LOGIN_FIELDS.email}.invalid`);
+        if (!password)
+            newErrors.password = t(`error.${LOGIN_FIELDS.password}.required`);
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-  return {
-    t,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    errors,
-    loading,
-    handleLogin,
-    navigate,
-  };
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validate()) return;
+        setLoading(true);
+        const success = await login({ email, password });
+        if (!success) {
+            toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS, {
+                position: "top-right",
+            });
+            setLoading(false);
+            return;
+        }
+        navigate(from, { replace: true });
+        setLoading(false);
+    };
+
+    return {
+        t,
+        email,
+        setEmail,
+        password,
+        setPassword,
+        errors,
+        loading,
+        handleLogin,
+        navigate,
+    };
 }
