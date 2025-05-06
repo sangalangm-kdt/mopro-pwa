@@ -1,5 +1,9 @@
 {
-  "title": "アカウント",
-  "profileSettings": "プロフィール設定",
-  "logout": "ログアウト"
+  "menu": "メニュー",
+  "close_sidebar": "サイドバーを閉じる",
+  "main_menu": "メインメニュー",
+  "account": "アカウント",
+  "profile_settings": "プロフィール設定",
+  "log_out": "ログアウト",
+  "footer_copyright": "MoPro © 全著作権所有"
 }

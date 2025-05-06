@@ -1,0 +1,13 @@
+export function isMatchingSerial(
+  scannedSerial: string,
+  dbSerial: string
+): boolean {
+  const clean = (str: string) =>
+    str
+      .trim()
+      .replace(/[\u200B-\u200D\uFEFF]/g, "")
+      .normalize()
+      .toLowerCase();
+
+  return clean(scannedSerial) === clean(dbSerial);
+}

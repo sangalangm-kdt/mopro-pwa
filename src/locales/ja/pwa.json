@@ -1,0 +1,10 @@
+{
+  "app": "アプリ",
+  "install_app": "アプリをインストール",
+  "how_to_install": "インストール方法",
+  "pwa": "PWA",
+  "how_to_install_app": "アプリをインストールする方法",
+  "instruction_share": "1. Safariで共有アイコンをタップ",
+  "instruction_add_home": "2. 「ホーム画面に追加」をタップ",
+  "got_it": "OK!"
+}

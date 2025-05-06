@@ -17,3 +17,13 @@ export const SIDEBAR_LOGOUT_BUTTON_CLASSES =
 
 export const SIDEBAR_FOOTER_COPYRIGHT_CLASSES =
   "text-xs text-gray-500 border-t pt-4 border-gray-200 dark:border-zinc-700";
+
+//scan result
+export const SCAN_RESULT_CLASSES = {
+  SHEET_HEIGHT_COLLAPSED: "h-[45%]",
+  SHEET_HEIGHT_EXPANDED: "h-[100%]",
+  SHEET_TRANSITION_CLASSES:
+    "transition-all duration-300 ease-in-out flex flex-col",
+  HANDLE_STYLE:
+    "w-12 h-1.5 bg-gray-300 dark:bg-gray-700 mx-auto mt-2 mb-4 rounded-full",
+};

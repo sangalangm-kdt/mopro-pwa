@@ -1,0 +1,9 @@
+{
+  "process": {
+    "procurement": "Procurement",
+    "assembly": "Assembly",
+    "inspection": "Inspection",
+    "packaging": "Packaging",
+    "shipping": "Shipping"
+  }
+}

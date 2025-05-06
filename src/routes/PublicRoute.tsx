@@ -1,3 +1,4 @@
+import Preloader from "@/components/Preloader";
 import { ROUTES } from "@/constants";
 import { useAuth } from "@/context/auth/useAuth";
 import { JSX } from "react";

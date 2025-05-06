@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Globe, Sun, Moon } from "lucide-react";
+import { ChevronDown, ChevronUp, Globe, SunMoon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import ThemeToggle from "@/components/ThemeToggle";
-import PWAButton from "@/components/PWAButton";
+import PWAButton from "@/components/buttons/PWAButton";
 
 import {
   SIDEBAR_PREFERENCES_CONTAINER_CLASSES,
@@ -39,7 +39,7 @@ export default function PreferencesSection() {
       <div>
         <button
           onClick={() => setLangOpen((prev) => !prev)}
-          className="w-full flex justify-between items-center text-sm font-medium px-3 py-1 bg-transparent text-gray-800 dark:text-gray-100"
+          className="w-full flex justify-between items-center text-sm font-body px-3 py-1 bg-transparent text-gray-800 dark:text-gray-100"
         >
           <span className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
@@ -73,32 +73,17 @@ export default function PreferencesSection() {
 
       {/* Theme Toggle */}
       <div>
-        <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+        {/* <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
           {t("theme")}
-        </label>
-        <div className="flex items-center justify-between px-3 py-1">
-          <span
-            className={`flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 transition-all duration-300 ${
-              theme === "dark"
-                ? "opacity-100 translate-y-0"
-                : "opacity-90 translate-y-[1px]"
-            }`}
-          >
-            {theme === "dark" ? (
-              <>
-                <Moon className="w-4 h-4 text-primary-400" />
-                {t("current", { theme: t("themeModes.dark") })}
-              </>
-            ) : (
-              <>
-                <Sun className="w-4 h-4 text-yellow-500" />
-                {t("current", { theme: t("themeModes.light") })}
-              </>
-            )}
+        </label> */}
+        <div className="w-full flex justify-between items-center text-sm font-body px-3 py-1 bg-transparent text-gray-800 dark:text-gray-100">
+          <span className="flex items-center gap-2">
+            <SunMoon className="w-4 h-4 " />
+            {t("current", {
+              theme: t(`themeModes.${theme}`), // auto resolves "dark" or "light"
+            })}
           </span>
-          <div className="ml-4">
-            <ThemeToggle />
-          </div>
+          <ThemeToggle />
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import { LogOut, Settings, X } from "lucide-react";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next"; // ADD
 import MenuLinks from "@/components/navigation/MenuLinks";
 import PreferencesSection from "@/components/navigation/PreferencesSection";
 import { useAuth } from "@/context/auth/useAuth";
@@ -18,13 +19,13 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation("account");
 
   const handleLogout = () => {
     logout();
     onClose();
   };
 
-  //  Hook handles swipe and accessibility
   useSidebarControls(open, onClose, sidebarRef, closeButtonRef);
 
   return (
@@ -41,20 +42,20 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         ref={sidebarRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Main Menu"
+        aria-label={t("main_menu")} // <-- use t() for Main Menu
         className={`fixed top-0 left-0 w-64 h-full bg-white dark:bg-zinc-800 z-50 shadow-lg transition-transform duration-300 flex flex-col ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-zinc-700">
+        <div className="flex items-center justify-between px-4 py-[22px] xs:py-[18px] border-b border-gray-200 dark:border-zinc-700">
           <span className="text-lg font-semibold text-primary-800 dark:text-white">
-            Menu
+            {t("menu")}
           </span>
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            aria-label="Close Sidebar"
+            aria-label={t("close_sidebar")}
             className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500"
           >
             <X className="h-5 w-5 text-gray-600 dark:text-gray-300" />
@@ -70,7 +71,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         {/* Footer: Account Section */}
         <div className="px-4 pb-4 space-y-3">
           <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1">
-            Account
+            {t("account")}
           </h2>
 
           {/* User Info */}
@@ -100,7 +101,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             >
               <span className="flex items-center gap-2 text-sm">
                 <Settings className="w-4 h-4" />
-                Profile Settings
+                {t("profile_settings")}
               </span>
             </button>
           </div>
@@ -111,12 +112,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 border border-red-200 dark:border-zinc-700 rounded-md hover:bg-red-50 dark:hover:bg-zinc-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
           >
             <LogOut className="h-4 w-4" />
-            Log Out
+            {t("log_out")}
           </button>
 
           {/* Footer Text */}
           <p className="text-xs text-gray-500 border-t pt-4 lg:hidden border-gray-200 dark:border-zinc-700">
-            © {new Date().getFullYear()} MoPro. All rights reserved.
+            © {new Date().getFullYear()} {t("footer_copyright")}
           </p>
         </div>
       </aside>

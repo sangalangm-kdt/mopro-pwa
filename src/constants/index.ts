@@ -6,3 +6,5 @@ export * from "./routes";
 export * from "./variables/fieldNames";
 export * from "./variables/placeholder";
 export * from "./variables/text";
+export * from "./classes";
+export * from "./mockData";

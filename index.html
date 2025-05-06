@@ -2,44 +2,127 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <!-- Favicons -->
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/icon-v1-512x512.png" />
-
-    <!-- Manifest -->
-    <link rel="manifest" href="/manifest.webmanifest" />
-
-    <!-- Viewport -->
     <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      name="description"
+      content="Manage production progress, projects, and workflows efficiently with MOPro, the modern project dashboard solution."
     />
 
-    <!-- App name & theming -->
+    <!-- Viewport for responsive design -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+
+    <!-- Theme color for Chrome on Android -->
     <meta name="theme-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="MOPro" />
 
-    <!-- Fonts & styles -->
+    <!-- Title -->
+    <title>MOPro</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/android/android-launchericon-48-48.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/android/android-launchericon-72-72.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/android/android-launchericon-192-192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/android/android-launchericon-512-512.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="1024x1024"
+      href="/icon-1024x1024.png"
+    />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="120x120" href="/ios/120.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/ios/152.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/ios/167.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/ios/180.png" />
+    <link rel="apple-touch-icon" sizes="1024x1024" href="/ios/1024.png" />
+
+    <!-- Apple Splash Screens (Optional for iOS) -->
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/apple-splash-1125x2436.png"
+      media="(device-width: 375px) and (device-height: 812px)"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/apple-splash-1242x2688.png"
+      media="(device-width: 414px) and (device-height: 896px)"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/apple-splash-828x1792.png"
+      media="(device-width: 414px) and (device-height: 896px)"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/apple-splash-1242x2208.png"
+      media="(device-width: 414px) and (device-height: 736px)"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/apple-splash-750x1334.png"
+      media="(device-width: 375px) and (device-height: 667px)"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/apple-splash-640x1136.png"
+      media="(device-width: 320px) and (device-height: 568px)"
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-    <link href="/src/styles.css" rel="stylesheet" />
 
-    <title>MOPro</title>
+    <!-- Global Styles -->
+    <link href="/src/styles.css" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Main entry -->
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script type="module">
+      import { registerSW } from "virtual:pwa-register";
+      registerSW({ immediate: true });
+    </script>
   </body>
 </html>

@@ -1,37 +1,91 @@
-// src/router/AppRoutes.tsx
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainLayout from "@layouts/MainLayout";
-import QRScanner from "@/pages/QrScanner";
-import Home from "@/pages/Home";
-import Profile from "@/pages/Profile";
-import Login from "@/pages/Login";
+import { lazy, Suspense } from "react";
 import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 import { AuthProvider } from "@context/auth/AuthProvider";
 import { ROUTES } from "@constants/routes";
-import PublicRoute from "./PublicRoute";
+
+// Lazy load pages
+const MainLayout = lazy(() => import("@layouts/MainLayout"));
+const QRScanner = lazy(() => import("@/pages/QrScanner"));
+const Home = lazy(() => import("@/pages/Home"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const Login = lazy(() => import("@/pages/Login"));
+const ScanResult = lazy(() => import("@/pages/ScanResult"));
+const EditProgress = lazy(() => import("@pages/EditProgress"));
+const UserGuidelines = lazy(() => import("@pages/UserGuidelines"));
+const HelpAndSupport = lazy(() => import("@pages/HelpAndSupport"));
+
+// Fallback UI while loading
+import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
+
+const LoadingScreen = () => (
+  <div className="flex justify-center items-center min-h-screen p-8 bg-bg-color">
+    <SkeletonLoader
+      blocks={[
+        { type: "title" },
+        { type: "text" },
+        { type: "text" },
+        { type: "rect", height: "48" },
+      ]}
+    />
+  </div>
+);
 
 const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
     element: (
       <PublicRoute>
-        <Login />
+        <Suspense fallback={<LoadingScreen />}>
+          <Login />
+        </Suspense>
       </PublicRoute>
     ),
   },
   {
     path: "/",
-    element: <PrivateRoute />,
+    element: (
+      <PrivateRoute>
+        <Suspense fallback={<LoadingScreen />}>
+          <MainLayout />
+        </Suspense>
+      </PrivateRoute>
+    ),
     children: [
       {
-        path: "/",
-        element: <MainLayout />,
-        children: [
-          { path: ROUTES.HOME, element: <Home /> },
-          { path: ROUTES.SCANNER, element: <QRScanner /> },
-          { path: ROUTES.PROFILE, element: <Profile /> },
-        ],
+        path: ROUTES.HOME,
+        element: <Home />,
       },
+      {
+        path: ROUTES.SCANNER,
+        element: <QRScanner />,
+      },
+      {
+        path: ROUTES.SCAN_RESULT,
+        element: (
+          <ScanResult
+            qrData={""}
+            onClose={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
+        ),
+      },
+      {
+        path: ROUTES.EDIT_PROGRESS,
+        element: <EditProgress />,
+      },
+
+      {
+        path: ROUTES.PROFILE,
+        element: <Profile />,
+      },
+      {
+        path: ROUTES.USER_GUIDELINES,
+        element: <UserGuidelines />,
+      },
+      { path: ROUTES.HELP_AND_SUPPORT, element: <HelpAndSupport /> },
     ],
   },
   {

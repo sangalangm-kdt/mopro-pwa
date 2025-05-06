@@ -8,6 +8,7 @@ import {
   X,
   LogOut,
   Bell,
+  type LucideIcon,
 } from "lucide-react";
 
 interface HeaderRightElementProps {
@@ -15,38 +16,33 @@ interface HeaderRightElementProps {
   onClick?: () => void;
 }
 
+const iconMap: Record<string, LucideIcon> = {
+  home: Settings,
+  scanner: Flashlight,
+  inspection: FileText,
+  profile: Edit,
+  settings: Save,
+  support: HelpCircle,
+  report: FileText,
+  login: X,
+  dashboard: Bell,
+  logout: LogOut,
+};
+
 export default function HeaderRightElement({
   page,
   onClick,
 }: HeaderRightElementProps) {
-  const iconProps = {
-    className: "text-gray-700 dark:text-gray-200 cursor-pointer",
-    size: 22,
-    onClick,
-  };
+  const IconComponent = iconMap[page] ?? HelpCircle;
 
-  switch (page) {
-    case "home":
-      return <Settings {...iconProps} />;
-    case "scanner":
-      return <Flashlight {...iconProps} />;
-    case "inspection":
-      return <FileText {...iconProps} />;
-    case "profile":
-      return <Edit {...iconProps} />;
-    case "settings":
-      return <Save {...iconProps} />;
-    case "support":
-      return <HelpCircle {...iconProps} />;
-    case "report":
-      return <FileText {...iconProps} />;
-    case "login":
-      return <X {...iconProps} />;
-    case "dashboard":
-      return <Bell {...iconProps} />;
-    case "logout":
-      return <LogOut {...iconProps} />;
-    default:
-      return null;
-  }
+  return (
+    <IconComponent
+      className={`text-gray-700 dark:text-gray-200 cursor-pointer ${
+        !iconMap[page] ? "opacity-50" : ""
+      }`}
+      size={22}
+      onClick={onClick}
+      aria-label={iconMap[page] ? page : "Unknown Page"}
+    />
+  );
 }

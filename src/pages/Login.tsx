@@ -1,12 +1,12 @@
 import { Trans } from "react-i18next";
-import TextInput from "@/components/Input";
+import TextInput from "@/components/inputs/Input";
 import BoardingScreen from "@/components/BoardingScreen";
 import LargeHeader from "@/components/Header";
-import Button from "@/components/Button";
+import Button from "@/components/buttons/Button";
 import RememberMeCheckbox from "@/components/Checkbox";
 import Icon from "@/components/icons/Icons";
 import LanguageDropdown from "@/components/LanguageSwitcher";
-import PWAButton from "@/components/PWAButton";
+import PWAButton from "@/components/buttons/PWAButton";
 import Logo from "@assets/logo/logo v2.svg?react";
 import {
   ROUTES,

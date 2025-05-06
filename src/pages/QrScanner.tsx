@@ -1,41 +1,87 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQrScanner } from "@/hooks/qr-scanner";
 import Header from "@/components/navigation/Header";
+import Button from "@/components/buttons/Button";
 import { Flashlight, FlashlightOff } from "lucide-react";
 import { toggleFlashlight } from "@/utils/flashlight";
+import ScanResult from "./ScanResult";
+import { MOCK_SCAN_DATA, QR_SCANNER_TEXT_KEYS } from "@/constants";
+import { stopCamera } from "@/utils/stop-camera";
+import { toast } from "sonner";
+import ManualEntryModal from "@/components/modals/ManualEntryModal";
+import { isMatchingSerial } from "@/utils/compare-serial";
 
 const QRScanner = () => {
-  const [qrData, setQrData] = useState<string | null>(null);
+  const { t } = useTranslation("scan");
+  const {
+    TITLE,
+    SCAN_PROMPT,
+    START_SCAN,
+    SCAN_AGAIN,
+    SCANNING,
+    ADD_MANUALLY,
+    FLASHLIGHT_NOT_SUPPORTED,
+  } = QR_SCANNER_TEXT_KEYS;
+
   const [torchOn, setTorchOn] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [qrData, setQrData] = useState<string | null>(null);
+  const [showManualModal, setShowManualModal] = useState(false); // 👉 added state
 
   const {
     videoRef,
     canvasRef,
     overlayRef,
     scanBoxRef,
+    scanning,
     handleRescan,
-    detecting,
+    setScanning,
   } = useQrScanner({
     onResult: (data) => {
-      console.log("✅ Scanned:", data);
-      setQrData(data);
+      const found = Object.values(MOCK_SCAN_DATA).find(
+        (item) => item.serialNumber === data
+      );
+
+      if (!found) {
+        toast.error("No matching record found for the scanned QR code.");
+        handleRescan();
+        return;
+      }
+
+      setLoading(true);
+      setTimeout(() => {
+        setQrData(data);
+        setLoading(false);
+      }, 200);
     },
   });
+
+  const startScan = () => {
+    handleRescan();
+    setScanning(true);
+  };
 
   const handleToggleFlashlight = async () => {
     try {
       await toggleFlashlight(!torchOn);
       setTorchOn((prev) => !prev);
     } catch {
-      alert("🔦 Flashlight not supported.");
+      alert(t(FLASHLIGHT_NOT_SUPPORTED));
     }
   };
 
+  const handleCloseModal = () => {
+    setQrData(null);
+    stopCamera(videoRef.current);
+    handleRescan();
+  };
+
   return (
-    <div className="fixed inset-0 z-[9999] bg-black overflow-hidden">
+    <div className="fixed inset-0 bg-black overflow-hidden">
       <div className="relative z-20">
         <Header
-          title="QR Scanner"
+          title={t(TITLE)}
           rightElement={
             <button onClick={handleToggleFlashlight}>
               {torchOn ? (
@@ -50,12 +96,11 @@ const QRScanner = () => {
 
       <video
         ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover "
+        className="absolute inset-0 w-full h-full object-cover"
         autoPlay
         muted
         playsInline
       />
-
       <canvas ref={canvasRef} className="hidden" />
       <canvas
         ref={overlayRef}
@@ -66,23 +111,64 @@ const QRScanner = () => {
         className="absolute inset-0 w-full h-full pointer-events-none"
       />
 
-      {qrData && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg">
-          <span className="text-sm">✅ {qrData}</span>
-          <button
-            onClick={handleRescan}
-            className="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
-          >
-            🔄 Rescan
-          </button>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center z-30 bg-black/60">
+          <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
-      {detecting && !qrData && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded font-semibold animate-pulse shadow-md">
-          🟡 Detecting QR Code...
-        </div>
+      {qrData && <ScanResult qrData={qrData} onClose={handleCloseModal} />}
+
+      {/* Manual entry modal */}
+      {showManualModal && (
+        <ManualEntryModal
+          onClose={() => setShowManualModal(false)}
+          onSubmit={({ drawingNumber }) => {
+            const found = Object.values(MOCK_SCAN_DATA).find((item) =>
+              isMatchingSerial(drawingNumber, item.serialNumber)
+            );
+
+            if (!found) {
+              toast.error(
+                "No matching record found for the entered drawing number."
+              );
+              return;
+            }
+
+            setQrData(drawingNumber);
+            stopCamera(videoRef.current);
+            setShowManualModal(false);
+          }}
+        />
       )}
+
+      <div className="fixed bottom-0 left-0 right-0 z-[150] bg-bg-color text-black rounded-t-2xl px-4 pt-4 pb-6 shadow-xl max-h-[40vh] overflow-y-auto w-full max-w-md mx-auto">
+        <div className="text-center space-y-4">
+          <p className="text-sm text-gray-600">{t(SCAN_PROMPT)}</p>
+
+          <div className="space-y-3">
+            <Button
+              onClick={startScan}
+              disabled={scanning}
+              className={`w-full ${
+                scanning
+                  ? "bg-primary-300 cursor-not-allowed"
+                  : "bg-primary-600 hover:bg-primary-700 text-white"
+              }`}
+            >
+              {scanning ? t(SCANNING) : qrData ? t(SCAN_AGAIN) : t(START_SCAN)}
+            </Button>
+
+            <Button
+              onClick={() => setShowManualModal(true)}
+              variant="outlined"
+              fullWidth
+            >
+              {t(ADD_MANUALLY)}
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

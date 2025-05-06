@@ -5,7 +5,7 @@ import { useAuth } from "@/context/auth/useAuth";
 import { LOGIN_FIELDS } from "@constants/variables/fieldNames";
 import { REGEX, ROUTES } from "@constants/index";
 import { TOAST_MESSAGES } from "@constants/messages";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export function useLoginForm() {
     const { t } = useTranslation("login");
@@ -45,16 +45,20 @@ export function useLoginForm() {
         e.preventDefault();
         if (!validate()) return;
         setLoading(true);
-        const success = await login({ email, password });
+        const success = await login(email, password);
         if (!success) {
-            toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS, {
-                position: "top-right",
-            });
+            toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS);
             setLoading(false);
             return;
         }
-        navigate(from, { replace: true });
-        setLoading(false);
+
+        toast.success(TOAST_MESSAGES.LOGIN_SUCCESS);
+
+        // Delay navigation by 500ms
+        setTimeout(() => {
+            navigate(from, { replace: true });
+            setLoading(false);
+        }, 500);
     };
 
     return {

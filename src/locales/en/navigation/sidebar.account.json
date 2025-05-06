@@ -1,5 +1,9 @@
 {
-  "title": "Account",
-  "profileSettings": "Profile Settings",
-  "logout": "Log Out"
+  "menu": "Menu",
+  "close_sidebar": "Close Sidebar",
+  "main_menu": "Main Menu",
+  "account": "Account",
+  "profile_settings": "Profile Settings",
+  "log_out": "Log Out",
+  "footer_copyright": "MoPro. All rights reserved."
 }

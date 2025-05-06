@@ -1,22 +1,23 @@
 @import "tailwindcss";
+
+/* --------------------------------- */
+/*             ROOT                 */
+/* --------------------------------- */
 :root {
   font-family: "Inter", system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  /* color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424; */
-
-  background-color: var(--bg-color);
-  color: var(--text-color);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
-@custom-variant dark (&:where(.dark, .dark *));
 
+/* --------------------------------- */
+/*         FONT-FACE LOADERS         */
+/* --------------------------------- */
 @font-face {
   font-family: "Inter";
   src: url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
@@ -45,6 +46,9 @@
   font-style: italic;
 }
 
+/* --------------------------------- */
+/*           THEME CUSTOM VARS       */
+/* --------------------------------- */
 @theme {
   --color-primary-50: var(--primary-50);
   --color-primary-100: var(--primary-100);
@@ -70,11 +74,13 @@
   --font-display: "Raleway", system-ui, sans-serif;
 
   --breakpoint-xs: 300px;
-
   --bg-background: #ffff;
   --animate-fade-in-up: "fadeInUp 0.6s ease-out";
 }
 
+/* --------------------------------- */
+/*         LIGHT THEME COLORS        */
+/* --------------------------------- */
 :root {
   --primary-50: #f9fbea;
   --primary-100: #f2f6d1;
@@ -84,10 +90,9 @@
   --primary-500: #9bb52d;
   --primary-600: #799020;
   --primary-700: #5c6e1d;
-  --primary-800: #4a581c;
+  --primary-800: #4b581c;
   --primary-900: #3f4b1c;
   --primary-950: #4a581c;
-  /* --primary-950: #20290a; */
 
   --secondary-1: #bc6c25;
 
@@ -95,11 +100,14 @@
   --warning: #e7b644;
   --danger: #d9534f;
   --info: #4a90e2;
-  --bg-color: #fafafa;
 
+  --bg-color: #fafafa;
   --color: #ffff;
 }
 
+/* --------------------------------- */
+/*         DARK THEME COLORS         */
+/* --------------------------------- */
 .dark {
   --primary-50: #20290a;
   --primary-100: #3f4b1c;
@@ -112,17 +120,48 @@
   --primary-800: #9bb52d;
   --primary-900: #ffff;
   --primary-950: #f9fbea;
+
   --success: #4caf50;
   --warning: #f8d88c;
   --danger: #f36f6b;
   --info: #4a90e2;
+
   --bg-color: #18181b;
 }
 
+/* --------------------------------- */
+/*           BASE STYLES             */
+/* --------------------------------- */
 html {
   font-family: "Inter", system-ui, sans-serif;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Custom variant */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Safe area paddings */
+.safe-padding-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-padding-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-padding-left {
+  padding-left: env(safe-area-inset-left);
+}
+.safe-padding-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* --------------------------------- */
+/*           KEYFRAMES               */
+/* --------------------------------- */
 @keyframes dominoFade {
   0%,
   100% {
@@ -133,22 +172,179 @@ html {
   }
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes bottom-sheet {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* --------------------------------- */
+/*          ANIMATION CLASSES        */
+/* --------------------------------- */
 .domino-path {
   animation: dominoFade 1.5s ease-in-out infinite;
 }
 
-.safe-padding-top {
-  padding-top: env(safe-area-inset-top);
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
 }
 
-.safe-padding-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+.animate-bottom-sheet {
+  animation: bottom-sheet 0.3s ease-out forwards;
 }
 
-.safe-padding-left {
-  padding-left: env(safe-area-inset-left);
+.animate-slide-in {
+  animation: slideIn 0.3s ease forwards;
 }
 
-.safe-padding-right {
-  padding-right: env(safe-area-inset-right);
+.animate-fade {
+  animation: fade 0.3s ease-out forwards;
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.4s ease-out forwards;
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* --------------------------------- */
+/*         CUSTOM UTILITIES          */
+/* --------------------------------- */
+@layer utilities {
+  /* Gradient background utility */
+  .gradient-primary {
+    background-image: linear-gradient(to right, #afc456 0%, #99aa4f 100%);
+  }
+
+  /* Scrollbar styling */
+  .scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: var(--primary-100);
+    border-radius: 100vw;
+  }
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+input[type="range"].progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  background: white;
+  border: 2px solid #9bb52d; /* lime-500 */
+  border-radius: 9999px;
+  margin-top: -18px;
+}
+
+input[type="range"].progress-slider::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  background: white;
+  border: 2px solid #9bb52d;
+  border-radius: 9999px;
+}
+
+/* Remove number input arrows (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
