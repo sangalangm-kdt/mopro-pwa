@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { isAxiosError } from "axios";
 import useSWR from "swr";
 
 export const useAuth = () => {
@@ -32,7 +33,7 @@ export const useAuth = () => {
             await mutate();
             return true;
         } catch (error) {
-            if (error.response) {
+            if (isAxiosError(error) && error.response) {
                 const { status, data } = error.response;
 
                 if (status === 422) {
@@ -42,44 +43,14 @@ export const useAuth = () => {
                 } else {
                     console.log("Login failed:", status);
                 }
-            } else {
+            } else if (error instanceof Error) {
                 console.log("Unexpected error:", error.message);
+            } else {
+                console.log("Unknown error", error);
             }
             return false;
         }
     };
 
-    const setTimezone = async (): Promise<void> => {
-        try {
-            await csrf();
-
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const response = await axios.post("/set-timezone", { timezone });
-            console.log("Timezone set:", response.data);
-            console.log(user.created_at);
-            const date = new Date(user.created_at);
-            console.log(
-                date.toLocaleString("en-US", {
-                    timeZone: timezone,
-                    timeZoneName: "short",
-                })
-            );
-        } catch (error) {
-            if (error.response) {
-                const { status, data } = error.response;
-
-                if (status === 422) {
-                    console.log("Validation error:", data.errors);
-                } else if (status === 403) {
-                    console.log("Unauthorized");
-                } else {
-                    console.log("Failed to set timezone:", status);
-                }
-            } else {
-                console.log("Unexpected error:", error.message);
-            }
-        }
-    };
-
-    return { user, mutate, isLoading, login, setTimezone };
+    return { user, mutate, isLoading, login };
 };

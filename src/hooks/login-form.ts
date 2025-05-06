@@ -45,7 +45,7 @@ export function useLoginForm() {
         e.preventDefault();
         if (!validate()) return;
         setLoading(true);
-        const success = await login(email, password);
+        const success = await login({ email, password });
         if (!success) {
             toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS);
             setLoading(false);
