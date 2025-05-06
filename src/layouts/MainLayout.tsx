@@ -3,7 +3,13 @@ import Navbar from "@/components/navigation/NavBar";
 import { ROUTES } from "@/constants";
 
 // Route patterns (mga walang header to)
-const HIDDEN_LAYOUT_PATTERNS = [ROUTES.SCANNER, ROUTES.EDIT_PROGRESS];
+const HIDDEN_LAYOUT_PATTERNS = [
+  ROUTES.SCANNER,
+  ROUTES.EDIT_PROGRESS,
+  ROUTES.PROFILE,
+  ROUTES.HELP_AND_SUPPORT,
+  ROUTES.USER_GUIDELINES,
+];
 
 export default function MainLayout() {
   const location = useLocation();
@@ -13,7 +19,7 @@ export default function MainLayout() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col ">
       {!hideLayout && <Navbar />}
       <main
         className={`${

@@ -12,26 +12,25 @@ export default function Header({
   title,
   showBack = true,
   rightElement,
-  textColorClass = "text-white", // ✅ Default still white
+  textColorClass = "text-white",
 }: HeaderProps) {
   const navigate = useNavigate();
 
   return (
     <header
-      className={`flex items-center justify-between px-4 py-6 bg-transparent backdrop-blur-sm ${textColorClass}`}
+      className={`flex items-center justify-between px-4 py-4 bg-transparent backdrop-blur-sm shadow-md ${textColorClass}`}
     >
       {/* Back button */}
       <div className="w-1/5">
         {showBack && (
           <button
             onClick={() => navigate(-1)}
-            className={`flex items-center space-x-1 ${textColorClass} hover:text-primary-300 transition-colors duration-200 group`}
+            className={`p-2 rounded-full ${textColorClass} hover:bg-gray-200 dark:hover:bg-zinc-800 active:bg-gray-300 dark:active:bg-zinc-700 transition group`}
           >
             <ArrowLeft
               size={24}
               className="group-hover:-translate-x-1 transition-transform duration-200"
             />
-            {/* <span className="text-sm font-medium">Back</span> */}
           </button>
         )}
       </div>

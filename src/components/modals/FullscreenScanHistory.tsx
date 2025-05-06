@@ -41,7 +41,7 @@ export default function FullscreenScanHistory({
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-zinc-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-          {t("scanHistory.title", "Full Scan History")}
+          {t("scanHistory.title", "Scan History")}
         </h2>
         <button
           onClick={handleClose}
@@ -52,7 +52,7 @@ export default function FullscreenScanHistory({
       </div>
 
       {/* Content */}
-      <div className="p-4 h-[calc(100vh-60px)] overflow-y-auto">
+      <div className="p-4 h-[calc(100vh-60px)] overflow-y-auto scrollbar">
         {loading ? (
           <ScanHistorySkeleton count={data.length || 5} />
         ) : data.length > 0 ? (

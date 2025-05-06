@@ -43,11 +43,9 @@ export default function ProcessDropdown({
   }, []);
 
   // 🔍 Filter dropdown items
-  const filteredProcesses = open
-    ? processes
-    : processes.filter((proc) =>
-        proc.label.toLowerCase().includes(search.toLowerCase())
-      );
+  const filteredProcesses = processes.filter((proc) =>
+    proc.label.toLowerCase().includes(search.toLowerCase())
+  );
 
   // ⌨️ Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {

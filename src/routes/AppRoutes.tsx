@@ -13,6 +13,8 @@ const Profile = lazy(() => import("@/pages/Profile"));
 const Login = lazy(() => import("@/pages/Login"));
 const ScanResult = lazy(() => import("@/pages/ScanResult"));
 const EditProgress = lazy(() => import("@pages/EditProgress"));
+const UserGuidelines = lazy(() => import("@pages/UserGuidelines"));
+const HelpAndSupport = lazy(() => import("@pages/HelpAndSupport"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
@@ -53,7 +55,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: ROUTES.HOME,
-        element: <Home />, // No need to wrap in Suspense again
+        element: <Home />,
       },
       {
         path: ROUTES.SCANNER,
@@ -79,6 +81,11 @@ const router = createBrowserRouter([
         path: ROUTES.PROFILE,
         element: <Profile />,
       },
+      {
+        path: ROUTES.USER_GUIDELINES,
+        element: <UserGuidelines />,
+      },
+      { path: ROUTES.HELP_AND_SUPPORT, element: <HelpAndSupport /> },
     ],
   },
   {

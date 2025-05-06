@@ -30,7 +30,7 @@ const Home = () => {
   }));
 
   return (
-    <div className="flex flex-col items-center justify-start px-1 py-4 space-y-5 bg-bg-color">
+    <div className="flex flex-col items-center justify-start px-1 py-4 space-y-5 bg-bg-color ">
       {/* 👋 Welcome Section */}
       <div className="w-full max-w-md bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl p-5 shadow-sm transition-colors">
         {loading ? (
