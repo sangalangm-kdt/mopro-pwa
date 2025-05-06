@@ -1,20 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import { useScanResult } from "@/hooks/scan-result";
 import Header from "@/components/navigation/Header";
 import Icon from "@/components/icons/Icons";
-import { MOCK_SCAN_DATA, type ScanResult } from "@/constants";
-import {
-  SCAN_RESULT,
-  SCAN_RESULT_CLASSES,
-  SCAN_RESULT_CONFIG,
-} from "@/constants";
-import {
-  getOverviewFields,
-  getProductDetailsFields,
-  type FieldItem,
-} from "@/constants/variables/fields";
-import { isMatchingSerial } from "@/utils/compare-serial";
 import QRButtonActions from "@/components/buttons/QRButtonActions";
 import ScanSkeletonGroup from "@/components/skeletons/qrscanner/ScanSkeletonGroup";
+import { SCAN_RESULT, SCAN_RESULT_CLASSES } from "@/constants";
+import { FieldItem } from "@/constants/variables/fields";
+import { useState } from "react";
 
 interface ScanResultProps {
   qrData: string;
@@ -24,7 +15,6 @@ interface ScanResultProps {
 function Section({ label, value, icon }: FieldItem) {
   const isRemarks = label.toLowerCase() === "remarks";
   const [showFull, setShowFull] = useState(false);
-
   const stringValue = typeof value === "string" ? value : String(value ?? "-");
   const shouldTruncate = isRemarks && stringValue.length > 80;
   const displayValue =
@@ -41,7 +31,7 @@ function Section({ label, value, icon }: FieldItem) {
           {displayValue}
           {shouldTruncate && (
             <button
-              onClick={() => setShowFull((prev) => !prev)}
+              onClick={() => setShowFull(!showFull)}
               className="ml-1 text-primary-500 text-xs underline"
             >
               {showFull ? "Read less" : "Read more"}
@@ -54,57 +44,23 @@ function Section({ label, value, icon }: FieldItem) {
 }
 
 export default function ScanResult({ qrData, onClose }: ScanResultProps) {
-  const [expanded, setExpanded] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const sheetRef = useRef<HTMLDivElement>(null);
-  const startY = useRef<number | null>(null);
-
-  const foundEntry = Object.values(MOCK_SCAN_DATA).find((item) =>
-    isMatchingSerial(qrData, item.serialNumber)
-  );
-
-  const parsed: ScanResult = foundEntry ?? {
-    error: "No data found for this serial number",
-  };
-
-  const overviewFields = getOverviewFields(parsed);
-  const productDetailsFields = getProductDetailsFields(parsed);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [qrData]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    startY.current = e.touches[0].clientY;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (startY.current === null) return;
-
-    const endY = e.changedTouches[0].clientY;
-    const diffY = endY - startY.current;
-
-    if (!expanded && diffY > SCAN_RESULT_CONFIG.COLLAPSE_THRESHOLD) {
-      onClose(); // Only close when it's still collapsed
-    } else if (diffY < SCAN_RESULT_CONFIG.EXPAND_THRESHOLD) {
-      setExpanded(true);
-    }
-
-    startY.current = null;
-  };
+  const {
+    expanded,
+    loading,
+    parsed,
+    overviewFields,
+    productDetailsFields,
+    handleTouchStart,
+    handleTouchEnd,
+    handleOverlayClick,
+  } = useScanResult(qrData, onClose);
 
   return (
     <div
       className="fixed inset-0 z-[200] bg-black/40 flex justify-center items-end overflow-hidden"
-      onClick={() => {
-        if (!expanded) onClose();
-      }}
+      onClick={handleOverlayClick}
     >
       <div
-        ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -157,6 +113,7 @@ export default function ScanResult({ qrData, onClose }: ScanResultProps) {
                 </h3>
                 <p className="text-xs text-gray-500">Line number</p>
               </div>
+
               <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow border border-gray-200 dark:border-zinc-700 space-y-4">
                 <p className="text-base font-bold text-gray-800 dark:text-white">
                   Overview

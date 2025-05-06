@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "./Button";
-import { useAuth } from "@/context/auth/useAuth";
+import { useAuthContext } from "@/context/auth/useAuth";
 import { Download, X } from "lucide-react";
 import { PWA_TEXT_KEYS } from "@/constants";
 
@@ -19,7 +19,7 @@ export default function PWAButton() {
   const [isSafari, setIsSafari] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuthContext();
   const { t } = useTranslation("pwa");
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function PWAButton() {
 
   return (
     <>
-      {isAuthenticated ? (
+      {user ? (
         <>
           <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
             {t(PWA_TEXT_KEYS.INSTALL_APP)}

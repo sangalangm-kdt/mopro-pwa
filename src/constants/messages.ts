@@ -7,4 +7,5 @@ export const LOGIN_MESSAGES = {
 export const TOAST_MESSAGES = {
   INVALID_CREDENTIALS: "Invalid email or password",
   LOGIN_SUCCESS: "Logged in successfully!",
+  NO_RECORD_FOUND: "These credentials do not match our records.",
 };

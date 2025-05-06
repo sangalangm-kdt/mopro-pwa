@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"; // ADD
 import MenuLinks from "@/components/navigation/MenuLinks";
 import PreferencesSection from "@/components/navigation/PreferencesSection";
-import { useAuth } from "@/context/auth/useAuth";
+import { useAuthContext } from "@/context/auth/useAuth";
 import { ROUTES } from "@/constants";
 import { SIDEBAR_MENU_BUTTON_CLASSES } from "@/constants/classes";
 import { useSidebarControls } from "@/utils/sidebar-controls";
@@ -15,14 +15,17 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
-  const { user, logout } = useAuth();
+  const {
+    user,
+    //  logout
+  } = useAuthContext();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const { t } = useTranslation("account");
 
   const handleLogout = () => {
-    logout();
+    // logout();
     onClose();
   };
 
@@ -77,12 +80,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           {/* User Info */}
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-800 text-primary-700 dark:text-primary-100 font-semibold text-sm">
-              {user?.firstName?.[0]}
-              {user?.lastName?.[0]}
+              {(user?.firstName?.charAt(0) ?? "") +
+                (user?.lastName?.charAt(0) ?? "") || "U"}
             </div>
             <div className="min-w-0">
               <p className="font-semibold text-primary-800 dark:text-white truncate">
-                {user?.firstName} {user?.lastName}
+                {user?.firstName ?? "Unknown"} {user?.lastName ?? ""}
               </p>
               <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                 {user?.email}

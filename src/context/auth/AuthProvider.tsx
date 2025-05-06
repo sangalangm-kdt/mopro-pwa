@@ -1,14 +1,12 @@
-import { AuthContext } from "@context/auth/useAuth";
-import { useAuth } from "@/api/auth";
+import { AuthContext } from "./useAuth";
+import { useAuth } from "@/api/auth"; // your original auth logic hook
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    // const { user, login, logout, isLoading } = useAuth();
-    const { user, login, isLoading } = useAuth();
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user, login, isLoading } = useAuth();
 
-    return (
-        // <AuthContext.Provider value={{ user, login, logout, loading }}>
-        <AuthContext.Provider value={{ user, login, isLoading }}>
-            {children}
-        </AuthContext.Provider>
-    );
-}
+  return (
+    <AuthContext.Provider value={{ user, login, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

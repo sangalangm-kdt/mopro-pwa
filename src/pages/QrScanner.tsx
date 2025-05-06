@@ -27,8 +27,7 @@ const QRScanner = () => {
   const [torchOn, setTorchOn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [qrData, setQrData] = useState<string | null>(null);
-  const [showManualModal, setShowManualModal] = useState(false); // 👉 added state
-
+  const [showManualModal, setShowManualModal] = useState(false);
   const {
     videoRef,
     canvasRef,
