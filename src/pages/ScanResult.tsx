@@ -12,8 +12,11 @@ interface ScanResultProps {
   onClose: () => void;
 }
 
+import { useTranslation } from "react-i18next";
+
 function Section({ label, value, icon }: FieldItem) {
-  const isRemarks = label.toLowerCase() === "remarks";
+  const { t } = useTranslation();
+  const isRemarks = label === "remarks";
   const [showFull, setShowFull] = useState(false);
   const stringValue = typeof value === "string" ? value : String(value ?? "-");
   const shouldTruncate = isRemarks && stringValue.length > 80;
@@ -26,7 +29,7 @@ function Section({ label, value, icon }: FieldItem) {
     <div className="flex items-start gap-2">
       <Icon name={icon} className="w-4 h-4 text-gray-500" />
       <div>
-        <p className="text-gray-500 text-xs">{label}</p>
+        <p className="text-gray-500 text-xs">{t(label)}</p>
         <p className="font-medium text-gray-800 dark:text-white break-words text-sm">
           {displayValue}
           {shouldTruncate && (
@@ -34,7 +37,7 @@ function Section({ label, value, icon }: FieldItem) {
               onClick={() => setShowFull(!showFull)}
               className="ml-1 text-primary-500 text-xs underline"
             >
-              {showFull ? "Read less" : "Read more"}
+              {showFull ? t("read_less") : t("read_more")}
             </button>
           )}
         </p>
@@ -44,6 +47,7 @@ function Section({ label, value, icon }: FieldItem) {
 }
 
 export default function ScanResult({ qrData, onClose }: ScanResultProps) {
+  const { t } = useTranslation();
   const {
     expanded,
     loading,
@@ -77,7 +81,7 @@ export default function ScanResult({ qrData, onClose }: ScanResultProps) {
 
         {expanded && (
           <Header
-            title={SCAN_RESULT.HEADER_TITLE}
+            title={t(SCAN_RESULT.HEADER_TITLE)}
             showBack={true}
             textColorClass="text-gray-700 dark:text-white"
           />
@@ -92,7 +96,7 @@ export default function ScanResult({ qrData, onClose }: ScanResultProps) {
         >
           {!expanded && (
             <h2 className="text-base font-semibold mb-4 text-center text-gray-700">
-              {SCAN_RESULT.TITLE}
+              {t(SCAN_RESULT.TITLE)}
             </h2>
           )}
 
@@ -111,12 +115,12 @@ export default function ScanResult({ qrData, onClose }: ScanResultProps) {
                 <h3 className="text-xl font-bold text-primary-800">
                   {parsed.serialNumber}
                 </h3>
-                <p className="text-xs text-gray-500">Line number</p>
+                <p className="text-xs text-gray-500">{t("line_number")}</p>
               </div>
 
               <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow border border-gray-200 dark:border-zinc-700 space-y-4">
                 <p className="text-base font-bold text-gray-800 dark:text-white">
-                  Overview
+                  {t("overview")}
                 </p>
                 {overviewFields.map((field) => (
                   <Section key={field.label} {...field} />
@@ -126,7 +130,7 @@ export default function ScanResult({ qrData, onClose }: ScanResultProps) {
               {productDetailsFields.length > 0 && (
                 <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow border mt-3 border-gray-200 dark:border-zinc-700 space-y-4">
                   <p className="text-base font-bold text-gray-800 dark:text-white">
-                    Product Details
+                    {t("product_details")}
                   </p>
                   {productDetailsFields.map((field) => (
                     <Section key={field.label} {...field} />

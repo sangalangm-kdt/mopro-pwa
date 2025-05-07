@@ -1,0 +1,19 @@
+{
+  "scan_result_title": "Scan Result",
+  "scan_result_header_title": "Scan Result",
+  "confirm_button": "Confirm",
+  "line_number": "Line number",
+  "overview": "Overview",
+  "product_details": "Product Details",
+  "project_name": "Project name",
+  "order_number": "Order number",
+  "last_updated": "Last updated",
+  "last_modified_by": "Last modified by",
+  "product_name": "Product name",
+  "weight": "Weight",
+  "current_process": "Current process",
+  "progress": "Progress (%)",
+  "remarks": "Remarks",
+  "read_more": "Read more",
+  "read_less": "Read less"
+}

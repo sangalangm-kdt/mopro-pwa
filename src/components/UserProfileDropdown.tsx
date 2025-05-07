@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { useAuth } from "@/context/auth/useAuth";
+import { useAuthContext } from "@/context/auth/useAuth";
 
 export default function UserProfileDropdown() {
   const [open, setOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthContext();
 
   return (
     <div className="relative">

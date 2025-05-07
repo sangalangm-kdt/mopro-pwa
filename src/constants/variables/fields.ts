@@ -13,22 +13,22 @@ export function getOverviewFields(parsed: ScanResult): FieldItem[] {
 
   return [
     {
-      label: "Project name",
+      label: "project_name",
       value: parsed.projectName,
       icon: "clipboard-list",
     },
     {
-      label: "Order number",
+      label: "order_number",
       value: parsed.orderNumber,
       icon: "clipboard-list",
     },
     {
-      label: "Last updated",
+      label: "last_updated",
       value: new Date(parsed.lastUpdated).toLocaleString(),
       icon: "clock",
     },
     {
-      label: "Last modified by",
+      label: "last_modified_by",
       value: parsed.productDetails.lastModifiedBy,
       icon: "last-modified-by",
     },
@@ -40,32 +40,31 @@ export function getProductDetailsFields(parsed: ScanResult): FieldItem[] {
   if ("error" in parsed || !parsed.productDetails) return [];
 
   return [
-    // {
-    //   label: "Line number",
-    //   value: parsed.productDetails.lineNumber,
-    //   icon: "clipboard-list",
-    // },
     {
-      label: "Product name",
+      label: "product_name",
       value: parsed.productDetails.productName,
       icon: "clipboard-list",
     },
     {
-      label: "Weight",
+      label: "weight",
       value: parsed.productDetails.weight,
       icon: "weight",
     },
     {
-      label: "Current process",
+      label: "current_process",
       value: parsed.productDetails.currentProcess,
       icon: "workflow",
     },
     {
-      label: "Progress (%)",
+      label: "progress",
       value: `${parsed.productDetails.progress}%`,
       icon: "loader",
     },
-    { label: "Remarks", value: parsed.remarks, icon: "sticky-note" },
+    {
+      label: "remarks",
+      value: parsed.remarks,
+      icon: "sticky-note",
+    },
   ];
 }
 

@@ -25,11 +25,9 @@ export const PWA_TEXT_KEYS = {
 };
 
 export const SCAN_RESULT = {
-  TITLE: "Scan Result",
-  HEADER_TITLE: "Scan Result",
-  CONFIRM_BUTTON: "Confirm",
-  RESCAN_BUTTON: "Rescan",
-  COLLAPSE_BUTTON: "Collapse",
+  TITLE: "scan_result_title",
+  HEADER_TITLE: "scan_result_header_title",
+  CONFIRM_BUTTON: "confirm_button",
 };
 
 export const QR_SCANNER_TEXT_KEYS = {

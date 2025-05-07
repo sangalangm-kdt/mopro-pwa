@@ -1,19 +1,37 @@
 export const allIcons = [
-  // ✅ Android required sizes (for splash + install prompt)
+  // ✅ Light mode icons
   {
-    src: "/android/android-launchericon-192-192.png",
+    src: "/android/android-launchericon-light-192.png",
     sizes: "192x192",
     type: "image/png",
-    purpose: "any maskable", // allows rounded adaptive icons on Android
+    purpose: "any maskable",
+    media: "(prefers-color-scheme: light)",
   },
   {
-    src: "/android/android-launchericon-512-512.png",
+    src: "/android/android-launchericon-light-512.png",
     sizes: "512x512",
     type: "image/png",
     purpose: "any maskable",
+    media: "(prefers-color-scheme: light)",
   },
 
-  // ✅ iOS recommended sizes
+  // ✅ Dark mode icons
+  {
+    src: "/android/android-launchericon-dark-192.png",
+    sizes: "192x192",
+    type: "image/png",
+    purpose: "any maskable",
+    media: "(prefers-color-scheme: dark)",
+  },
+  {
+    src: "/android/android-launchericon-dark-512.png",
+    sizes: "512x512",
+    type: "image/png",
+    purpose: "any maskable",
+    media: "(prefers-color-scheme: dark)",
+  },
+
+  // ✅ iOS and default icons (neutral)
   {
     src: "/ios/120.png",
     sizes: "120x120",
@@ -40,7 +58,7 @@ export const allIcons = [
     type: "image/png",
   },
 
-  // ✅ Optional: fallback for older Android or Windows
+  // ✅ Optional: fallback
   {
     src: "/ios/144.png",
     sizes: "144x144",

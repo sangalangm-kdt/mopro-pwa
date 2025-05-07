@@ -6,7 +6,11 @@ import Button from "@/components/buttons/Button";
 import { Flashlight, FlashlightOff } from "lucide-react";
 import { toggleFlashlight } from "@/utils/flashlight";
 import ScanResult from "./ScanResult";
-import { MOCK_SCAN_DATA, QR_SCANNER_TEXT_KEYS } from "@/constants";
+import {
+  MOCK_SCAN_DATA,
+  QR_SCANNER_TEXT_KEYS,
+  TOAST_MESSAGES,
+} from "@/constants";
 import { stopCamera } from "@/utils/stop-camera";
 import { toast } from "sonner";
 import ManualEntryModal from "@/components/modals/ManualEntryModal";
@@ -43,7 +47,7 @@ const QRScanner = () => {
       );
 
       if (!found) {
-        toast.error("No matching record found for the scanned QR code.");
+        toast.error(TOAST_MESSAGES.NO_DATA_RECORD_FOUND);
         handleRescan();
         return;
       }
