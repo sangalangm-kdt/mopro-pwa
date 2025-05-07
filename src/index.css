@@ -23,6 +23,7 @@
   src: url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -30,6 +31,7 @@
   src: url("/fonts/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
@@ -37,6 +39,7 @@
   src: url("/fonts/Raleway-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -44,6 +47,7 @@
   src: url("/fonts/Raleway-Italic-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: italic;
+  font-display: swap;
 }
 
 /* --------------------------------- */

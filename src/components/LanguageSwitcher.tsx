@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "./icons/Icons";
 import { useAuthContext } from "@/context/auth/useAuth";
+import { useAuthContext } from "@/context/auth/useAuth";
 
 const LANGUAGES = [
     { code: "ja", label: "日本語", short: "JA" },
