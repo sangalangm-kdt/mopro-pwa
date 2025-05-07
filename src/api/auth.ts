@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { isAxiosError } from "axios";
 import useSWR from "swr";
 
 export const useAuth = () => {
@@ -32,7 +33,7 @@ export const useAuth = () => {
             await mutate();
             return true;
         } catch (error) {
-            if (error.response) {
+            if (isAxiosError(error) && error.response) {
                 const { status, data } = error.response;
 
                 if (status === 422) {
@@ -42,8 +43,10 @@ export const useAuth = () => {
                 } else {
                     console.log("Login failed:", status);
                 }
-            } else {
+            } else if (error instanceof Error) {
                 console.log("Unexpected error:", error.message);
+            } else {
+                console.log("Unknown error", error);
             }
             return false;
         }
