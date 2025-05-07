@@ -1,9 +1,6 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEditProgress } from "@/hooks/edit-progress";
 import Icon from "@/components/icons/Icons";
 import Header from "@/components/navigation/Header";
-import { MOCK_SCAN_DATA, PROCESS_VALUES } from "@/constants";
-import { isMatchingSerial } from "@/utils/compare-serial";
 import ProcessDropdown from "@/components/ProcessDropdown";
 import ProgressSlider from "@/components/ProgressSlider";
 import ProductInfoField from "@/components/inputs/ProductInfoField";
@@ -13,60 +10,22 @@ import { Loader2 } from "lucide-react";
 import SuccessModal from "@/components/modals/SuccessModal";
 
 const EditProgress = () => {
-  // Extract serial number from route params
-  const { serialNumber = "" } = useParams<{ serialNumber: string }>();
+  const {
+    serialNumber,
+    product,
+    loading,
+    saving,
+    success,
+    submitted,
+    selectedProcess,
+    progress,
+    setSelectedProcess,
+    setProgress,
+    setSuccess,
+    handleSave,
+    isValid,
+  } = useEditProgress();
 
-  // Create dropdown options from process constants
-  const processes = useMemo(
-    () => PROCESS_VALUES.map((v) => ({ label: v, value: v })),
-    []
-  );
-
-  // Lookup product based on serial number (case-insensitive match)
-  const product = useMemo(() => {
-    if (!serialNumber) return null;
-    return (
-      Object.values(MOCK_SCAN_DATA).find((item) =>
-        isMatchingSerial(serialNumber, item.serialNumber)
-      ) || null
-    );
-  }, [serialNumber]);
-
-  // Form state
-  const [selectedProcess, setSelectedProcess] = useState("");
-  const [progress, setProgress] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false); // Loading state while saving
-  const [success, setSuccess] = useState(false); // Success state
-
-  // Validate form
-  const isValid = selectedProcess.trim() !== "" && progress > 0;
-
-  // Simulate async loading (can replace with real fetch later)
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Handle form submission
-  const handleSave = () => {
-    setSubmitted(true);
-    if (!isValid) return;
-
-    setSaving(true);
-    setTimeout(() => {
-      console.log("Saving progress for:", {
-        serialNumber,
-        selectedProcess,
-        progress,
-      });
-      setSaving(false);
-      setSuccess(true);
-    }, 1000);
-  };
-
-  // Show error if product not found
   if (!product && !loading) {
     return (
       <div className="flex flex-col min-h-screen w-full bg-white dark:bg-zinc-900 text-gray-800 dark:text-white">
@@ -107,12 +66,10 @@ const EditProgress = () => {
           Update the current process and progress of the product
         </p>
 
-        {/* Skeleton Loader while loading */}
         {loading ? (
           <EditProgressSkeleton />
         ) : (
           <>
-            {/* Static Product Info */}
             <div className="space-y-3 p-4 bg-white dark:bg-zinc-800 rounded-md border border-gray-200 dark:border-zinc-700">
               <div>
                 <p className="text-sm font-semibold mb-1 text-primary-700 dark:text-primary-400 tracking-wide">
@@ -126,11 +83,10 @@ const EditProgress = () => {
               <ProductInfoField label="Drawing number" value={serialNumber} />
               <ProductInfoField
                 label="Product Name"
-                value={product?.productDetails.productName ?? "-"}
+                value={product?.productDetails?.productName ?? "-"}
               />
             </div>
 
-            {/* Editable Progress Section */}
             <div className="space-y-4 p-4 bg-white dark:bg-zinc-800 rounded-md border border-gray-200 dark:border-zinc-700">
               <div>
                 <p className="text-sm font-semibold mb-1 text-primary-700 dark:text-primary-400 tracking-wide">
@@ -142,16 +98,17 @@ const EditProgress = () => {
                 </p>
               </div>
 
-              {/* Process dropdown input */}
               <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Process <span className="text-red-500">*</span>
                 </label>
-                <ProcessDropdown
-                  value={selectedProcess}
-                  onChange={setSelectedProcess}
-                  options={processes}
-                />
+                {product && (
+                  <ProcessDropdown
+                    value={selectedProcess}
+                    onChange={setSelectedProcess}
+                    options={product.processes}
+                  />
+                )}
                 {submitted && !selectedProcess && (
                   <p className="text-xs text-red-500 mt-1">
                     Process is required.
@@ -159,7 +116,6 @@ const EditProgress = () => {
                 )}
               </div>
 
-              {/* Progress slider */}
               <div className="space-y-1">
                 <ProgressSlider value={progress} onChange={setProgress} />
                 {submitted && progress <= 0 && (
@@ -172,8 +128,7 @@ const EditProgress = () => {
           </>
         )}
 
-        {/* Fixed bottom action bar */}
-        <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white  dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-700 flex justify-between gap-3 z-40">
+        <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-700 flex justify-between gap-3 z-40">
           <Button
             onClick={() => window.history.back()}
             variant="outlined"
@@ -199,7 +154,6 @@ const EditProgress = () => {
           </Button>
         </div>
 
-        {/* Success Modal */}
         {success && <SuccessModal onClose={() => setSuccess(false)} />}
       </div>
     </div>
