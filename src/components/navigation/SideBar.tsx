@@ -1,7 +1,7 @@
 import { LogOut, Settings, X } from "lucide-react";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next"; // ADD
+import { useTranslation } from "react-i18next";
 import MenuLinks from "@/components/navigation/MenuLinks";
 import PreferencesSection from "@/components/navigation/PreferencesSection";
 import { useAuthContext } from "@/context/auth/useAuth";
@@ -17,7 +17,7 @@ interface SidebarProps {
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const {
     user,
-    //  logout
+    // logout
   } = useAuthContext();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -41,11 +41,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         />
       )}
 
-      <aside
+      <div
         ref={sidebarRef}
         role="dialog"
         aria-modal="true"
-        aria-label={t("main_menu")} // <-- use t() for Main Menu
+        aria-label={t("main_menu")}
+        tabIndex={-1}
         className={`fixed top-0 left-0 w-64 h-full bg-white dark:bg-zinc-800 z-50 shadow-lg transition-transform duration-300 flex flex-col ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -93,7 +94,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             </div>
           </div>
 
-          {/* Profile Settings Button */}
+          {/* Profile Settings */}
           <div className="text-gray-800 dark:text-white">
             <button
               onClick={() => {
@@ -123,7 +124,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             © {new Date().getFullYear()} {t("footer_copyright")}
           </p>
         </div>
-      </aside>
+      </div>
     </>
   );
 }

@@ -6,8 +6,6 @@ import { JSX } from "react";
 export default function PublicRoute({ children }: { children: JSX.Element }) {
   const { user } = useAuthContext();
 
-  //   if (isLoading) return <Preloader />;
-
   if (user) {
     return <Navigate to={ROUTES.HOME} replace />;
   }

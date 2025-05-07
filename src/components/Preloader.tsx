@@ -4,7 +4,7 @@ export default function Preloader() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false); // hide preloader after 3 seconds
-    }, 3000); // 3000ms = 3 seconds
+    }, 1000); // 3000ms = 3 seconds
 
     return () => clearTimeout(timer); // clear timer if component unmounts
   }, []);

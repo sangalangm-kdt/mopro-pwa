@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "./icons/Icons";
-import { useAuth } from "@/context/auth/useAuth";
+import { useAuthContext } from "@/context/auth/useAuth";
 
 const LANGUAGES = [
   { code: "ja", label: "日本語", short: "JA" },
@@ -10,7 +10,7 @@ const LANGUAGES = [
 
 export default function LanguageDropdown() {
   const { i18n } = useTranslation();
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuthContext();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -38,7 +38,7 @@ export default function LanguageDropdown() {
   }, []);
 
   // 🔓 Unauthenticated: dropdown style
-  if (!isAuthenticated) {
+  if (!user) {
     return (
       <div
         className="relative inline-block text-primary-900  "
