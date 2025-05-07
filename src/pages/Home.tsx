@@ -7,8 +7,10 @@ import ScanHistoryCard, { ScanEntry } from "@/components/cards/SummaryCard";
 import { MOCK_SCAN_HISTORY } from "@/constants/mockData";
 import FullscreenScanHistory from "@/components/modals/FullscreenScanHistory";
 import SectionSkeleton from "@/components/skeletons/SectionSkeleton"; // ✅
+import { useAuth } from "@/api/auth";
 
 const Home = () => {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [showFullHistory, setShowFullHistory] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ const Home = () => {
         progress: item.progress,
         process: item.process,
     }));
-
+    console.log(user);
     return (
         <div className="flex flex-col items-center justify-start px-1 py-4 space-y-5 bg-bg-color ">
             {/* 👋 Welcome Section */}

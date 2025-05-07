@@ -52,5 +52,13 @@ export const useAuth = () => {
         }
     };
 
-    return { user, mutate, isLoading, login };
+    const logout = async () => {
+        if (!error) {
+            await axios.post("/logout").then(() => mutate());
+        }
+
+        window.location.pathname = "login";
+    };
+
+    return { user, mutate, isLoading, login, logout };
 };
