@@ -1,67 +1,87 @@
-import { useEffect, useRef, useState } from "react";
-import { MOCK_SCAN_DATA, SCAN_RESULT_CONFIG } from "@/constants";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { SCAN_RESULT_CONFIG } from "@/constants";
 import {
   getOverviewFields,
   getProductDetailsFields,
 } from "@/constants/variables/fields";
 import { isMatchingSerial } from "@/utils/compare-serial";
-import { ScanResult as ParsedResult } from "@/constants";
+import type { Project, ScanResult } from "@/types/scan";
 
-// Custom hook for handling QR scan result logic
-export function useScanResult(qrData: string, onClose: () => void) {
-  const [expanded, setExpanded] = useState(false); // Controls expanded state of scan result card
-  const [loading, setLoading] = useState(true); // Controls loading state
-  const startY = useRef<number | null>(null); // Track touch start Y position for swipe detection
+export function useScanResult(
+  qrData: string,
+  onClose: () => void,
+  projects?: Project[]
+) {
+  // Find the matching project based on scanned QR code
+  const matchedProject = useMemo(() => {
+    return projects?.find((project) =>
+      project.products.some((product) =>
+        isMatchingSerial(product.lineNumber, qrData)
+      )
+    );
+  }, [projects, qrData]);
 
-  // Try to find a matching entry from mock data based on the scanned QR data
-  const foundEntry = Object.values(MOCK_SCAN_DATA).find((item) =>
-    isMatchingSerial(qrData, item.serialNumber)
-  );
+  //  Find the specific product within the matched project
+  const matchedProduct = useMemo(() => {
+    return matchedProject?.products.find((product) =>
+      isMatchingSerial(product.lineNumber, qrData)
+    );
+  }, [matchedProject, qrData]);
 
-  // Parsed result to display – either found data or error message
-  const parsed: ParsedResult = foundEntry ?? {
-    error: "No data found for this serial number",
-  };
+  // UI state: whether the result sheet is expanded or still loading
+  const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const startY = useRef<number | null>(null);
 
-  // Get structured field groups for display
+  // Construct parsed scan result or error
+  const parsed: ScanResult =
+    matchedProject && matchedProduct
+      ? {
+          lineNumber: matchedProduct.lineNumber,
+          serialNumber: matchedProduct.lineNumber,
+          orderNumber: matchedProject.orderNumber,
+          name: matchedProject.name,
+          updatedAt: matchedProject.updatedAt,
+          remarks: matchedProject.remarks,
+          productDetails: matchedProduct,
+        }
+      : {
+          error: "No data found for this serial number",
+        };
+
+  // Extract UI field groups from parsed data
   const overviewFields = getOverviewFields(parsed);
-  const productDetailsFields = getProductDetailsFields(parsed);
+  const productDetailsFields =
+    "error" in parsed ? [] : getProductDetailsFields(parsed.productDetails);
 
-  // Simulate loading delay (especially useful in development for visual feedback)
+  //  Fake loading delay to simulate processing/animation
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
   }, [qrData]);
 
-  // Record the Y-position of initial touch
   const handleTouchStart = (e: React.TouchEvent) => {
     startY.current = e.touches[0].clientY;
   };
 
-  // Handle touch end to detect swipe gestures
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (startY.current === null) return;
-
     const endY = e.changedTouches[0].clientY;
     const diffY = endY - startY.current;
 
     if (!expanded && diffY > SCAN_RESULT_CONFIG.COLLAPSE_THRESHOLD) {
-      // Swipe down to close if not expanded
       onClose();
     } else if (diffY < SCAN_RESULT_CONFIG.EXPAND_THRESHOLD) {
-      // Swipe up to expand
       setExpanded(true);
     }
 
-    startY.current = null; // Reset touch start reference
+    startY.current = null;
   };
 
-  // Clicking the background overlay closes the result if not expanded
   const handleOverlayClick = () => {
     if (!expanded) onClose();
   };
 
-  // Toggle expand/collapse manually (e.g., by tapping a button)
   const toggleExpanded = () => setExpanded((prev) => !prev);
 
   return {

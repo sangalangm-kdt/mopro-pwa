@@ -6,17 +6,18 @@ import Button from "@/components/buttons/Button";
 import { Flashlight, FlashlightOff } from "lucide-react";
 import { toggleFlashlight } from "@/utils/flashlight";
 import ScanResult from "./ScanResult";
-import {
-  MOCK_SCAN_DATA,
-  QR_SCANNER_TEXT_KEYS,
-  TOAST_MESSAGES,
-} from "@/constants";
+import { QR_SCANNER_TEXT_KEYS } from "@/constants";
 import { stopCamera } from "@/utils/stop-camera";
 import { toast } from "sonner";
 import ManualEntryModal from "@/components/modals/ManualEntryModal";
-import { isMatchingSerial } from "@/utils/compare-serial";
+import { useProject } from "@/api/project";
 
 const QRScanner = () => {
+  const { projects } = useProject();
+  const product = projects?.flatMap(
+    (item: { products: unknown }) => item.products
+  );
+  console.log(product);
   const { t } = useTranslation("scan");
   const {
     TITLE,
@@ -42,12 +43,13 @@ const QRScanner = () => {
     setScanning,
   } = useQrScanner({
     onResult: (data) => {
-      const found = Object.values(MOCK_SCAN_DATA).find(
-        (item) => item.serialNumber === data
+      const found = product.find(
+        (item: { lineNumber: string }) => item.lineNumber == data
       );
+      console.log(data, product[2].id);
 
       if (!found) {
-        toast.error(TOAST_MESSAGES.NO_DATA_RECORD_FOUND);
+        toast.error("No matching record found for the scanned QR code.");
         handleRescan();
         return;
       }
@@ -120,15 +122,21 @@ const QRScanner = () => {
         </div>
       )}
 
-      {qrData && <ScanResult qrData={qrData} onClose={handleCloseModal} />}
+      {qrData && (
+        <ScanResult
+          qrData={qrData}
+          onClose={handleCloseModal}
+          projects={projects}
+        />
+      )}
 
       {/* Manual entry modal */}
       {showManualModal && (
         <ManualEntryModal
           onClose={() => setShowManualModal(false)}
           onSubmit={({ drawingNumber }) => {
-            const found = Object.values(MOCK_SCAN_DATA).find((item) =>
-              isMatchingSerial(drawingNumber, item.serialNumber)
+            const found = product.find(
+              (item: { lineNumber: string }) => item.lineNumber == drawingNumber
             );
 
             if (!found) {

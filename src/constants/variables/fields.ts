@@ -1,71 +1,49 @@
-// fields.ts
-import type { ScanResult } from "@/constants";
+import type { ScanResult, Product } from "@/types/scan";
 
-interface FieldItem {
+export interface FieldItem {
   label: string;
   value: string | number | undefined;
   icon: string;
 }
 
-//sa scanResult to for viewing the details
 export function getOverviewFields(parsed: ScanResult): FieldItem[] {
   if ("error" in parsed) return [];
 
   return [
+    { label: "Project name", value: parsed.name, icon: "clipboard-list" },
     {
-      label: "project_name",
-      value: parsed.projectName,
-      icon: "clipboard-list",
-    },
-    {
-      label: "order_number",
+      label: "Order number",
       value: parsed.orderNumber,
       icon: "clipboard-list",
     },
     {
-      label: "last_updated",
-      value: new Date(parsed.lastUpdated).toLocaleString(),
+      label: "Last updated",
+      value: new Date(parsed.updatedAt).toLocaleString(),
       icon: "clock",
     },
     {
-      label: "last_modified_by",
+      label: "Last modified by",
       value: parsed.productDetails.lastModifiedBy,
       icon: "last-modified-by",
     },
   ];
 }
 
-//sa scanResult to for viewing the details
-export function getProductDetailsFields(parsed: ScanResult): FieldItem[] {
-  if ("error" in parsed || !parsed.productDetails) return [];
-
+export function getProductDetailsFields(parsed: Product): FieldItem[] {
   return [
+    // { label: "Line number", value: parsed.lineNumber, icon: "clipboard-list" },
     {
-      label: "product_name",
-      value: parsed.productDetails.productName,
+      label: "Product name",
+      value: parsed.productList.name,
       icon: "clipboard-list",
     },
+    { label: "Weight", value: parsed.weight, icon: "weight" },
     {
-      label: "weight",
-      value: parsed.productDetails.weight,
-      icon: "weight",
-    },
-    {
-      label: "current_process",
-      value: parsed.productDetails.currentProcess,
+      label: "Current process",
+      value: parsed.currentProcess,
       icon: "workflow",
     },
-    {
-      label: "progress",
-      value: `${parsed.productDetails.progress}%`,
-      icon: "loader",
-    },
-    {
-      label: "remarks",
-      value: parsed.remarks,
-      icon: "sticky-note",
-    },
+    { label: "Progress (%)", value: `${parsed.progress}%`, icon: "loader" },
+    { label: "Remarks", value: parsed.remarks, icon: "sticky-note" },
   ];
 }
-
-export type { FieldItem };
