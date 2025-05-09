@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { isMatchingSerial } from "@/utils/compare-serial";
 import { useProduct } from "@/api/product";
 import { useProject } from "@/api/project";
+import { useAuth } from "@/api/auth";
+import { useProgressUpdate } from "@/api/progress-update";
 
 export function useEditProgress() {
     // Get serial number from route
@@ -11,8 +13,8 @@ export function useEditProgress() {
     // Data fetching
     const { product } = useProduct(+lineNumber);
     const { projects } = useProject();
-    // const {addProgress} = useProgress();
-    // console.log(projects);
+    const { addProgressUpdate } = useProgressUpdate();
+    const user = useAuth().user.data;
     console.log(projects[0]);
     console.log(product);
 
@@ -53,19 +55,30 @@ export function useEditProgress() {
 
     // Handle form submit/save
     const handleSave = () => {
-        setSubmitted(true);
+        // setSubmitted(true);
         if (!isValid) return;
-
-        setSaving(true);
-        setTimeout(() => {
-            console.log("Saving progress for:", {
-                lineNumber,
-                selectedProcess,
-                progress,
-            });
-            setSaving(false);
-            setSuccess(true);
-        }, 1000);
+        addProgressUpdate({
+            processId: 1,
+            lineNumber: lineNumber,
+            userId: user.id,
+            percent: progress,
+        });
+        console.log({
+            processId: 1,
+            lineNumber: lineNumber,
+            userId: user.id,
+            percent: progress,
+        });
+        // setSaving(true);
+        // setTimeout(() => {
+        //     console.log("Saving progress for:", {
+        //         lineNumber,
+        //         selectedProcess,
+        //         progress,
+        //     });
+        //     setSaving(false);
+        //     setSuccess(true);
+        // }, 1000);
     };
 
     return {
