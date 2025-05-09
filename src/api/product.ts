@@ -6,7 +6,6 @@ export const useProduct = (id?: number) => {
     data: products,
     mutate: mutateProducts,
     error: productsError,
-    isLoading,
   } = useSWR("/api/product", () =>
     axios
       .get("/api/product")
@@ -36,6 +35,5 @@ export const useProduct = (id?: number) => {
     mutateProducts,
     productError,
     productsError,
-    isLoading,
   };
 };
