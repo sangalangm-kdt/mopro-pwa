@@ -1,86 +1,98 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { isMatchingSerial } from "@/utils/compare-serial";
 import { useProduct } from "@/api/product";
 import { useProject } from "@/api/project";
+import { isMatchingSerial } from "@/utils/compare-serial";
+import { Product, Project, Process } from "@/types/editProgress";
 
-export function useEditProgress() {
-    // Get serial number from route
-    const { lineNumber } = useParams<{ lineNumber: string }>();
+// Extract and convert the `lineNumber` param from the URL
+function useLineNumber(): number | null {
+  const { lineNumber } = useParams<{ lineNumber?: string }>();
+  return useMemo(() => (lineNumber ? +lineNumber : null), [lineNumber]);
+}
 
-    // Data fetching
-    const { product } = useProduct(+lineNumber);
-    const { projects } = useProject();
-    // const {addProgress} = useProgress();
-    // console.log(projects);
-    console.log(projects[0]);
-    console.log(product);
+// Find the project that contains the product with the given line number
+function useMatchedProject(lineNumber: number | null): Project | undefined {
+  const { projects } = useProject();
 
-    const matchedProject = useMemo(() => {
-        return projects?.find((project) =>
-            project.products.some((product) =>
-                isMatchingSerial(product.lineNumber, +lineNumber)
-            )
-        );
-    }, [projects]);
+  return useMemo(() => {
+    if (!projects || lineNumber === null) return undefined;
 
-    // Generate dropdown options
-    const processes = useMemo(
-        () =>
-            matchedProject?.process.map((v) => ({
-                label: v.processList.name,
-                value: v.processList.name,
-            })),
-        []
+    return projects.find((project: Project) =>
+      project.products.some(
+        (product: Product) =>
+          isMatchingSerial(String(product.lineNumber), String(lineNumber)) // Ensure string comparison
+      )
     );
+  }, [projects, lineNumber]);
+}
 
-    // Form states
-    const [selectedProcess, setSelectedProcess] = useState("");
-    const [progress, setProgress] = useState(0);
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [success, setSuccess] = useState(false);
-    console.log(selectedProcess);
-    // Validation
-    const isValid = selectedProcess.trim() !== "" && progress > 0;
+// Transform process data into dropdown options format
+function useProcessOptions(processes: Process[] | undefined) {
+  return useMemo(() => {
+    return (
+      processes?.map((v) => ({
+        label: v.processList.name,
+        value: v.processList.id,
+      })) ?? []
+    );
+  }, [processes]);
+}
 
-    // Simulate loading (e.g., fetching from API)
-    useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 800);
-        return () => clearTimeout(timer);
-    }, []);
+// handles edit progress form logic
+export function useEditProgress() {
+  const lineNumber = useLineNumber(); // Extracted from route
+  const { product } = useProduct(lineNumber ?? 0); // Fetch individual product data
+  const matchedProject = useMatchedProject(lineNumber); // Identify the project
+  const processes = useProcessOptions(matchedProject?.process); // Format for dropdown
 
-    // Handle form submit/save
-    const handleSave = () => {
-        setSubmitted(true);
-        if (!isValid) return;
+  // Form state management
+  const [selectedProcess, setSelectedProcess] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+  // Validation: user must select a process and progress must be > 0
+  const isValid = selectedProcess !== "" && progress > 0;
 
-        setSaving(true);
-        setTimeout(() => {
-            console.log("Saving progress for:", {
-                lineNumber,
-                selectedProcess,
-                progress,
-            });
-            setSaving(false);
-            setSuccess(true);
-        }, 1000);
-    };
+  // Simulate initial loading state
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
-    return {
+  // Handle form submission
+  const handleSave = () => {
+    setSubmitted(true);
+    if (!isValid || lineNumber === null) return;
+
+    setSaving(true);
+    setTimeout(() => {
+      // Simulate saving logic
+      console.log("Saving progress for:", {
         lineNumber,
-        product: product ? { ...product, processes } : null,
-        loading,
-        saving,
-        success,
-        submitted,
         selectedProcess,
         progress,
-        setSelectedProcess,
-        setProgress,
-        setSuccess,
-        handleSave,
-        isValid,
-    };
+      });
+      setSaving(false);
+      setSuccess(true);
+    }, 1000);
+  };
+
+  return {
+    lineNumber,
+    product: product ? { ...product, processes } : null,
+    loading,
+    saving,
+    success,
+    submitted,
+    selectedProcess,
+    progress,
+    setSelectedProcess,
+    setProgress,
+    setSuccess,
+    handleSave,
+    isValid,
+  };
 }

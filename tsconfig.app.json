@@ -33,7 +33,8 @@
       "@locales/*": ["locales/*"],
       "@assets/*": ["assets/*"],
       "@hooks/*": ["hooks/*"],
-      "@context/*": ["context/*"]
+      "@context/*": ["context/*"],
+      "@types/*": ["types/*"]
     }
   },
   "include": ["src", "i18n.ts", "src/types"]
