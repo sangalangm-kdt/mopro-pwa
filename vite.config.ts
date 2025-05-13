@@ -6,9 +6,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import AutoImport from "unplugin-auto-import/vite";
 import svgr from "vite-plugin-svgr";
+import viteCompression from "vite-plugin-compression"; // ✅ NEW
 import { allIcons } from "./src/assets/icons";
 
-// Fix __dirname for ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -33,12 +33,21 @@ export default defineConfig({
         skipWaiting: true,
       },
     }),
-
     AutoImport({
       imports: ["react", "react-router-dom"],
       dts: "src/auto-imports.d.ts",
     }),
+    viteCompression({
+      // ✅ Enable gzip
+      algorithm: "gzip",
+      threshold: 10240, // Only assets > 10KB
+      ext: ".gz",
+    }),
   ],
+  preview: {
+    host: "0.0.0.0",
+    port: 1000, // optional: set your preferred port
+  },
   server: {
     port: 3000,
   },
@@ -46,7 +55,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "src"),
       "@components": path.resolve(__dirname, "src/components"),
-      "@pages": path.resolve(__dirname, "src/pages"), // <-- fix this line
+      "@pages": path.resolve(__dirname, "src/pages"),
       "@constants": path.resolve(__dirname, "src/constants"),
       "@layouts": path.resolve(__dirname, "src/layouts"),
       "@router": path.resolve(__dirname, "src/router"),
