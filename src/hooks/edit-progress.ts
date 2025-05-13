@@ -4,6 +4,8 @@ import { useProduct } from "@/api/product";
 import { useProject } from "@/api/project";
 import { isMatchingSerial } from "@/utils/compare-serial";
 import { Product, Project, Process } from "@/types/editProgress";
+import { useAuth } from "@/api/auth";
+import { useProgressUpdate } from "@/api/progress-update";
 
 // Extract and convert the `lineNumber` param from the URL
 function useLineNumber(): number | null {
@@ -44,6 +46,9 @@ function useProcessOptions(processes: Process[] | undefined) {
 
 // handles edit progress form logic
 export function useEditProgress() {
+    const { addProgressUpdate } = useProgressUpdate();
+    const user = useAuth().user.data;
+
     const lineNumber = useLineNumber(); // Extracted from route
     const { product } = useProduct(lineNumber ?? 0); // Fetch individual product data
     const matchedProject = useMatchedProject(lineNumber); // Identify the project
@@ -58,7 +63,7 @@ export function useEditProgress() {
     const [success, setSuccess] = useState(false);
     // Validation: user must select a process and progress must be > 0
     const isValid = selectedProcess !== "" && progress > 0;
-
+    console.log(selectedProcess);
     // Simulate initial loading state
     useEffect(() => {
         const timer = setTimeout(() => setLoading(false), 800);
@@ -66,31 +71,33 @@ export function useEditProgress() {
     }, []);
 
     // Handle form submit/save
-    const handleSave = () => {
+    const handleSave = async () => {
         // setSubmitted(true);
         if (!isValid) return;
-        addProgressUpdate({
-            processId: 1,
+        setSaving(true);
+        const success = await addProgressUpdate({
+            processId: selectedProcess,
             lineNumber: lineNumber,
             userId: user.id,
             percent: progress,
         });
         console.log({
-            processId: 1,
+            processId: selectedProcess,
             lineNumber: lineNumber,
             userId: user.id,
             percent: progress,
         });
-        // setSaving(true);
-        // setTimeout(() => {
-        //     console.log("Saving progress for:", {
-        //         lineNumber,
-        //         selectedProcess,
-        //         progress,
-        //     });
-        //     setSaving(false);
-        //     setSuccess(true);
-        // }, 1000);
+
+        if (success) {
+            console.log("Saving progress for:", {
+                lineNumber,
+                selectedProcess,
+                progress,
+            });
+
+            setSaving(false);
+            setSuccess(true);
+        }
     };
 
     return {

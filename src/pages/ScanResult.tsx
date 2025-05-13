@@ -11,6 +11,7 @@ interface ScanResultProps {
     qrData: string;
     onClose: () => void;
     projects?: [];
+    progress?: [];
 }
 
 // import { useTranslation } from "react-i18next";
@@ -51,6 +52,7 @@ export default function ScanResult({
     qrData,
     onClose,
     projects,
+    progress,
 }: ScanResultProps) {
     const {
         expanded,
@@ -61,7 +63,7 @@ export default function ScanResult({
         handleTouchStart,
         handleTouchEnd,
         handleOverlayClick,
-    } = useScanResult(qrData, onClose, projects);
+    } = useScanResult(qrData, onClose, projects, progress);
     return (
         <div
             className="fixed inset-0 z-[200] bg-black/40 flex justify-center items-end overflow-hidden"

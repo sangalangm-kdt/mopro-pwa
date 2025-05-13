@@ -11,12 +11,14 @@ import { stopCamera } from "@/utils/stop-camera";
 import { toast } from "sonner";
 import ManualEntryModal from "@/components/modals/ManualEntryModal";
 import { useProject } from "@/api/project";
+import { useProgress } from "@/api/progress";
 
 const QRScanner = () => {
     const { projects } = useProject();
     const product = projects?.flatMap(
         (item: { products: unknown }) => item.products
     );
+    const { progress } = useProgress();
 
     const { t } = useTranslation("scan");
     const {
@@ -128,6 +130,7 @@ const QRScanner = () => {
                     qrData={qrData}
                     onClose={handleCloseModal}
                     projects={projects}
+                    progress={progress}
                 />
             )}
 
