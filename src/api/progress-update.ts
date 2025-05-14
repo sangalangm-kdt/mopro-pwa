@@ -1,4 +1,6 @@
-import axios from "@/lib/axios";
+import axios from "@/lib/axios"; // ✅ your custom axios instance
+import { isAxiosError } from "axios"; // ✅ correct Axios helper import
+
 import useSWR from "swr";
 
 interface ProgressUpdatePayload {
@@ -8,16 +10,6 @@ interface ProgressUpdatePayload {
   percent: number;
   product_id: number;
   project_id: number;
-}
-
-interface ApiError {
-  response?: {
-    status: number;
-    data?: {
-      errors?: Record<string, string[]>;
-    };
-  };
-  message?: string;
 }
 
 export const useProgressUpdate = () => {
@@ -32,7 +24,7 @@ export const useProgressUpdate = () => {
       .get("/api/progress-update")
       .then((res) => res.data)
       .catch((error) => {
-        if (error.response.status !== 409) throw error;
+        if (error.response?.status !== 409) throw error;
       })
   );
 
@@ -48,7 +40,7 @@ export const useProgressUpdate = () => {
       await mutate();
       return true;
     } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         const { status, data } = error.response;
 
         if (status === 422) {
