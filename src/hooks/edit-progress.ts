@@ -1,11 +1,11 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { useProduct } from "@/api/product";
-import { useProject } from "@/api/project";
-import { isMatchingSerial } from "@/utils/compare-serial";
-import { Product, Project, Process } from "@/types/editProgress";
 import { useAuth } from "@/api/auth";
+import { useProduct } from "@/api/product";
 import { useProgressUpdate } from "@/api/progress-update";
+import { useProject } from "@/api/project";
+import { Process, Product, Project } from "@/types/editProgress";
+import { isMatchingSerial } from "@/utils/compare-serial";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 
 // Extract and convert the `lineNumber` param from the URL
 function useLineNumber(): number | null {
@@ -75,6 +75,7 @@ export function useEditProgress() {
         if (!isValid) return;
         setSaving(true);
         const success = await addProgressUpdate({
+            projectId: matchedProject?.id,
             productId: product.id,
             processId: selectedProcess,
             lineNumber: lineNumber,
@@ -82,6 +83,7 @@ export function useEditProgress() {
             percent: progress,
         });
         console.log({
+            projectId: matchedProject?.id,
             productId: product.id,
             processId: selectedProcess,
             lineNumber: lineNumber,
@@ -96,9 +98,9 @@ export function useEditProgress() {
                 progress,
             });
 
-            setSaving(false);
             setSuccess(true);
         }
+        setSaving(false);
     };
 
     return {
