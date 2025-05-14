@@ -5,5 +5,11 @@
     "inspection": "Inspection",
     "packaging": "Packaging",
     "shipping": "Shipping"
+  },
+  "home": {
+    "welcomeTitle": "Welcome to <1>MOPro</1>",
+    "welcomeDescription": "Manage inspections, track progress, and scan your project QR codes effortlessly and efficiently.",
+    "scanTitle": "Scan QR Code",
+    "scanSubtitle": "Click here to update your progress"
   }
 }
