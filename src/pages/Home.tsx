@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ROUTES, BUTTON_TEXT, MOCK_SCAN_HISTORY } from "@constants/index";
+import { useProgress } from "@/api/progress";
 import Button from "@/components/buttons/Button";
-import { QrCode } from "lucide-react";
-import ScanHistoryCard, { ScanEntry } from "@/components/cards/ScanHistoryCard";
+import ScanHistoryCard from "@/components/cards/ScanHistoryCard";
 import FullscreenScanHistory from "@/components/modals/FullscreenScanHistory";
-import { useProgressUpdate } from "@/api/progress-update";
+import { BUTTON_TEXT, ROUTES } from "@constants/index";
+import { QrCode } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-    const { progressUpdates, isLoading } = useProgressUpdate();
-    console.log("progressUpdate", progressUpdates);
+    const { progress, isLoading } = useProgress();
+    console.log("progressUpdate", progress);
 
     const navigate = useNavigate();
     const [showFullHistory, setShowFullHistory] = useState(false);
@@ -56,7 +56,7 @@ const Home = () => {
             {/* 📜 Scan History */}
             <div className="w-full flex justify-center">
                 <ScanHistoryCard
-                    history={progressUpdates?.slice(0, 5)}
+                    history={progress?.slice(0, 5)}
                     scrollable={false}
                     onLoadMore={() => setShowFullHistory(true)}
                     loading={isLoading}
@@ -66,8 +66,9 @@ const Home = () => {
             {/* 🧾 Fullscreen Modal */}
             {showFullHistory && (
                 <FullscreenScanHistory
-                    data={progressUpdates}
+                    data={progress}
                     onClose={() => setShowFullHistory(false)}
+                    loading={isLoading}
                 />
             )}
         </div>

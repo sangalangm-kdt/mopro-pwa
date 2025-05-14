@@ -1,8 +1,8 @@
+import { formatDate } from "@/utils/format-date";
+import ScanHistorySkeleton from "@components/skeletons/ScanHistorySkeleton"; // 🆕
 import { Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import RadialProgress from "../RadialProgress";
-import ScanHistorySkeleton from "@components/skeletons/ScanHistorySkeleton"; // 🆕
-import { formatDate } from "@/utils/format-date";
 
 export interface ScanEntry {
     id: number;
@@ -24,12 +24,13 @@ export default function ScanHistoryCard({
     history,
     scrollable = true,
     onLoadMore,
-    loading = false, // 🆕
+    loading,
 }: ScanHistoryCardProps) {
     const { t, i18n } = useTranslation("common");
     const locale = i18n.language || "en";
 
     console.log(history);
+    console.log(loading);
     return (
         <div
             className={`w-full rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 shadow-sm sm:max-w-md ${
@@ -53,22 +54,26 @@ export default function ScanHistoryCard({
                         >
                             <div className="flex flex-col">
                                 <p className="font-medium text-gray-800 dark:text-white truncate max-w-[160px] sm:max-w-[200px]">
-                                    {entry.productName}
+                                    {entry.product.productList.name}
                                 </p>
                                 <p className="text-xs py-4 text-gray-500 dark:text-gray-400">
                                     {t(
-                                        `process.${entry.process}`,
-                                        entry.process
+                                        `process.${entry.process.processList.name}`,
+                                        entry.process.processList.name
                                     )}
                                 </p>
                             </div>
                             <div className="flex flex-col items-end text-xs text-right">
                                 <span className="text-gray-500 dark:text-gray-400 italic mb-1">
-                                    {formatDate(entry.date, undefined, locale)}
+                                    {formatDate(
+                                        entry.createdAt,
+                                        undefined,
+                                        locale
+                                    )}
                                 </span>
                                 <RadialProgress
                                     size={50}
-                                    percentage={entry.progress}
+                                    percentage={entry.percent}
                                 />
                             </div>
                         </li>

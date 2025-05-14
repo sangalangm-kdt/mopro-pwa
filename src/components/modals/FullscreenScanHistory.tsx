@@ -1,30 +1,29 @@
-import { useEffect, useState } from "react";
-import { X } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import RadialProgress from "../RadialProgress";
-import { formatDate } from "@/utils/format-date";
 import ScanHistorySkeleton from "@/components/skeletons/ScanHistorySkeleton";
+import { formatDate } from "@/utils/format-date";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ScanEntry } from "../cards/ScanHistoryCard";
+import RadialProgress from "../RadialProgress";
 
 interface FullscreenScanHistoryProps {
     data: ScanEntry[];
     onClose: () => void;
+    loading: boolean;
 }
 
 export default function FullscreenScanHistory({
     data,
     onClose,
+    loading,
 }: FullscreenScanHistoryProps) {
     const { t, i18n } = useTranslation("common");
     const locale = i18n.language || "en";
 
     const [visible, setVisible] = useState(false);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setVisible(true);
-        const timeout = setTimeout(() => setLoading(false), 800); // ⏱ simulate delay
-        return () => clearTimeout(timeout);
+        !loading && setVisible(true);
     }, []);
 
     const handleClose = () => {
@@ -55,35 +54,35 @@ export default function FullscreenScanHistory({
             <div className="p-4 h-[calc(100vh-60px)] overflow-y-auto scrollbar">
                 {loading ? (
                     <ScanHistorySkeleton count={data.length || 5} />
-                ) : data.length > 0 ? (
+                ) : data?.length > 0 ? (
                     <ul className="divide-y divide-gray-200 dark:divide-zinc-700 text-sm">
-                        {data.map((entry) => (
+                        {data?.map((entry) => (
                             <li
                                 key={entry.id}
                                 className="py-4 flex flex-row justify-between items-center gap-4"
                             >
                                 <div className="flex flex-col">
                                     <p className="font-medium text-gray-800 dark:text-white truncate max-w-[200px]">
-                                        {entry.productName}
+                                        {entry.product.productList.name}
                                     </p>
                                     <p className="text-xs text-gray-500 py-4 dark:text-gray-400">
                                         {t(
-                                            `process.${entry.process}`,
-                                            entry.process
+                                            `process.${entry.process.processList.name}`,
+                                            entry.process.processList.name
                                         )}
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-end text-xs text-right">
                                     <span className="text-gray-500 dark:text-gray-400 italic mb-1">
                                         {formatDate(
-                                            entry.date,
+                                            entry.createdAt,
                                             undefined,
                                             locale
                                         )}
                                     </span>
                                     <RadialProgress
                                         size={50}
-                                        percentage={entry.progress}
+                                        percentage={entry.percent}
                                     />
                                 </div>
                             </li>
