@@ -4,15 +4,17 @@ import useSWR from "swr";
 export const useProgressUpdate = () => {
     const csrf = () => axios.get("/sanctum/csrf-cookie");
 
-    const { data: progressUpdates, mutate } = useSWR(
-        "/api/progress-update",
-        () =>
-            axios
-                .get("/api/progress-update")
-                .then((res) => res.data)
-                .catch((error) => {
-                    if (error.response.status !== 409) throw error;
-                })
+    const {
+        data: progressUpdates,
+        mutate,
+        isLoading,
+    } = useSWR("/api/progress-update", () =>
+        axios
+            .get("/api/progress-update")
+            .then((res) => res.data)
+            .catch((error) => {
+                if (error.response.status !== 409) throw error;
+            })
     );
 
     const addProgressUpdate = async (data) => {
@@ -44,5 +46,5 @@ export const useProgressUpdate = () => {
             return false;
         }
     };
-    return { progressUpdates, mutate, addProgressUpdate };
+    return { progressUpdates, isLoading, mutate, addProgressUpdate };
 };

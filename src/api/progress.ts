@@ -19,7 +19,7 @@ interface ApiError {
 export const useProgress = () => {
     const csrf = () => axios.get("/sanctum/csrf-cookie");
 
-    const { data: progresses, mutate } = useSWR("/api/progress", () =>
+    const { data: progress, mutate } = useSWR("/api/progress", () =>
         axios
             .get("/api/progress")
             .then((res) => res.data)
@@ -63,5 +63,5 @@ export const useProgress = () => {
         }
     };
 
-    return { progresses, mutate, addProgress };
+    return { progress, mutate, addProgress };
 };

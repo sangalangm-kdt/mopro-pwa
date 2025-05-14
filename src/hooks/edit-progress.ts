@@ -57,7 +57,7 @@ export function useEditProgress() {
     // Form state management
     const [selectedProcess, setSelectedProcess] = useState("");
     const [progress, setProgress] = useState(0);
-    const [submitted, setSubmitted] = useState(false);
+    const [submitted] = useState(false);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -72,16 +72,17 @@ export function useEditProgress() {
 
     // Handle form submit/save
     const handleSave = async () => {
-        // setSubmitted(true);
         if (!isValid) return;
         setSaving(true);
         const success = await addProgressUpdate({
+            productId: product.id,
             processId: selectedProcess,
             lineNumber: lineNumber,
             userId: user.id,
             percent: progress,
         });
         console.log({
+            productId: product.id,
             processId: selectedProcess,
             lineNumber: lineNumber,
             userId: user.id,
