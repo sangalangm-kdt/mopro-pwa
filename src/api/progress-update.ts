@@ -23,13 +23,16 @@ interface ApiError {
 export const useProgressUpdate = () => {
   const csrf = () => axios.get("/sanctum/csrf-cookie");
 
-  const { data: progressUpdates, mutate } = useSWR("/api/progress-update", () =>
+  const {
+    data: progressUpdates,
+    mutate,
+    isLoading,
+  } = useSWR("/api/progress-update", () =>
     axios
       .get("/api/progress-update")
       .then((res) => res.data)
-      .catch((error: unknown) => {
-        const err = error as ApiError;
-        if (err.response?.status !== 409) throw err;
+      .catch((error) => {
+        if (error.response.status !== 409) throw error;
       })
   );
 
@@ -45,27 +48,24 @@ export const useProgressUpdate = () => {
       await mutate();
       return true;
     } catch (error: unknown) {
-      const err = error as ApiError;
-
-      if (err.response) {
-        const { status, data } = err.response;
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
 
         if (status === 422) {
           console.log("Validation error:", data?.errors);
         } else if (status === 403) {
           console.log("Unauthorized: Wrong credentials");
         } else {
-          console.log("Login failed:", status);
+          console.log("Request failed:", status);
         }
-      } else if (err instanceof Error) {
-        console.log("Unexpected error:", err.message);
+      } else if (error instanceof Error) {
+        console.log("Unexpected error:", error.message);
       } else {
-        console.log("Unknown error", err);
+        console.log("Unknown error", error);
       }
-
       return false;
     }
   };
 
-  return { progressUpdates, mutate, addProgressUpdate };
+  return { progressUpdates, isLoading, mutate, addProgressUpdate };
 };

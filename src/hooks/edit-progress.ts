@@ -69,29 +69,30 @@ export function useEditProgress() {
 
   // Handle form submit/save
   const handleSave = async () => {
-    if (!isValid || lineNumber === null || !product) return;
+    if (!isValid || !product || lineNumber === null) return;
 
     setSaving(true);
 
     const success = await addProgressUpdate({
       processId: selectedProcess,
-      lineNumber,
+      lineNumber: lineNumber!, // ✅ ensure type safety
       userId: user.id,
       percent: progress,
       product_id: product.id,
       project_id: product.projectId,
     });
 
-    if (success) {
-      console.log("Saving progress for:", {
-        lineNumber,
-        selectedProcess,
-        progress,
-      });
+    console.log("Saving progress for:", {
+      lineNumber,
+      selectedProcess,
+      progress,
+    });
 
-      setSaving(false);
+    if (success) {
       setSuccess(true);
     }
+
+    setSaving(false);
   };
 
   return {
