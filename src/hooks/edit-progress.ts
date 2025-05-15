@@ -47,32 +47,25 @@ export function useEditProgress() {
   const user = useAuth().user.data;
 
   const lineNumber = useLineNumber(); // Extracted from route
-  const { product } = useProduct(lineNumber ?? 0); // Fetch individual product data
+
+  const { products } = useProduct(); // Fetch individual product data
+  const product = products?.find(
+    (p: { lineNumber: number | null }) => p.lineNumber === lineNumber
+  ); // Find the product by line number
   const matchedProject = useMatchedProject(lineNumber); // Identify the project
   const processes = useProcessOptions(matchedProject?.process); // Format for dropdown
 
   // Form state management
-  const [selectedProcess, setSelectedProcess] = useState<string>(
-    () => product?.currentProcess?.id ?? ""
-  );
-  const [progress, setProgress] = useState<number>(
-    () => product?.progress ?? 0
-  );
-
-  useEffect(() => {
-    if (product) {
-      setSelectedProcess(product.currentProcess?.id ?? "");
-      setProgress(product.progress ?? 0);
-    }
-  }, [product]);
-
+  const [selectedProcess, setSelectedProcess] = useState("");
+  const [progress, setProgress] = useState(0);
   const [submitted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+
   // Validation: user must select a process and progress must be > 0
   const isValid = selectedProcess !== "" && progress > 0;
-  console.log(selectedProcess);
+
   // Simulate initial loading state
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 800);
@@ -81,29 +74,34 @@ export function useEditProgress() {
 
   // Handle form submit/save
   const handleSave = async () => {
-    if (!isValid || !product || lineNumber === null || !matchedProject) return;
-
+    if (!isValid) return;
     setSaving(true);
-
     const success = await addProgressUpdate({
       processId: selectedProcess,
-      lineNumber: lineNumber!, // ✅ ensure type safety
+      lineNumber: lineNumber,
       userId: user.id,
       percent: progress,
+      projectId: matchedProject?.id,
       productId: product.id,
-      projectId: matchedProject.id,
     });
-
-    console.log("Saving progress for:", {
-      lineNumber,
-      selectedProcess,
-      progress,
+    console.log({
+      projectId: matchedProject?.id,
+      productId: product.id,
+      processId: selectedProcess,
+      lineNumber: lineNumber,
+      userId: user.id,
+      percent: progress,
     });
 
     if (success) {
+      console.log("Saving progress for:", {
+        lineNumber,
+        selectedProcess,
+        progress,
+      });
+
       setSuccess(true);
     }
-
     setSaving(false);
   };
 
