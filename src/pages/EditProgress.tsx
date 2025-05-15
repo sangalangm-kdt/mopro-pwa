@@ -8,6 +8,9 @@ import Button from "@/components/buttons/Button";
 import EditProgressSkeleton from "@/components/skeletons/EditProgressSkeleton";
 import { Loader2 } from "lucide-react";
 import SuccessModal from "@/components/modals/SuccessModal";
+import { formatDate } from "@/utils/format-date";
+import { ROUTES } from "@/constants";
+import { useNavigate } from "react-router-dom"; // ✅ make sure this import is present
 
 const EditProgress = () => {
   const {
@@ -26,7 +29,8 @@ const EditProgress = () => {
     isValid,
   } = useEditProgress();
 
-  // Show skeleton when loading or product is unavailable
+  const navigate = useNavigate();
+
   if (loading || !product) {
     return (
       <div className="flex flex-col min-h-screen w-full dark:bg-zinc-900">
@@ -34,7 +38,15 @@ const EditProgress = () => {
           title="Edit Progress"
           showBack
           textColorClass="text-gray-800 dark:text-white"
-          rightElement={<Icon name="home" />}
+          rightElement={
+            <button
+              onClick={() => navigate(ROUTES.HOME)}
+              className="p-1 cursor-pointer"
+              aria-label="Go to home"
+            >
+              <Icon name="home" />
+            </button>
+          }
         />
         <div className="flex-1 p-4">
           <EditProgressSkeleton />
@@ -43,13 +55,26 @@ const EditProgress = () => {
     );
   }
 
+  // ✅ Normalize updated_at to updatedAt
+  if (!product.updatedAt && product.updated_at) {
+    product.updatedAt = product.updated_at;
+  }
+
   return (
     <div className="flex flex-col min-h-screen w-full overflow-hidden dark:bg-zinc-900">
       <Header
         title="Edit Progress"
         showBack
         textColorClass="text-gray-800 dark:text-white"
-        rightElement={<Icon name="home" />}
+        rightElement={
+          <button
+            onClick={() => navigate(ROUTES.HOME)}
+            className="p-1 cursor-pointer"
+            aria-label="Go to home"
+          >
+            <Icon name="home" />
+          </button>
+        }
       />
 
       <div className="flex-1 p-4 space-y-6 text-gray-800 dark:text-white pb-32">
@@ -82,6 +107,31 @@ const EditProgress = () => {
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug">
               Select the current process and update the progress value below.
             </p>
+
+            {(product.currentProcess || product.progress !== undefined) && (
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                <p>
+                  Previous Process:{" "}
+                  <span className="font-semibold">
+                    {product.currentProcess?.name ?? "-"}
+                  </span>
+                </p>
+                <p>
+                  Previous Progress:{" "}
+                  <span className="font-semibold">
+                    {product.progress ?? 0}%
+                  </span>
+                </p>
+                {product.updatedAt && (
+                  <p>
+                    Last Updated:{" "}
+                    <span className="font-semibold">
+                      {formatDate(product.updatedAt)}
+                    </span>
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="space-y-1">
