@@ -50,7 +50,9 @@ export function useEditProgress() {
     const user = useAuth().user.data;
 
     const lineNumber = useLineNumber(); // Extracted from route
-    const { product } = useProduct(lineNumber ?? 0); // Fetch individual product data
+
+    const { products } = useProduct(); // Fetch individual product data
+    const product = products?.find((p) => p.lineNumber === lineNumber); // Find the product by line number
     const matchedProject = useMatchedProject(lineNumber); // Identify the project
     const processes = useProcessOptions(matchedProject?.process); // Format for dropdown
 
@@ -61,9 +63,10 @@ export function useEditProgress() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
+
     // Validation: user must select a process and progress must be > 0
     const isValid = selectedProcess !== "" && progress > 0;
-    console.log(selectedProcess);
+
     // Simulate initial loading state
     useEffect(() => {
         const timer = setTimeout(() => setLoading(false), 800);
@@ -75,12 +78,12 @@ export function useEditProgress() {
         if (!isValid) return;
         setSaving(true);
         const success = await addProgressUpdate({
-            projectId: matchedProject?.id,
-            productId: product.id,
             processId: selectedProcess,
             lineNumber: lineNumber,
             userId: user.id,
             percent: progress,
+            projectId: matchedProject?.id,
+            productId: product.id,
         });
         console.log({
             projectId: matchedProject?.id,
