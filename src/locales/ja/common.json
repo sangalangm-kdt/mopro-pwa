@@ -1,0 +1,14 @@
+{
+  "home": {
+    "welcomeTitle": "<1>MOPro</1>へようこそ",
+    "welcomeDescription": "検査を管理し、進捗を追跡し、プロジェクトのQRコードを簡単かつ効率的にスキャンできます。",
+    "scanTitle": "QRコードをスキャン",
+    "scanSubtitle": "進捗を更新するにはここをクリックしてください",
+    "scanHistory": "スキャン履歴",
+    "scanButton": "スキャン"
+  },
+  "button": {
+    "confirm": "確認",
+    "cancel": "キャンセル"
+  }
+}

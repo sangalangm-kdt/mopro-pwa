@@ -51,7 +51,7 @@ export function useScanResult(
   }, [progress, qrData]);
 
   const latestProgress = matchedProgress?.[0];
-  console.log("matchss", matchedProgress);
+  console.log("matchss", latestProgress);
 
   // 3. Reconstruct Product from project + progress
   const reconstructedProduct: Product | undefined = useMemo(() => {

@@ -1,5 +1,6 @@
-import { ChevronDown, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useState, useMemo } from "react";
+import StepDropdown from "./StepDropdown";
 
 export default function ProgressSlider({
   value,
@@ -39,23 +40,8 @@ export default function ProgressSlider({
           >
             Step:
           </label>
-          <div className="relative w-16">
-            <select
-              id="step-select"
-              value={step}
-              onChange={(e) => setStep(Number(e.target.value))}
-              className="w-full h-9 pl-3 pr-8 rounded-md text-sm bg-white dark:bg-zinc-800 text-gray-800 dark:text-white border border-gray-300 dark:border-zinc-600 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              {[1, 2, 5, 10, 20, 25].map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-400 dark:text-gray-500">
-              <ChevronDown className="w-4 h-4" />
-            </div>
-          </div>
+
+          <StepDropdown value={step} onChange={setStep} />
         </div>
       </div>
 

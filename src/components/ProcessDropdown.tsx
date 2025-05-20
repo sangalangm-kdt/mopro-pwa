@@ -23,8 +23,11 @@ export default function ProcessDropdown({
 
   //  Sync input field with current selected value
   useEffect(() => {
-    const selected = processes.find((p) => p.value === value);
+    const selected = processes.find((p) => p.value == value);
     setSearch(selected?.label || "");
+    console.log(value);
+    console.log(processes);
+    console.log(selected);
   }, [processes, value]);
 
   //  Close dropdown on outside click

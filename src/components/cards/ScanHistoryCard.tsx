@@ -6,11 +6,21 @@ import RadialProgress from "../RadialProgress";
 
 export interface ScanEntry {
   id: number;
+  percent: number;
   drawingNumber: string;
   productName: string;
   date: string;
-  progress: number;
-  process: string;
+  createdAt: string;
+  product: {
+    productList: {
+      name: string;
+    };
+  };
+  process: {
+    processList: {
+      name: string;
+    };
+  };
 }
 
 interface ScanHistoryCardProps {
@@ -26,7 +36,7 @@ export default function ScanHistoryCard({
   onLoadMore,
   loading,
 }: ScanHistoryCardProps) {
-  const { t, i18n } = useTranslation("common");
+  const { t, i18n } = useTranslation(["common", "home"]);
   const locale = i18n.language || "en";
 
   console.log(history);

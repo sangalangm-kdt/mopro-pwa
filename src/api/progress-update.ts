@@ -57,5 +57,10 @@ export const useProgressUpdate = () => {
       return false;
     }
   };
-  return { progressUpdates, isLoading, mutate, addProgressUpdate };
+  return {
+    progressUpdates,
+    isLoading,
+    mutate,
+    addProgressUpdate,
+  };
 };

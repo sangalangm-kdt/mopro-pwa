@@ -1,16 +1,16 @@
-import { useProgress } from "@/api/progress";
+import { useProgressUpdate } from "@/api/progress-update";
 import Button from "@/components/buttons/Button";
 import ScanHistoryCard from "@/components/cards/ScanHistoryCard";
 import FullscreenScanHistory from "@/components/modals/FullscreenScanHistory";
-import { BUTTON_TEXT, ROUTES } from "@constants/index";
+import { BUTTON_TEXT, HOME_TEXT_KEYS, ROUTES } from "@constants/index";
 import { ScanQrCode } from "lucide-react";
 import { useState } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const { progress, isLoading } = useProgress();
-  console.log("progressUpdate", progress);
-
+  const { progressUpdates, isLoading } = useProgressUpdate();
+  const { t } = useTranslation("common");
   const navigate = useNavigate();
   const [showFullHistory, setShowFullHistory] = useState(false);
 
@@ -19,14 +19,17 @@ const Home = () => {
       {/* 👋 Welcome Section */}
       <div className="w-full max-w-md bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl p-5 shadow-sm transition-colors">
         <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Welcome to{" "}
-          <span className="font-raleway text-primary-600 dark:text-primary-400">
-            MOPro
-          </span>
+          <Trans
+            i18nKey={HOME_TEXT_KEYS.WELCOME_TITLE}
+            ns="common"
+            components={[
+              <span className="app-name-highlight font-raleway text-primary-600 dark:text-primary-400" />,
+            ]}
+          />
         </h1>
+
         <p className="text-sm text-gray-800 dark:text-gray-200 mt-2 leading-relaxed">
-          Manage inspections, track progress, and scan your project QR codes
-          effortlessly and efficiently.
+          {t(HOME_TEXT_KEYS.WELCOME_DESCRIPTION)}
         </p>
       </div>
 
@@ -38,22 +41,22 @@ const Home = () => {
           </div>
           <div className="text-sm">
             <p className="text-gray-800 dark:text-white font-semibold">
-              Scan QR Code
+              {t(HOME_TEXT_KEYS.SCAN_TITLE)}
             </p>
             <p className="text-gray-500 dark:text-gray-400 text-xs">
-              Click here to update your progress
+              {t(HOME_TEXT_KEYS.SCAN_SUBTITLE)}
             </p>
           </div>
         </div>
         <Button onClick={() => navigate(ROUTES.SCANNER)} className="px-6 py-2">
-          {BUTTON_TEXT.SCAN}
+          {t(BUTTON_TEXT.SCAN)}
         </Button>
       </div>
 
       {/* 📜 Scan History */}
       <div className="w-full flex justify-center">
         <ScanHistoryCard
-          history={progress?.slice(0, 5)}
+          history={progressUpdates?.slice(0, 5)}
           scrollable={false}
           onLoadMore={() => setShowFullHistory(true)}
           loading={isLoading}
@@ -63,7 +66,7 @@ const Home = () => {
       {/* 🧾 Fullscreen Modal */}
       {showFullHistory && (
         <FullscreenScanHistory
-          data={progress}
+          data={progressUpdates}
           onClose={() => setShowFullHistory(false)}
           loading={isLoading}
         />

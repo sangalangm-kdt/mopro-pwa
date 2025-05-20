@@ -48,8 +48,7 @@ export const useAuth = () => {
       } else {
         console.log("Unknown error", error);
       }
-      //   return false;
-      throw error;
+      return false;
     }
   };
 

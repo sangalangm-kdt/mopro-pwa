@@ -33,7 +33,7 @@ function useProcessOptions(processes: Process[] | undefined) {
     return (
       processes?.map((v) => ({
         label: v.processList.name,
-        value: String(v.processList.id),
+        value: String(v.id),
       })) ?? []
     );
   }, [processes]);
@@ -42,6 +42,7 @@ function useProcessOptions(processes: Process[] | undefined) {
 // Main logic
 export function useEditProgress() {
   const { addProgressUpdate, progressUpdates } = useProgressUpdate();
+
   const user = useAuth().user.data;
 
   const lineNumber = useLineNumber();
@@ -67,12 +68,11 @@ export function useEditProgress() {
   const processes = useProcessOptions(matchedProject?.process);
 
   const [selectedProcess, setSelectedProcess] = useState<string>(
-    () =>
-      latestProgress?.process?.processList?.id?.toString() ??
-      product?.currentProcess?.id?.toString() ??
-      ""
+    () => latestProgress?.process?.id?.toString() ?? ""
   );
 
+  console.log(latestProgress?.process?.id?.toString());
+  console.log(product?.currentProcess?.id?.toString());
   console.log(selectedProcess);
   const [progress, setProgress] = useState(() =>
     typeof latestProgress?.percent === "number"
@@ -116,7 +116,7 @@ export function useEditProgress() {
     product: product
       ? {
           ...product,
-          updatedAt: product.updatedAt || product.updated_at,
+          updatedAt: latestProgress?.updatedAt,
           processes,
         }
       : null,

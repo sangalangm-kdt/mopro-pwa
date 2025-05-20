@@ -55,11 +55,6 @@ const EditProgress = () => {
     );
   }
 
-  // ✅ Normalize updated_at to updatedAt
-  if (!product.updatedAt && product.updated_at) {
-    product.updatedAt = product.updated_at;
-  }
-
   return (
     <div className="flex flex-col min-h-screen w-full overflow-hidden dark:bg-zinc-900">
       <Header
@@ -107,31 +102,6 @@ const EditProgress = () => {
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug">
               Select the current process and update the progress value below.
             </p>
-
-            {(product.currentProcess || product.progress !== undefined) && (
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                <p>
-                  Previous Process:{" "}
-                  <span className="font-semibold">
-                    {product.currentProcess?.name ?? "-"}
-                  </span>
-                </p>
-                <p>
-                  Previous Progress:{" "}
-                  <span className="font-semibold">
-                    {product.progress ?? 0}%
-                  </span>
-                </p>
-                {product.updatedAt && (
-                  <p>
-                    Last Updated:{" "}
-                    <span className="font-semibold">
-                      {formatDate(product.updatedAt)}
-                    </span>
-                  </p>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="space-y-1">
@@ -140,7 +110,10 @@ const EditProgress = () => {
             </label>
             <ProcessDropdown
               value={selectedProcess}
-              onChange={(val) => setSelectedProcess(val)}
+              onChange={(val) => {
+                setSelectedProcess(val);
+                console.log(product.processes);
+              }}
               options={product.processes}
             />
             {submitted && !selectedProcess && (
@@ -156,6 +129,14 @@ const EditProgress = () => {
               </p>
             )}
           </div>
+          {product.updatedAt && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Last Updated:{" "}
+              <span className="font-semibold">
+                {formatDate(product.updatedAt)}
+              </span>
+            </p>
+          )}
         </div>
       </div>
 
