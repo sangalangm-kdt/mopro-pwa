@@ -4,7 +4,7 @@ export interface Product {
   remarks: string;
   lastModifiedBy: string;
   currentProcess: string;
-  progress: number;
+  percent: number;
   productList: {
     name: string;
   };
@@ -26,6 +26,31 @@ export interface ScanSuccessData {
   updatedAt: string;
   remarks: string;
   productDetails: Product;
+  percent: number;
 }
 
 export type ScanResult = ScanSuccessData | { error: string };
+
+export interface RawProgressEntry {
+  id: number;
+  lineNumber: string;
+  percent: number;
+  updatedAt: string;
+  product: {
+    lineNumber: string;
+    weight: number;
+    remarks: string;
+    productList: {
+      name: string;
+    };
+  };
+  user: {
+    firstName: string;
+    lastName: string;
+  };
+  process: {
+    processList: {
+      name: string;
+    };
+  };
+}

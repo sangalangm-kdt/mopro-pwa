@@ -33,7 +33,7 @@ export function getProductDetailsFields(parsed: Product): FieldItem[] {
   return [
     // { label: "Line number", value: parsed.lineNumber, icon: "clipboard-list" },
     {
-      label: "Product name",
+      label: "Drawing name",
       value: parsed.productList.name,
       icon: "clipboard-list",
     },
@@ -43,7 +43,7 @@ export function getProductDetailsFields(parsed: Product): FieldItem[] {
       value: parsed.currentProcess,
       icon: "workflow",
     },
-    { label: "Progress (%)", value: `${parsed.progress}%`, icon: "loader" },
+    { label: "Progress (%)", value: parsed.percent, icon: "loader" },
     { label: "Remarks", value: parsed.remarks, icon: "sticky-note" },
   ];
 }

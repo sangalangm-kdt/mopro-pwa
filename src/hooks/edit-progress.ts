@@ -6,108 +6,120 @@ import { isMatchingSerial } from "@/utils/compare-serial";
 import { Product, Project, Process } from "@/types/editProgress";
 import { useAuth } from "@/api/auth";
 import { useProgressUpdate } from "@/api/progress-update";
+import type { RawProgressEntry } from "@/types/scan"; // make sure this matches your actual type location
 
-// Extract and convert the `lineNumber` param from the URL
+// Extract line number from URL
 function useLineNumber(): number | null {
   const { lineNumber } = useParams<{ lineNumber?: string }>();
   return useMemo(() => (lineNumber ? +lineNumber : null), [lineNumber]);
 }
 
-// Find the project that contains the product with the given line number
+// Match project by lineNumber
 function useMatchedProject(lineNumber: number | null): Project | undefined {
   const { projects } = useProject();
-
   return useMemo(() => {
     if (!projects || lineNumber === null) return undefined;
-
     return projects.find((project: Project) =>
-      project.products.some(
-        (product: Product) =>
-          isMatchingSerial(String(product.lineNumber), String(lineNumber)) // Ensure string comparison
+      project.products.some((product: Product) =>
+        isMatchingSerial(String(product.lineNumber), String(lineNumber))
       )
     );
   }, [projects, lineNumber]);
 }
 
-// Transform process data into dropdown options format
+// Format process options for dropdown
 function useProcessOptions(processes: Process[] | undefined) {
   return useMemo(() => {
     return (
       processes?.map((v) => ({
         label: v.processList.name,
-        value: v.processList.id,
+        value: String(v.processList.id),
       })) ?? []
     );
   }, [processes]);
 }
 
-// handles edit progress form logic
+// Main logic
 export function useEditProgress() {
-  const { addProgressUpdate } = useProgressUpdate();
+  const { addProgressUpdate, progressUpdates } = useProgressUpdate();
   const user = useAuth().user.data;
 
-  const lineNumber = useLineNumber(); // Extracted from route
+  const lineNumber = useLineNumber();
+  const { products } = useProduct();
+  const matchedProject = useMatchedProject(lineNumber);
 
-  const { products } = useProduct(); // Fetch individual product data
+  // Get the specific product
   const product = products?.find(
-    (p: { lineNumber: number | null }) => p.lineNumber === lineNumber
-  ); // Find the product by line number
-  const matchedProject = useMatchedProject(lineNumber); // Identify the project
-  const processes = useProcessOptions(matchedProject?.process); // Format for dropdown
+    (p: Product) => String(p.lineNumber) === String(lineNumber)
+  );
 
-  // Form state management
-  const [selectedProcess, setSelectedProcess] = useState("");
-  const [progress, setProgress] = useState(0);
-  const [submitted] = useState(false);
+  const latestProgress = useMemo(() => {
+    return progressUpdates
+      ?.filter((entry: RawProgressEntry) =>
+        isMatchingSerial(String(entry.product?.lineNumber), String(lineNumber))
+      )
+      .sort(
+        (a: RawProgressEntry, b: RawProgressEntry) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )[0];
+  }, [progressUpdates, lineNumber]);
+
+  const processes = useProcessOptions(matchedProject?.process);
+
+  const [selectedProcess, setSelectedProcess] = useState<string>(
+    () =>
+      latestProgress?.process?.processList?.id?.toString() ??
+      product?.currentProcess?.id?.toString() ??
+      ""
+  );
+
+  console.log(selectedProcess);
+  const [progress, setProgress] = useState(() =>
+    typeof latestProgress?.percent === "number"
+      ? latestProgress.percent
+      : typeof product?.progress === "number"
+      ? product.progress
+      : 0
+  );
+  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Validation: user must select a process and progress must be > 0
   const isValid = selectedProcess !== "" && progress > 0;
 
-  // Simulate initial loading state
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
 
-  // Handle form submit/save
   const handleSave = async () => {
+    setSubmitted(true);
     if (!isValid) return;
+
     setSaving(true);
     const success = await addProgressUpdate({
       processId: selectedProcess,
-      lineNumber: lineNumber,
+      lineNumber,
       userId: user.id,
       percent: progress,
       projectId: matchedProject?.id,
-      productId: product.id,
-    });
-    console.log({
-      projectId: matchedProject?.id,
-      productId: product.id,
-      processId: selectedProcess,
-      lineNumber: lineNumber,
-      userId: user.id,
-      percent: progress,
+      productId: product?.id,
     });
 
-    if (success) {
-      console.log("Saving progress for:", {
-        lineNumber,
-        selectedProcess,
-        progress,
-      });
-
-      setSuccess(true);
-    }
+    if (success) setSuccess(true);
     setSaving(false);
   };
 
   return {
     lineNumber,
-    product: product ? { ...product, processes } : null,
+    product: product
+      ? {
+          ...product,
+          updatedAt: product.updatedAt || product.updated_at,
+          processes,
+        }
+      : null,
     loading,
     saving,
     success,

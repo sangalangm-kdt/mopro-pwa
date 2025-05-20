@@ -8,8 +8,8 @@ interface ProgressUpdatePayload {
   lineNumber: number;
   userId: number;
   percent: number;
-  product_id: number;
-  project_id: number;
+  productId: number;
+  projectId: number;
 }
 
 export const useProgressUpdate = () => {

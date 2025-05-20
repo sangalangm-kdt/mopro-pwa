@@ -5,15 +5,27 @@ import {
   getProductDetailsFields,
 } from "@/constants/variables/fields";
 import { isMatchingSerial } from "@/utils/compare-serial";
-import type { Project, Product, ScanResult } from "@/types/scan";
+import type {
+  RawProgressEntry,
+  Project,
+  Product,
+  ScanResult,
+} from "@/types/scan";
+
+import { useIsMobile } from "./is-mobile-screen";
 
 export function useScanResult(
   qrData: string,
   onClose: () => void,
   projects?: Project[],
-  progress?: Product[]
+  progress?: RawProgressEntry[]
 ) {
-  // Find the matching project based on scanned QR code
+  const isMobile = useIsMobile();
+  const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const startY = useRef<number | null>(null);
+
+  // 1. Match project and product inside it
   const matchedProject = useMemo(() => {
     return projects?.find((project) =>
       project.products.some((product) =>
@@ -22,47 +34,70 @@ export function useScanResult(
     );
   }, [projects, qrData]);
 
-  const matchedProgress = useMemo(() => {
-    return progress?.filter((progress) =>
-      isMatchingSerial(progress.lineNumber, qrData)
-    );
-  }, [progress, qrData]);
-  console.log(matchedProgress);
-
-  //  Find the specific product within the matched project
-  const matchedProduct = useMemo(() => {
+  const matchedProduct: Product | undefined = useMemo(() => {
     return matchedProject?.products.find((product) =>
       isMatchingSerial(product.lineNumber, qrData)
     );
   }, [matchedProject, qrData]);
 
-  // UI state: whether the result sheet is expanded or still loading
-  const [expanded, setExpanded] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const startY = useRef<number | null>(null);
+  // 2. Find latest progress entry for this product
+  const matchedProgress = useMemo(() => {
+    return progress
+      ?.filter((entry) => isMatchingSerial(entry.product?.lineNumber, qrData))
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+  }, [progress, qrData]);
 
-  // Construct parsed scan result or error
+  const latestProgress = matchedProgress?.[0];
+  console.log("matchss", matchedProgress);
+
+  // 3. Reconstruct Product from project + progress
+  const reconstructedProduct: Product | undefined = useMemo(() => {
+    if (!matchedProduct) return undefined;
+
+    return {
+      lineNumber: String(matchedProduct.lineNumber),
+      weight: matchedProduct.weight,
+      remarks: matchedProduct.remarks,
+      lastModifiedBy: latestProgress
+        ? `${latestProgress.user.firstName} ${latestProgress.user.lastName}`
+        : "-",
+      currentProcess: latestProgress
+        ? latestProgress.process.processList.name
+        : matchedProduct.currentProcess,
+      percent:
+        typeof latestProgress?.percent === "number"
+          ? latestProgress.percent
+          : matchedProduct.percent ?? 0,
+      productList: {
+        name: matchedProduct.productList.name,
+      },
+    };
+  }, [matchedProduct, latestProgress]);
+
+  // 4. Final scan result
   const parsed: ScanResult =
-    matchedProject && matchedProduct
+    matchedProject && reconstructedProduct
       ? {
-          lineNumber: matchedProduct.lineNumber,
-          serialNumber: matchedProduct.lineNumber,
+          lineNumber: reconstructedProduct.lineNumber,
+          serialNumber: reconstructedProduct.lineNumber,
           orderNumber: matchedProject.orderNumber,
+          percent: reconstructedProduct.percent,
           name: matchedProject.name,
           updatedAt: matchedProject.updatedAt,
           remarks: matchedProject.remarks,
-          productDetails: matchedProduct,
+          productDetails: reconstructedProduct,
         }
       : {
-          error: "No data found for this serial number",
+          error: "No data found for this drawing number.",
         };
 
-  // Extract UI field groups from parsed data
   const overviewFields = getOverviewFields(parsed);
   const productDetailsFields =
     "error" in parsed ? [] : getProductDetailsFields(parsed.productDetails);
 
-  //  Fake loading delay to simulate processing/animation
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
@@ -98,9 +133,10 @@ export function useScanResult(
     parsed,
     overviewFields,
     productDetailsFields,
-    handleTouchStart,
-    handleTouchEnd,
+    handleTouchStart: isMobile ? handleTouchStart : undefined,
+    handleTouchEnd: isMobile ? handleTouchEnd : undefined,
     handleOverlayClick,
     toggleExpanded,
+    isMobile,
   };
 }

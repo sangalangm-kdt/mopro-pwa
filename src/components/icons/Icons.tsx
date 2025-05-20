@@ -10,6 +10,7 @@ import {
   Home,
   Weight,
   UserPen,
+  Frown,
 } from "lucide-react";
 
 // Lazy-loaded custom icons
@@ -34,6 +35,7 @@ const lucideIcons: Record<string, LucideIcon> = {
   clock: Clock,
   workflow: Workflow,
   "sticky-note": StickyNote,
+  sad: Frown,
   home: Home,
   weight: Weight,
   "last-modified-by": UserPen,

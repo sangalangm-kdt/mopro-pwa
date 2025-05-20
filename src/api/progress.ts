@@ -67,5 +67,5 @@ export const useProgress = () => {
     }
   };
 
-  return { progress, isLoading, mutate, addProgress };
+  return { progress, isLoading, mutate, addProgress, useProgress };
 };

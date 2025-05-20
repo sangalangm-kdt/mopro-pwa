@@ -140,7 +140,7 @@ const EditProgress = () => {
             </label>
             <ProcessDropdown
               value={selectedProcess}
-              onChange={setSelectedProcess}
+              onChange={(val) => setSelectedProcess(val)}
               options={product.processes}
             />
             {submitted && !selectedProcess && (
