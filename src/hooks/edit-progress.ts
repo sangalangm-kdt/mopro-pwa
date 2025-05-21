@@ -118,6 +118,11 @@ export function useEditProgress() {
           ...product,
           updatedAt: latestProgress?.updatedAt,
           processes,
+          previousProgress:
+            progressUpdates?.filter(
+              (entry: { product: { lineNumber: string } }) =>
+                isMatchingSerial(entry.product?.lineNumber, product.lineNumber)
+            ) ?? [],
         }
       : null,
     loading,

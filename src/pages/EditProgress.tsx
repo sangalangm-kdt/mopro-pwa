@@ -112,10 +112,22 @@ const EditProgress = () => {
               value={selectedProcess}
               onChange={(val) => {
                 setSelectedProcess(val);
-                console.log(product.processes);
+
+                // Try to find the latest matching progress entry for this process
+                const matchingEntry = product?.previousProgress?.find(
+                  (entry: { process: { id: unknown } }) =>
+                    String(entry.process.id) === val
+                );
+
+                if (matchingEntry) {
+                  setProgress(matchingEntry.percent); // ✅ has previous progress
+                } else {
+                  setProgress(0); // 🔁 reset if none
+                }
               }}
               options={product.processes}
             />
+
             {submitted && !selectedProcess && (
               <p className="text-xs text-red-500 mt-1">Process is required.</p>
             )}
