@@ -9,12 +9,17 @@ import { ROUTES } from "@constants/routes";
 const MainLayout = lazy(() => import("@layouts/MainLayout"));
 const QRScanner = lazy(() => import("@/pages/QrScanner"));
 const Home = lazy(() => import("@/pages/Home"));
+
 const Profile = lazy(() => import("@/pages/Profile"));
+const EditProfile = lazy(() => import("@/pages/EditProfile"));
+const ChangePass = lazy(() => import("@pages/ChangePass"));
+
 const Login = lazy(() => import("@/pages/Login"));
 const ScanResult = lazy(() => import("@/pages/ScanResult"));
 const EditProgress = lazy(() => import("@pages/EditProgress"));
 const UserGuidelines = lazy(() => import("@pages/UserGuidelines"));
 const HelpAndSupport = lazy(() => import("@pages/HelpAndSupport"));
+const ModalWrapper = lazy(() => import("@layouts/ModalWrapper"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
@@ -52,15 +57,25 @@ const router = createBrowserRouter([
         </Suspense>
       </PrivateRoute>
     ),
+    children: [{ path: ROUTES.HOME, element: <Home /> }],
+  },
+  {
+    path: "/",
+    element: (
+      <PrivateRoute>
+        <Suspense fallback={<LoadingScreen />}>
+          <ModalWrapper />
+        </Suspense>
+      </PrivateRoute>
+    ),
     children: [
-      {
-        path: ROUTES.HOME,
-        element: <Home />,
-      },
-      {
-        path: ROUTES.SCANNER,
-        element: <QRScanner />,
-      },
+      { path: ROUTES.PROFILE, element: <Profile /> },
+      { path: ROUTES.EDIT_PROFILE, element: <EditProfile /> },
+      { path: ROUTES.CHANGE_PASSWORD, element: <ChangePass /> },
+      { path: ROUTES.SCANNER, element: <QRScanner /> },
+      { path: ROUTES.EDIT_PROGRESS, element: <EditProgress /> },
+      { path: ROUTES.USER_GUIDELINES, element: <UserGuidelines /> },
+      { path: ROUTES.HELP_AND_SUPPORT, element: <HelpAndSupport /> },
       {
         path: ROUTES.SCAN_RESULT,
         element: (
@@ -72,20 +87,6 @@ const router = createBrowserRouter([
           />
         ),
       },
-      {
-        path: ROUTES.EDIT_PROGRESS,
-        element: <EditProgress />,
-      },
-
-      {
-        path: ROUTES.PROFILE,
-        element: <Profile />,
-      },
-      {
-        path: ROUTES.USER_GUIDELINES,
-        element: <UserGuidelines />,
-      },
-      { path: ROUTES.HELP_AND_SUPPORT, element: <HelpAndSupport /> },
     ],
   },
   {

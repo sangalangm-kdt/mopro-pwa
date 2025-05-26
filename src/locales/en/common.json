@@ -1,14 +1,110 @@
 {
   "home": {
-    "welcomeTitle": "Welcome to <1>MOPro</1>",
-    "welcomeDescription": "Manage inspections, track progress, and scan your project QR codes effortlessly and efficiently.",
-    "scanTitle": "Scan QR Code",
-    "scanSubtitle": "Click here to update your progress",
-    "scanHistory": "Scan History",
-    "scanButton": "Scan"
+    "welcome_title": "Welcome to <1>MOPro</1>",
+    "welcome_description": "Manage inspections, track progress, and scan your project QR codes effortlessly and efficiently.",
+    "scan_title": "Scan QR Code",
+    "scan_subtitle": "Click here to update your progress",
+    "scan_history": "Scan History",
+    "scan_button": "Scan",
+    "scan_history_empty": "No recent scans.",
+    "scan_history_load_more": "Load more...",
+    "hi": "Hi,"
   },
   "button": {
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "scan": "Scan",
+    "close": "Close",
+    "save": "Save",
+    "edit_progress": "Edit Progress"
+  },
+  "manual_entry": {
+    "title": "Manual Entry",
+    "description": "Fill in the drawing number manually.",
+    "placeholder": "Drawing Number",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "date_filter": {
+    "all": "All",
+    "latest": "Latest",
+    "today": "Today",
+    "week": "This Week",
+    "month": "This Month",
+    "last7days": "Last 7 Days"
+  },
+  "scan_result": {
+    "title": "Scan Result",
+    "header_title": "Scanned Details",
+    "drawing_number": "Drawing number",
+    "overview": "Overview",
+    "product_details": "Product Details",
+    "error_message": "Please check the QR code and try again. If the problem persists, contact your leader.",
+    "error_note": "You may also try scanning again or use manual enter the QR code.",
+    "read_more": "Read more",
+    "read_less": "Read less"
+  },
+  "scan_labels": {
+    "project_name": "Project name",
+    "order_number": "Order number",
+    "last_updated": "Last updated",
+    "last_modified_by": "Last modified by",
+    "drawing_name": "Drawing name",
+    "weight": "Weight",
+    "current_process": "Current process",
+    "progress": "Progress (%)",
+    "remarks": "Remarks"
+  },
+  "edit_progress": {
+    "title": "Edit Progress",
+    "subtitle": "Update the current process and progress of the product",
+    "product_info_title": "Product information",
+    "product_info_note": "These details are pulled from the scanned QR code and are not editable.",
+    "drawing_number": "Drawing number",
+    "product_name": "Product Name",
+    "progress_title": "Progress update",
+    "progress_note": "Select the current process and update the progress value below.",
+    "process_label": "Process",
+    "process_required": "Process is required.",
+    "progress_required": "Progress must be greater than 0%.",
+    "last_updated": "Last Updated:",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "process_placeholder": "Please select a process",
+    "clear_selection": "Clear selected value",
+    "no_matches": "No matches found"
+  },
+  "progress_slider": {
+    "label": "Progress",
+    "step": "Step",
+    "increase": "Increase progress",
+    "decrease": "Decrease progress",
+    "input": "Progress input"
+  },
+  "login": {
+    "title": "Log in",
+    "subheader": "Hello, welcome to <0>MoPro</0>.",
+    "subheading": "Stay informed, stay productive—track progress anytime, anywhere with <0>MoPro</0>.",
+    "email": "Email",
+    "password": "Password",
+    "placeholder": {
+      "email": "Enter your email",
+      "password": "Enter your password"
+    },
+    "submit": "Login",
+    "loading": "Logging in...",
+    "error": {
+      "email": {
+        "required": "Email is required",
+        "invalid": "Please enter a valid email address"
+      },
+      "password": {
+        "required": "Password is required"
+      }
+    },
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "requestAccount": "Request account"
   }
 }

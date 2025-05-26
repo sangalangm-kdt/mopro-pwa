@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import Button from "../buttons/Button";
+import { MANUAL_ENTRY_TEXT_KEYS } from "@/constants";
 
 interface ManualEntryModalProps {
   onClose: () => void;
@@ -8,7 +10,16 @@ interface ManualEntryModalProps {
 }
 
 const ManualEntryModal = ({ onClose, onSubmit }: ManualEntryModalProps) => {
+  const { t } = useTranslation("common");
   const [drawingNumber, setDrawingNumber] = useState("");
+
+  const TEXT = {
+    title: t(MANUAL_ENTRY_TEXT_KEYS.TITLE),
+    description: t(MANUAL_ENTRY_TEXT_KEYS.DESCRIPTION),
+    placeholder: t(MANUAL_ENTRY_TEXT_KEYS.PLACEHOLDER),
+    cancel: t(MANUAL_ENTRY_TEXT_KEYS.CANCEL),
+    submit: t(MANUAL_ENTRY_TEXT_KEYS.SUBMIT),
+  };
 
   const handleSubmit = () => {
     if (!drawingNumber.trim()) return;
@@ -35,16 +46,16 @@ const ManualEntryModal = ({ onClose, onSubmit }: ManualEntryModalProps) => {
 
         {/* Modal Content */}
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-          Manual Entry
+          {TEXT.title}
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
-          Fill in the drawing number manually.
+          {TEXT.description}
         </p>
 
         {/* Input Field */}
         <input
           type="text"
-          placeholder="Drawing Number"
+          placeholder={TEXT.placeholder}
           value={drawingNumber}
           onChange={(e) => setDrawingNumber(e.target.value)}
           className="w-full rounded-md border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2 text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -53,9 +64,9 @@ const ManualEntryModal = ({ onClose, onSubmit }: ManualEntryModalProps) => {
         {/* Action Buttons */}
         <div className="mt-6 flex justify-end gap-2">
           <Button variant="outlined" onClick={onClose}>
-            Cancel
+            {TEXT.cancel}
           </Button>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit}>{TEXT.submit}</Button>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import {
   SIDEBAR_MENU_BUTTON_CLASSES,
   SIDEBAR_SECTION_HEADING_CLASSES,
 } from "@/constants/classes";
-import { BookText, HelpCircle, Home } from "lucide-react";
+import { BookText, HelpCircle, Settings } from "lucide-react";
 import { ROUTES } from "@/constants";
 
 export default function MenuLinks({ onClose }: { onClose: () => void }) {
@@ -26,7 +26,7 @@ export default function MenuLinks({ onClose }: { onClose: () => void }) {
     <div className={SIDEBAR_MENU_LINK_CONTAINER_CLASSES}>
       <h2 className={SIDEBAR_SECTION_HEADING_CLASSES}>{t("title")}</h2>
       <nav className="space-y-2">
-        <button
+        {/* <button
           onClick={() => {
             navigate(ROUTES.HOME);
             onClose();
@@ -37,8 +37,20 @@ export default function MenuLinks({ onClose }: { onClose: () => void }) {
             <Home className="w-4 h-4" />
             {t("home")}
           </span>
+          
+        </button> */}
+        <button
+          onClick={() => {
+            onClose();
+            navigate(ROUTES.PROFILE);
+          }}
+          className={SIDEBAR_MENU_BUTTON_CLASSES}
+        >
+          <span className="flex items-center gap-2 text-sm">
+            <Settings className="w-4 h-4" />
+            {t("profile_settings")}
+          </span>
         </button>
-
         <button
           onClick={() => {
             navigate(ROUTES.USER_GUIDELINES);

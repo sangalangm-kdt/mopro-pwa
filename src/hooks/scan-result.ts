@@ -18,14 +18,14 @@ export function useScanResult(
   qrData: string,
   onClose: () => void,
   projects?: Project[],
-  progress?: RawProgressEntry[]
+  progress?: RawProgressEntry[],
+  labels: Record<string, string> = {} // ✅ fixed: always pass a default empty object
 ) {
   const isMobile = useIsMobile();
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(true);
   const startY = useRef<number | null>(null);
 
-  // 1. Match project and product inside it
   const matchedProject = useMemo(() => {
     return projects?.find((project) =>
       project.products.some((product) =>
@@ -40,7 +40,6 @@ export function useScanResult(
     );
   }, [matchedProject, qrData]);
 
-  // 2. Find latest progress entry for this product
   const matchedProgress = useMemo(() => {
     return progress
       ?.filter((entry) => isMatchingSerial(entry.product?.lineNumber, qrData))
@@ -51,9 +50,7 @@ export function useScanResult(
   }, [progress, qrData]);
 
   const latestProgress = matchedProgress?.[0];
-  console.log("matchss", latestProgress);
 
-  // 3. Reconstruct Product from project + progress
   const reconstructedProduct: Product | undefined = useMemo(() => {
     if (!matchedProduct) return undefined;
 
@@ -77,7 +74,6 @@ export function useScanResult(
     };
   }, [matchedProduct, latestProgress]);
 
-  // 4. Final scan result
   const parsed: ScanResult =
     matchedProject && reconstructedProduct
       ? {
@@ -94,9 +90,11 @@ export function useScanResult(
           error: "No data found for this drawing number.",
         };
 
-  const overviewFields = getOverviewFields(parsed);
+  const overviewFields = getOverviewFields(parsed, labels);
   const productDetailsFields =
-    "error" in parsed ? [] : getProductDetailsFields(parsed.productDetails);
+    "error" in parsed
+      ? []
+      : getProductDetailsFields(parsed.productDetails, labels);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 600);

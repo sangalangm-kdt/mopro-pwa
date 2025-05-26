@@ -3,12 +3,13 @@ import Logo from "@assets/logo/logo v2.svg?react";
 import Sidebar from "@/components/navigation/SideBar";
 import { Menu } from "lucide-react";
 import { useAuthContext } from "@/context/auth/useAuth";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuthContext();
   const firstName = user?.firstName?.split(" ")[0] || "User";
-
+  const { t } = useTranslation("common");
   console.log(user);
   console.log(firstName);
   return (
@@ -26,8 +27,8 @@ export default function Navbar() {
         </div>
 
         {/* Center */}
-        <div className="flex justify-center text-base sm:text-sm font-medium text-gray-700 dark:text-white truncate">
-          Hello,&nbsp;
+        <div className="flex justify-center  text-base sm:text-sm font-medium text-gray-700 dark:text-white truncate">
+          {t("home.hi")}&nbsp;
           <span className="text-primary-800 font-semibold">{firstName}</span>
         </div>
 

@@ -1,7 +1,9 @@
+import i18next from "i18next";
+
 export function formatDate(
   dateInput: string | Date,
   options?: Intl.DateTimeFormatOptions,
-  locale: string = "en-US"
+  locale: string = i18next.language // dynamically use current i18n language
 ): string {
   if (!dateInput) return "";
 

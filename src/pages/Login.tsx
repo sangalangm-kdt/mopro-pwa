@@ -1,4 +1,3 @@
-import { Trans } from "react-i18next";
 import TextInput from "@/components/inputs/Input";
 import BoardingScreen from "@/components/BoardingScreen";
 import LargeHeader from "@/components/Header";
@@ -8,18 +7,13 @@ import Icon from "@/components/icons/Icons";
 import LanguageDropdown from "@/components/LanguageSwitcher";
 import PWAButton from "@/components/buttons/PWAButton";
 import Logo from "@assets/logo/logo v2.svg?react";
-import {
-  ROUTES,
-  LOGIN_FIELDS,
-  PLACEHOLDERS,
-  BUTTON_TEXT,
-} from "@constants/index";
-// import CurvedLine from "@assets/curved-line.svg?react";
+
 import { useLoginForm } from "@/hooks/login-form";
+import { ROUTES, LOGIN_TEXT_KEYS } from "@constants/index";
+import { useLocalizedText } from "@/utils/localized-text";
 
 export default function Login() {
   const {
-    t,
     email,
     setEmail,
     password,
@@ -30,12 +24,11 @@ export default function Login() {
     navigate,
   } = useLoginForm();
 
+  const TEXT = useLocalizedText("common", LOGIN_TEXT_KEYS);
+
   return (
     <div className="flex min-h-screen relative">
-      {/* <div className="absolute inset-0 z-10 pointer-events-none left-0 top-34 overflow-hidden">
-                <CurvedLine className="w-[250%] sm:w-[150%] md:w-full h-auto" />
-            </div> */}
-
+      {/* Left: Form */}
       <div className="relative w-full md:w-[45%] lg:w-[40%] xl:w-[35%] flex items-center justify-center p-6 dark:bg-bg-color">
         <div className="w-full max-w-sm animate-fade-in-up pt-28">
           {/* Logo + Controls */}
@@ -47,51 +40,34 @@ export default function Login() {
             </div>
           </div>
 
+          {/* Form Header */}
           <div className="w-full max-w-sm animate-fade-in-up">
             <LargeHeader
-              header={t("title")}
-              subheader={
-                <Trans
-                  i18nKey="subheader"
-                  ns="login"
-                  components={[
-                    <strong key={0} className="text-secondary-1 font-bold" />,
-                  ]}
-                />
-              }
-              subheading={
-                <Trans
-                  i18nKey="subheading"
-                  ns="login"
-                  components={[
-                    <strong
-                      key={0}
-                      className="text-primary-900 text-sm font-display font-extrabold"
-                    />,
-                  ]}
-                />
-              }
+              header={LOGIN_TEXT_KEYS.TITLE}
+              subheader={LOGIN_TEXT_KEYS.SUBHEADER}
+              subheading={LOGIN_TEXT_KEYS.SUBHEADING}
             />
 
+            {/* Form */}
             <form onSubmit={handleLogin} className="mt-6 space-y-4">
               <TextInput
-                label={t(LOGIN_FIELDS.email)}
+                label={TEXT.EMAIL}
                 type="text"
-                name={LOGIN_FIELDS.email}
-                placeholder={t(PLACEHOLDERS.email)}
+                name="email"
+                placeholder={TEXT.PLACEHOLDER_EMAIL}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 error={errors.email}
                 icon={
-                  <Icon name="email" className="w-5 h-5 text-primary-700 " />
+                  <Icon name="email" className="w-5 h-5 text-primary-700" />
                 }
               />
 
               <TextInput
-                label={t(LOGIN_FIELDS.password)}
+                label={TEXT.PASSWORD}
                 type="password"
-                name={LOGIN_FIELDS.password}
-                placeholder={t(PLACEHOLDERS.password)}
+                name="password"
+                placeholder={TEXT.PLACEHOLDER_PASSWORD}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 error={errors.password}
@@ -99,12 +75,12 @@ export default function Login() {
               />
 
               <div className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
-                <RememberMeCheckbox label={t("rememberMe")} />
+                <RememberMeCheckbox label={TEXT.REMEMBER_ME} />
                 <button
                   type="button"
                   className="text-gray-600 dark:text-gray-400 hover:underline transition"
                 >
-                  {t("forgotPassword")}
+                  {TEXT.FORGOT_PASSWORD}
                 </button>
               </div>
 
@@ -114,10 +90,11 @@ export default function Login() {
                 variant="primary"
                 loading={loading}
               >
-                {loading ? t("loading") : t("submit")}
+                {loading ? TEXT.LOADING : TEXT.SUBMIT}
               </Button>
             </form>
 
+            {/* Divider */}
             <div className="flex items-center my-4 py-4">
               <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
               <span className="mx-2 text-sm text-gray-500 dark:text-gray-400">
@@ -126,6 +103,7 @@ export default function Login() {
               <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
             </div>
 
+            {/* Request Account */}
             <Button
               type="button"
               fullWidth
@@ -133,9 +111,7 @@ export default function Login() {
               className="mt-2"
               onClick={() => navigate(ROUTES.REQUEST_ACCOUNT)}
             >
-              {t("requestAccount", {
-                defaultValue: BUTTON_TEXT.REQUEST_ACCOUNT,
-              })}
+              {TEXT.REQUEST_ACCOUNT}
             </Button>
           </div>
         </div>

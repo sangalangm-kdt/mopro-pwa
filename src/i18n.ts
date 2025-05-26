@@ -17,6 +17,7 @@ import pwaJA from "@/locales/ja/pwa.json";
 import qrScannerEN from "@locales/en/qrscanner/scan.json";
 import qrScannerJA from "@locales/ja/qrscanner/scan.json";
 import commonEN from "@locales/en/common.json";
+import commonJA from "@locales/ja/common.json";
 import scanResultEN from "@locales/en/qrscanner/scanResult.json";
 import scanResultJA from "@locales/ja/qrscanner/scanResult.json";
 
@@ -47,6 +48,7 @@ i18n
         account: accountJA,
         pwa: pwaJA,
         scan: qrScannerJA,
+        common: commonJA,
         scanResult: scanResultJA,
       },
     },

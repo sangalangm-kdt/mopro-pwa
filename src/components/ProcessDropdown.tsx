@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, X } from "lucide-react";
+import { useLocalizedText } from "@/utils/localized-text";
+import { PROCESS_DROPDOWN_TEXT_KEYS } from "@/constants";
 
 export default function ProcessDropdown({
   value,
   onChange,
-  placeholder = "Please select a process",
+  placeholder,
   options = [],
 }: {
   value: string;
@@ -12,25 +14,18 @@ export default function ProcessDropdown({
   placeholder?: string;
   options: { label: string; value: string }[];
 }) {
+  const TEXT = useLocalizedText("common", PROCESS_DROPDOWN_TEXT_KEYS);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  //  Create dropdown options with display labels
-  const processes = options;
-
-  //  Sync input field with current selected value
   useEffect(() => {
-    const selected = processes.find((p) => p.value == value);
+    const selected = options.find((p) => p.value === value);
     setSearch(selected?.label || "");
-    console.log(value);
-    console.log(processes);
-    console.log(selected);
-  }, [processes, value]);
+  }, [options, value]);
 
-  //  Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -45,12 +40,10 @@ export default function ProcessDropdown({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🔍 Filter dropdown items
-  const filteredProcesses = processes.filter((proc) =>
+  const filteredProcesses = options.filter((proc) =>
     proc.label.toLowerCase().includes(search.toLowerCase())
   );
 
-  // ⌨️ Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!open) return;
 
@@ -81,7 +74,6 @@ export default function ProcessDropdown({
 
   return (
     <div className="space-y-1 relative" ref={dropdownRef}>
-      {/* Input container */}
       <div
         className="flex items-center w-full px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-800 dark:text-white shadow-sm focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500"
         onClick={() => {
@@ -100,11 +92,10 @@ export default function ProcessDropdown({
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={placeholder || TEXT.PLACEHOLDER}
           className="flex-1 bg-transparent border-none outline-none truncate overflow-hidden whitespace-nowrap"
         />
 
-        {/* Clear (X) button */}
         {value && (
           <button
             type="button"
@@ -115,13 +106,12 @@ export default function ProcessDropdown({
               setOpen(true);
             }}
             className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-white"
-            aria-label="Clear selected value"
+            aria-label={TEXT.CLEAR_SELECTION}
           >
             <X className="w-4 h-4" />
           </button>
         )}
 
-        {/* Chevron toggle */}
         <ChevronDown
           onClick={(e) => {
             e.stopPropagation();
@@ -134,10 +124,9 @@ export default function ProcessDropdown({
         />
       </div>
 
-      {/* Dropdown menu */}
       {open && (
         <div className="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto overflow-x-hidden rounded-md shadow-lg bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition transform duration-200 ease-out scale-100 opacity-100">
-          <ul className="py-1 text-sm  text-gray-700 dark:text-gray-200">
+          <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
             {filteredProcesses.length > 0 ? (
               filteredProcesses.map((proc, idx) => (
                 <li
@@ -147,10 +136,10 @@ export default function ProcessDropdown({
                     setSearch(proc.label);
                     setOpen(false);
                     setHighlightedIndex(
-                      processes.findIndex((p) => p.value === proc.value)
+                      options.findIndex((p) => p.value === proc.value)
                     );
                   }}
-                  className={`px-4 py-2 cursor-pointer transition-transform duration-100  ${
+                  className={`px-4 py-2 cursor-pointer transition-transform duration-100 ${
                     value === proc.value
                       ? "bg-primary-100 dark:bg-primary-600 text-primary-800 dark:text-white font-medium"
                       : idx === highlightedIndex
@@ -163,7 +152,7 @@ export default function ProcessDropdown({
               ))
             ) : (
               <li className="px-4 py-2 text-gray-400 dark:text-gray-500 italic">
-                No matches found
+                {TEXT.NO_MATCHES}
               </li>
             )}
           </ul>

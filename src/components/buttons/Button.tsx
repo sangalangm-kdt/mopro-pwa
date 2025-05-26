@@ -33,8 +33,9 @@ export default function Button({
     <button
       {...props}
       disabled={isDisabled}
-      className={`
+      className={`  
         inline-flex items-center justify-center px-4 py-3 rounded-md text-sm font-semibold sm:text-base transition-colors duration-200 ease-in-out
+        whitespace-nowrap min-w-fit
         ${fullWidth ? "w-full" : ""}
         ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
         ${VARIANT_CLASSES[variant]}

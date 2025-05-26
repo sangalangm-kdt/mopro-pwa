@@ -29,21 +29,29 @@ export function useLoginForm() {
   }, [from, user, navigate]);
 
   const validate = () => {
+    const trimmedEmail = email.trim();
     const newErrors: typeof errors = {};
-    if (!email) newErrors.email = t(`error.${LOGIN_FIELDS.email}.required`);
-    else if (!REGEX.EMAIL.test(email))
+
+    if (!trimmedEmail)
+      newErrors.email = t(`error.${LOGIN_FIELDS.email}.required`);
+    else if (!REGEX.EMAIL.test(trimmedEmail))
       newErrors.email = t(`error.${LOGIN_FIELDS.email}.invalid`);
+
     if (!password)
       newErrors.password = t(`error.${LOGIN_FIELDS.password}.required`);
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedEmail = email.trim();
     if (!validate()) return;
+
     setLoading(true);
-    const success = await login({ email, password });
+    const success = await login({ email: trimmedEmail, password });
+
     if (!success) {
       toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS);
       setLoading(false);
@@ -51,8 +59,6 @@ export function useLoginForm() {
     }
 
     toast.success(TOAST_MESSAGES.LOGIN_SUCCESS);
-
-    // Delay navigation by 500ms
     setTimeout(() => {
       navigate(from, { replace: true });
       setLoading(false);

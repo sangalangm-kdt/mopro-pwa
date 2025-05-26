@@ -3,9 +3,14 @@ import Header from "@/components/navigation/Header";
 import Icon from "@/components/icons/Icons";
 import QRButtonActions from "@/components/buttons/QRButtonActions";
 import ScanSkeletonGroup from "@/components/skeletons/qrscanner/ScanSkeletonGroup";
-import { SCAN_RESULT, SCAN_RESULT_CLASSES } from "@/constants";
+import {
+  SCAN_RESULT_TEXT_KEYS,
+  SCAN_LABEL_KEYS,
+  SCAN_RESULT_CLASSES,
+} from "@/constants";
 import { FieldItem } from "@/constants/variables/fields";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ScanResultProps {
   qrData: string;
@@ -13,8 +18,6 @@ interface ScanResultProps {
   projects?: [];
   progress?: [];
 }
-
-// import { useTranslation } from "react-i18next";
 
 function Section({ label, value, icon }: FieldItem) {
   const isRemarks = label.toLowerCase() === "remarks";
@@ -25,6 +28,11 @@ function Section({ label, value, icon }: FieldItem) {
     shouldTruncate && !showFull
       ? stringValue.slice(0, 80) + "..."
       : stringValue;
+  const { t } = useTranslation("common");
+  const SCAN_RESULT = {
+    READ_MORE: t(SCAN_RESULT_TEXT_KEYS.READ_MORE),
+    READ_LESS: t(SCAN_RESULT_TEXT_KEYS.READ_LESS),
+  };
 
   return (
     <div className="flex items-start gap-2">
@@ -38,7 +46,7 @@ function Section({ label, value, icon }: FieldItem) {
               onClick={() => setShowFull(!showFull)}
               className="ml-1 text-primary-500 text-xs underline"
             >
-              {showFull ? "Read less" : "Read more"}
+              {showFull ? SCAN_RESULT.READ_LESS : SCAN_RESULT.READ_MORE}
             </button>
           )}
         </p>
@@ -53,6 +61,19 @@ export default function ScanResult({
   projects,
   progress,
 }: ScanResultProps) {
+  const { t } = useTranslation("common");
+  const SCAN_LABELS = {
+    PROJECT_NAME: t(SCAN_LABEL_KEYS.PROJECT_NAME),
+    ORDER_NUMBER: t(SCAN_LABEL_KEYS.ORDER_NUMBER),
+    LAST_UPDATED: t(SCAN_LABEL_KEYS.LAST_UPDATED),
+    LAST_MODIFIED_BY: t(SCAN_LABEL_KEYS.LAST_MODIFIED_BY),
+    DRAWING_NAME: t(SCAN_LABEL_KEYS.DRAWING_NAME),
+    WEIGHT: t(SCAN_LABEL_KEYS.WEIGHT),
+    CURRENT_PROCESS: t(SCAN_LABEL_KEYS.CURRENT_PROCESS),
+    PROGRESS: t(SCAN_LABEL_KEYS.PROGRESS),
+    REMARKS: t(SCAN_LABEL_KEYS.REMARKS),
+  };
+
   const {
     expanded,
     loading,
@@ -62,7 +83,18 @@ export default function ScanResult({
     handleTouchStart,
     handleTouchEnd,
     handleOverlayClick,
-  } = useScanResult(qrData, onClose, projects, progress);
+  } = useScanResult(qrData, onClose, projects, progress, SCAN_LABELS);
+
+  const SCAN_RESULT = {
+    TITLE: t(SCAN_RESULT_TEXT_KEYS.TITLE),
+    HEADER_TITLE: t(SCAN_RESULT_TEXT_KEYS.HEADER_TITLE),
+    DRAWING_NUMBER: t(SCAN_RESULT_TEXT_KEYS.DRAWING_NUMBER),
+    OVERVIEW: t(SCAN_RESULT_TEXT_KEYS.OVERVIEW),
+    PRODUCT_DETAILS: t(SCAN_RESULT_TEXT_KEYS.PRODUCT_DETAILS),
+    ERROR_MESSAGE: t(SCAN_RESULT_TEXT_KEYS.ERROR_MESSAGE),
+    ERROR_NOTE: t(SCAN_RESULT_TEXT_KEYS.ERROR_NOTE),
+  };
+
   return (
     <div
       className="fixed inset-0 z-[200] bg-black/40 flex justify-center items-end overflow-hidden"
@@ -100,7 +132,7 @@ export default function ScanResult({
         >
           {!expanded && (
             <h2 className="text-base font-semibold mb-4 text-center text-gray-700">
-              {SCAN_RESULT.TITLE}
+              {SCAN_RESULT.HEADER_TITLE}
             </h2>
           )}
 
@@ -124,13 +156,11 @@ export default function ScanResult({
                 {String(parsed.error)}
               </p>
               <p className="text-xs text-red-500 dark:text-red-400 mt-2 text-center max-w-md">
-                Please check the QR code and try again. If the problem persists,
-                contact your leader.
+                {SCAN_RESULT.ERROR_MESSAGE}
               </p>
               {expanded && (
                 <p className="text-[11px] text-red-400 dark:text-red-500 text-center mt-2 italic">
-                  You may also try scanning again or use manual enter the QR
-                  code.
+                  {SCAN_RESULT.ERROR_NOTE}
                 </p>
               )}
             </div>
@@ -140,12 +170,14 @@ export default function ScanResult({
                 <h3 className="text-xl font-bold text-primary-800">
                   {parsed.lineNumber}
                 </h3>
-                <p className="text-xs text-gray-500">Drawing number</p>
+                <p className="text-xs text-gray-500">
+                  {SCAN_RESULT.DRAWING_NUMBER}
+                </p>
               </div>
 
               <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow border border-gray-200 dark:border-zinc-700 space-y-4">
                 <p className="text-base font-bold text-gray-800 dark:text-white">
-                  Overview
+                  {SCAN_RESULT.OVERVIEW}
                 </p>
                 {overviewFields.map((field) => (
                   <Section key={field.label} {...field} />
@@ -155,7 +187,7 @@ export default function ScanResult({
               {productDetailsFields.length > 0 && (
                 <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow border mt-3 border-gray-200 dark:border-zinc-700 space-y-4">
                   <p className="text-base font-bold text-gray-800 dark:text-white">
-                    Product Details
+                    {SCAN_RESULT.PRODUCT_DETAILS}
                   </p>
                   {productDetailsFields.map((field) => (
                     <Section key={field.label} {...field} />

@@ -1,14 +1,110 @@
 {
   "home": {
-    "welcomeTitle": "<1>MOPro</1>へようこそ",
-    "welcomeDescription": "検査を管理し、進捗を追跡し、プロジェクトのQRコードを簡単かつ効率的にスキャンできます。",
-    "scanTitle": "QRコードをスキャン",
-    "scanSubtitle": "進捗を更新するにはここをクリックしてください",
-    "scanHistory": "スキャン履歴",
-    "scanButton": "スキャン"
+    "welcome_title": "<1>MOPro</1>へようこそ",
+    "welcome_description": "検査を管理し、進捗を追跡し、プロジェクトのQRコードを簡単かつ効率的にスキャンできます。",
+    "scan_title": "QRコードをスキャン",
+    "scan_subtitle": "進捗を更新するにはこちらをクリック",
+    "scan_history": "スキャン履歴",
+    "scan_button": "スキャン",
+    "scan_history_empty": "最近のスキャンはありません。",
+    "scan_history_load_more": "さらに読み込む...",
+    "hi": "やあ、"
   },
   "button": {
     "confirm": "確認",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "scan": "スキャン",
+    "close": "閉じる",
+    "save": "保存",
+    "edit_progress": "進捗を編集"
+  },
+  "manual_entry": {
+    "title": "手動入力",
+    "description": "図面番号を手動で入力してください。",
+    "placeholder": "図面番号",
+    "cancel": "キャンセル",
+    "submit": "送信"
+  },
+  "date_filter": {
+    "all": "すべて",
+    "latest": "最新",
+    "today": "今日",
+    "week": "今週",
+    "month": "今月",
+    "last7days": "過去7日間"
+  },
+  "scan_result": {
+    "title": "スキャン結果",
+    "header_title": "スキャンされた詳細",
+    "drawing_number": "図面番号",
+    "overview": "概要",
+    "product_details": "製品の詳細",
+    "error_message": "QRコードを確認して、もう一度お試しください。問題が解決しない場合は、リーダーに連絡してください。",
+    "error_note": "再スキャンするか、手動でQRコードを入力することもできます。",
+    "read_more": "もっと見る",
+    "read_less": "閉じる"
+  },
+  "scan_labels": {
+    "project_name": "プロジェクト名",
+    "order_number": "注文番号",
+    "last_updated": "最終更新",
+    "last_modified_by": "最終更新者",
+    "drawing_name": "図面名",
+    "weight": "重量",
+    "current_process": "現在の工程",
+    "progress": "進捗（％）",
+    "remarks": "備考"
+  },
+  "edit_progress": {
+    "title": "進捗を編集",
+    "subtitle": "製品の現在の工程と進捗を更新します",
+    "product_info_title": "製品情報",
+    "product_info_note": "これらの詳細はスキャンされたQRコードから取得されており、編集できません。",
+    "drawing_number": "図面番号",
+    "product_name": "製品名",
+    "progress_title": "進捗更新",
+    "progress_note": "現在の工程を選択し、下記で進捗値を更新してください。",
+    "process_label": "工程",
+    "process_required": "工程は必須です。",
+    "progress_required": "進捗は0%以上である必要があります。",
+    "last_updated": "最終更新日:",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中...",
+    "process_placeholder": "工程を選択してください",
+    "clear_selection": "選択をクリア",
+    "no_matches": "一致するものが見つかりません"
+  },
+  "progress_slider": {
+    "label": "進捗",
+    "step": "ステップ",
+    "increase": "進捗を増やす",
+    "decrease": "進捗を減らす",
+    "input": "進捗入力"
+  },
+  "login": {
+    "title": "ログイン",
+    "subheader": "こんにちは、<0>MoPro</0>へようこそ。",
+    "subheading": "いつでもどこでも進捗を追跡し、情報を把握して生産性を維持しましょう。<0>MoPro</0>で管理がもっと簡単に。",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "placeholder": {
+      "email": "メールアドレスを入力してください",
+      "password": "パスワードを入力してください"
+    },
+    "submit": "ログイン",
+    "loading": "ログイン中...",
+    "error": {
+      "email": {
+        "required": "メールアドレスは必須です",
+        "invalid": "有効なメールアドレスを入力してください"
+      },
+      "password": {
+        "required": "パスワードは必須です"
+      }
+    },
+    "rememberMe": "ログイン状態を保持する",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "requestAccount": "アカウントをリクエスト"
   }
 }

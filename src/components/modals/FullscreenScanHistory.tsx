@@ -1,99 +1,162 @@
-import ScanHistorySkeleton from "@/components/skeletons/ScanHistorySkeleton";
-import { formatDate } from "@/utils/format-date";
-import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { ScanEntry } from "../cards/ScanHistoryCard";
+
+import ScanHistorySkeleton from "@/components/skeletons/ScanHistorySkeleton";
 import RadialProgress from "../RadialProgress";
+import { formatDate } from "@/utils/format-date";
+import { highlightMatch } from "@/utils/highlight-match";
+
+import type { ScanEntry } from "../cards/ScanHistoryCard";
+import { HOME_TEXT_KEYS } from "@/constants";
+
+import {
+  filterScanHistoryByDate,
+  getFilterOptions,
+  type DateFilterOption,
+} from "@/utils/date-filter";
+import { searchScanHistory } from "@/utils/search-scan-history";
 
 interface FullscreenScanHistoryProps {
-    data: ScanEntry[];
-    onClose: () => void;
-    loading: boolean;
+  data: ScanEntry[];
+  onClose: () => void;
+  loading: boolean;
 }
 
 export default function FullscreenScanHistory({
-    data,
-    onClose,
-    loading,
+  data,
+  onClose,
+  loading,
 }: FullscreenScanHistoryProps) {
-    const { t, i18n } = useTranslation("common");
-    const locale = i18n.language || "en";
+  const { t, i18n } = useTranslation("common");
+  const locale = i18n.language || "en";
+  const filterOptions = getFilterOptions(t);
 
-    const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [dateFilter, setDateFilter] = useState<DateFilterOption>("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
-    useEffect(() => {
-        !loading && setVisible(true);
-    }, []);
+  useEffect(() => {
+    if (!loading) {
+      setVisible(true);
+    }
+  }, [loading]);
 
-    const handleClose = () => {
-        setVisible(false);
-        setTimeout(onClose, 300);
-    };
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(onClose, 300);
+  };
 
-    return (
-        <div
-            className={`fixed inset-0 z-[9999] bg-white dark:bg-zinc-900 transition-transform duration-300 ${
-                visible ? "translate-y-0" : "translate-y-full"
-            }`}
+  const filteredData = searchScanHistory(
+    filterScanHistoryByDate(data, dateFilter),
+    searchTerm
+  );
+
+  return (
+    <div
+      className={`fixed inset-0 z-[9999] bg-white dark:bg-zinc-900 transition-all duration-300 ease-in-out ${
+        visible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+      }`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-zinc-700">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+          {t(HOME_TEXT_KEYS.SCAN_HISTORY)}
+        </h2>
+        <button
+          onClick={handleClose}
+          className="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
         >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-zinc-700">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                    {t("scanHistory.title", "Scan History")}
-                </h2>
-                <button
-                    onClick={handleClose}
-                    className="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
-                >
-                    <X className="w-6 h-6" />
-                </button>
-            </div>
+          <X className="w-6 h-6" />
+        </button>
+      </div>
 
-            {/* Content */}
-            <div className="p-4 h-[calc(100vh-60px)] overflow-y-auto scrollbar">
-                {loading ? (
-                    <ScanHistorySkeleton count={data.length || 5} />
-                ) : data?.length > 0 ? (
-                    <ul className="divide-y divide-gray-200 dark:divide-zinc-700 text-sm">
-                        {data?.map((entry) => (
-                            <li
-                                key={entry.id}
-                                className="py-4 flex flex-row justify-between items-center gap-4"
-                            >
-                                <div className="flex flex-col">
-                                    <p className="font-medium text-gray-800 dark:text-white truncate max-w-[200px]">
-                                        {entry.product.productList.name}
-                                    </p>
-                                    <p className="text-xs text-gray-500 py-4 dark:text-gray-400">
-                                        {t(
-                                            `process.${entry.process.processList.name}`,
-                                            entry.process.processList.name
-                                        )}
-                                    </p>
-                                </div>
-                                <div className="flex flex-col items-end text-xs text-right">
-                                    <span className="text-gray-500 dark:text-gray-400 italic mb-1">
-                                        {formatDate(
-                                            entry.createdAt,
-                                            undefined,
-                                            locale
-                                        )}
-                                    </span>
-                                    <RadialProgress
-                                        size={50}
-                                        percentage={entry.percent}
-                                    />
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-gray-500 dark:text-gray-400 text-sm text-center mt-10">
-                        {t("scanHistory.empty", "No recent scans.")}
-                    </p>
-                )}
-            </div>
+      {/* Content */}
+      <div className="p-4 h-[calc(100vh-60px)] overflow-y-auto scrollbar">
+        {/* Search Input */}
+        <div className="relative w-full sm:w-[240px] mb-4">
+          <input
+            type="text"
+            placeholder="Search product or process"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition"
+          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-zinc-400 pointer-events-none" />
         </div>
-    );
+
+        {/* Filter Buttons */}
+        <div className="flex gap-2 justify-start overflow-x-auto whitespace-nowrap mb-4 text-xs sm:text-sm w-full scrollbar-hide">
+          {filterOptions.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setDateFilter(opt.value)}
+              className={`px-3 py-1 rounded-full border ${
+                dateFilter === opt.value
+                  ? "bg-primary-500 text-white border-primary-500"
+                  : "bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-zinc-600"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Scan History List */}
+        {loading ? (
+          <ScanHistorySkeleton count={Math.max(data.length || 0, 5)} />
+        ) : filteredData.length > 0 ? (
+          <ul className="divide-y divide-gray-200 dark:divide-zinc-700 text-sm">
+            {filteredData.map((entry) => (
+              <li
+                key={entry.id}
+                className="py-3 flex justify-between items-start gap-2"
+              >
+                {/* Left side: Product and Process */}
+                <div className="flex flex-col gap-1 max-w-[70%]">
+                  <p className="font-medium text-gray-800 dark:text-white truncate">
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: highlightMatch(
+                          entry.product.productList.name,
+                          searchTerm
+                        ),
+                      }}
+                    />
+                  </p>
+                  <p className="text-xs text-gray-500 py-2 dark:text-gray-400">
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: highlightMatch(
+                          t(
+                            `process.${entry.process.processList.name}`,
+                            entry.process.processList.name
+                          ),
+                          searchTerm
+                        ),
+                      }}
+                    />
+                  </p>
+                </div>
+
+                {/* Right side: Date and RadialProgress */}
+                <div className="flex flex-col items-end min-w-[75px]">
+                  <span className="text-[11px] text-gray-400">
+                    {formatDate(entry.createdAt, undefined, locale)}
+                  </span>
+                  <div className="mt-1">
+                    <RadialProgress size={42} percentage={entry.percent} />
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center mt-10">
+            {t(HOME_TEXT_KEYS.SCAN_HISTORY_EMPTY)}
+          </p>
+        )}
+      </div>
+    </div>
+  );
 }

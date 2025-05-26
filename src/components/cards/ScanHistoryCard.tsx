@@ -1,8 +1,9 @@
 import { formatDate } from "@/utils/format-date";
-import ScanHistorySkeleton from "@components/skeletons/ScanHistorySkeleton"; // 🆕
+import ScanHistorySkeleton from "@components/skeletons/ScanHistorySkeleton";
 import { Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import RadialProgress from "../RadialProgress";
+import { HOME_TEXT_KEYS } from "@/constants";
 
 export interface ScanEntry {
   id: number;
@@ -26,31 +27,24 @@ export interface ScanEntry {
 interface ScanHistoryCardProps {
   history: ScanEntry[];
   scrollable?: boolean;
-  onLoadMore?: () => void;
-  loading?: boolean; // 🆕
+  loading?: boolean;
 }
 
 export default function ScanHistoryCard({
   history,
-  scrollable = true,
-  onLoadMore,
+
   loading,
 }: ScanHistoryCardProps) {
   const { t, i18n } = useTranslation(["common", "home"]);
   const locale = i18n.language || "en";
 
-  console.log(history);
-  console.log(loading);
   return (
-    <div
-      className={`w-full rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 shadow-sm sm:max-w-md ${
-        scrollable ? "overflow-y-auto max-h-[400px]" : "overflow-hidden"
-      }`}
-    >
+    <div>
       <h2 className="text-md font-semibold text-gray-800 dark:text-white flex items-center gap-2">
         <Clock className="w-4 h-4 text-primary-500" />
-        {t("scanHistory.title", "Scan History")}
+        {t(HOME_TEXT_KEYS.SCAN_HISTORY)}
       </h2>
+
       <hr className="border-t border-gray-200 dark:border-zinc-700 my-2" />
 
       {loading ? (
@@ -83,19 +77,10 @@ export default function ScanHistoryCard({
           ))}
         </ul>
       ) : (
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
-          {t("scanHistory.empty", "No recent scans.")}
-        </p>
-      )}
-
-      {!loading && (
-        <div className="mt-2 text-center">
-          <button
-            onClick={onLoadMore}
-            className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
-          >
-            {t("scanHistory.loadMore", "Load more...")}
-          </button>
+        <div className="flex items-center justify-center p-8">
+          <p className="text-gray-500 dark:text-gray-400 text-sm ">
+            {t(HOME_TEXT_KEYS.SCAN_HISTORY_EMPTY)}
+          </p>
         </div>
       )}
     </div>

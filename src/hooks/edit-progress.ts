@@ -95,7 +95,7 @@ export function useEditProgress() {
 
   const handleSave = async () => {
     setSubmitted(true);
-    if (!isValid) return;
+    if (!isValid || !lineNumber || !product?.id || !matchedProject?.id) return;
 
     setSaving(true);
     const success = await addProgressUpdate({
@@ -103,8 +103,8 @@ export function useEditProgress() {
       lineNumber,
       userId: user.id,
       percent: progress,
-      projectId: matchedProject?.id,
-      productId: product?.id,
+      projectId: matchedProject.id,
+      productId: product.id,
     });
 
     if (success) setSuccess(true);
