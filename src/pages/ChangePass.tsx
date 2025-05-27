@@ -1,35 +1,38 @@
-import { useState } from "react";
-import Header from "@/components/navigation/Header";
+import { useAuth } from "@/api/auth";
 import Button from "@/components/buttons/Button";
-import { Eye, EyeOff, Home } from "lucide-react";
-import { getPasswordFields } from "@/utils/password-fields";
+import Header from "@/components/navigation/Header";
 import type { PasswordField } from "@/types/passField";
+import { getPasswordFields } from "@/utils/password-fields";
+import { Eye, EyeOff, Home } from "lucide-react";
+import { useState } from "react";
 
 const ChangePass = () => {
   const navigate = useNavigate();
+  const { changePassword } = useAuth();
+
   const [form, setForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    currentPassword: "12345678",
+    password: "87654321",
+    passwordConfirmation: "87654321",
   });
 
   const [formErrors, setFormErrors] = useState({
     currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    password: "",
+    passwordConfirmation: "",
   });
 
   const [showPassword, setShowPassword] = useState({
     currentPassword: false,
-    newPassword: false,
-    confirmPassword: false,
+    password: false,
+    passwordConfirmation: false,
   });
 
   const fields: PasswordField[] = getPasswordFields();
 
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setFormErrors((prev) => ({ ...prev, [field]: "" }));
+    // setFormErrors((prev) => ({ ...prev, [field]: "" })); // clear error on typing
   };
 
   const toggleVisibility = (field: keyof typeof showPassword) => {
@@ -38,20 +41,25 @@ const ChangePass = () => {
 
   const handleChangePassword = () => {
     const errors: Record<string, string> = {};
-    const { currentPassword, newPassword, confirmPassword } = form;
+    // const { currentPassword, password, passwordConfirmation } = form;
 
-    if (!currentPassword)
-      errors.currentPassword = "Current password is required.";
-    if (!newPassword) errors.newPassword = "New password is required.";
-    if (!confirmPassword)
-      errors.confirmPassword = "Please confirm your new password.";
-    if (newPassword && confirmPassword && newPassword !== confirmPassword)
-      errors.confirmPassword = "New passwords do not match.";
+    // if (!currentPassword)
+    //     errors.currentPassword = "Current password is required.";
+    // if (!password) errors.password = "New password is required.";
+    // if (!passwordConfirmation)
+    //     errors.confirmPassword = "Please confirm your new password.";
+    // if (
+    //     password &&
+    //     passwordConfirmation &&
+    //     password !== passwordConfirmation
+    // )
+    //     errors.confirmPassword = "New passwords do not match.";
 
     setFormErrors(errors as typeof formErrors);
 
     if (Object.keys(errors).length === 0) {
       console.log("Changing password...", form);
+      changePassword(form);
     }
   };
 

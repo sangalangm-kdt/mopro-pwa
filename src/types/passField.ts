@@ -1,5 +1,5 @@
 export interface PasswordField {
-  name: "currentPassword" | "newPassword" | "confirmPassword";
-  label: string;
-  placeholder: string;
+    name: "currentPassword" | "password" | "passwordConfirmation";
+    label: string;
+    placeholder: string;
 }
