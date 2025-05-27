@@ -16,7 +16,8 @@
     "scan": "スキャン",
     "close": "閉じる",
     "save": "保存",
-    "edit_progress": "進捗を編集"
+    "edit_progress": "進捗を編集",
+    "save_changes": "変更を保存"
   },
   "manual_entry": {
     "title": "手動入力",
@@ -106,5 +107,55 @@
     "rememberMe": "ログイン状態を保持する",
     "forgotPassword": "パスワードをお忘れですか？",
     "requestAccount": "アカウントをリクエスト"
+  },
+  "help": {
+    "title": "ヘルプとサポート",
+    "faq": {
+      "title": "よくある質問",
+      "scan_qr": "QRコードはどうやってスキャンしますか？",
+      "scan_qr_answer": "スキャンタブに移動し、カメラをQRコードにかざしてください。",
+      "view_history": "スキャン履歴はどこで確認できますか？",
+      "view_history_answer": "ホーム画面からスキャン履歴を確認できます。",
+      "reset_password": "パスワードはどうやってリセットしますか？",
+      "reset_password_answer": "プロフィール画面で「パスワード変更」を選択してください。"
+    },
+    "contact": {
+      "title": "サポートに連絡する",
+      "position": "ソフトウェア開発者",
+      "company": "KHIテクニカルアンドデザインサービス株式会社"
+    }
+  },
+  "user_guidelines": {
+    "title": "ユーザーガイドライン",
+    "intro_title": "MOProへようこそ！",
+    "intro_description": "このガイドは、アプリの使い方やナビゲーションを理解するのに役立ちます。",
+    "general_title": "一般的なガイドライン",
+    "general_item_1": "QRスキャナーを使用して進捗を更新してください。",
+    "general_item_2": "確認する前に製品情報を確認してください。",
+    "general_item_3": "ログイン情報は他人と共有しないでください。",
+    "general_item_4": "定期的にパスワードを変更してください。",
+    "general_item_5": "共有デバイスを使用した後は必ずログアウトしてください。",
+    "troubleshooting_title": "トラブルシューティングのヒント",
+    "troubleshooting_item_1": "スキャンが失敗する場合は、明るい場所で再試行してください。",
+    "troubleshooting_item_2": "問題が発生した場合はキャッシュをクリアしてください。",
+    "troubleshooting_item_3": "問題が解決しない場合はサポートに連絡してください。",
+    "support_title": "お困りですか？",
+    "support_description": "メニューの「ヘルプとサポート」からFAQを確認したり、サポートに連絡したりできます。"
+  },
+  "profile": {
+    "edit_button": "プロフィールを編集",
+    "first_name": "名",
+    "last_name": "姓",
+    "email": "メールアドレス",
+    "role": {
+      "label": "役割",
+      "operator": "オペレーター",
+      "vendor": "ベンダー",
+      "admin": "管理者",
+      "unknown": "不明な役割"
+    }
+  },
+  "routes": {
+    "home": "ホーム"
   }
 }

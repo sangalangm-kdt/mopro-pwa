@@ -5,10 +5,12 @@ import Header from "@/components/navigation/Header";
 import Button from "@/components/buttons/Button";
 import { useAuthContext } from "@/context/auth/useAuth";
 import { CustomDropdown } from "@/components/CustomDropdown";
+import { useTranslation } from "react-i18next";
 
 const EditProfile = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
+  const { t } = useTranslation("common");
 
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
@@ -23,11 +25,11 @@ const EditProfile = () => {
 
   const getRoleLabel = (roleId?: number): string => {
     const roles: Record<number, string> = {
-      1: "Operator",
-      2: "Vendor",
-      3: "Admin",
+      1: t("profile.role.operator"),
+      2: t("profile.role.vendor"),
+      3: t("profile.role.admin"),
     };
-    return roles[roleId ?? 0] || "Unknown Role";
+    return roles[roleId ?? 0] || t("profile.role.unknown");
   };
 
   const handleSubmit = () => {
@@ -42,13 +44,13 @@ const EditProfile = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100">
       <Header
-        title="Edit Profile"
+        title={t("profile.edit_button")}
         textColorClass="text-gray-800 dark:text-white"
         rightElement={
           <button
             onClick={() => navigate("/")}
             className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
-            aria-label="Go to home"
+            aria-label={t("routes.home")}
           >
             <Home className="w-5 h-5 text-gray-700 dark:text-white" />
           </button>
@@ -71,7 +73,7 @@ const EditProfile = () => {
             {/* First Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                First Name
+                {t("profile.first_name")}
               </label>
               <input
                 type="text"
@@ -84,7 +86,7 @@ const EditProfile = () => {
             {/* Last Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Last Name
+                {t("profile.last_name")}
               </label>
               <input
                 type="text"
@@ -97,7 +99,7 @@ const EditProfile = () => {
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email
+                {t("profile.email")}
               </label>
               {user?.roleId === 3 ? (
                 <input
@@ -119,16 +121,16 @@ const EditProfile = () => {
             {/* Role */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Role
+                {t("profile.role.label")}
               </label>
               {user?.roleId === 3 ? (
                 <CustomDropdown
                   value={roleId}
                   onChange={setRoleId}
                   options={[
-                    { value: 1, label: "Operator" },
-                    { value: 2, label: "Vendor" },
-                    { value: 3, label: "Admin" },
+                    { value: 1, label: t("profile.role.operator") },
+                    { value: 2, label: t("profile.role.vendor") },
+                    { value: 3, label: t("profile.role.admin") },
                   ]}
                 />
               ) : (
@@ -144,7 +146,7 @@ const EditProfile = () => {
 
           {/* Submit Button */}
           <Button fullWidth variant="primary" onClick={handleSubmit}>
-            Save Changes
+            {t("button.save_changes")}
           </Button>
         </div>
       </div>

@@ -62,7 +62,7 @@ const Home = () => {
 
       {/* 📜 Scan History Block */}
       <div
-        className={`w-full rounded-lg border grow  border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 shadow-sm sm:max-w-md overflow-y-auto scroll-smooth max-h-[600px] sm:max-h-[500px]`}
+        className={`w-full rounded-lg border grow scrollbar border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 shadow-sm sm:max-w-md overflow-y-auto scroll-smooth max-h-[800px] sm:max-h-[500px]`}
       >
         <ScanHistoryCard
           history={progressUpdates?.slice(0, 5)}
@@ -74,7 +74,7 @@ const Home = () => {
           <div className="text-center mt-2">
             <button
               onClick={() => setShowFullHistory(true)}
-              className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+              className="text-xs text-gray-500 dark:text-gray-400  hover:text-primary-600 dark:hover:text-primary-400"
             >
               {TEXT.SCAN_HISTORY_LOAD_MORE}
             </button>

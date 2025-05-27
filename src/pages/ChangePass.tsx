@@ -29,7 +29,7 @@ const ChangePass = () => {
 
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setFormErrors((prev) => ({ ...prev, [field]: "" })); // clear error on typing
+    setFormErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const toggleVisibility = (field: keyof typeof showPassword) => {

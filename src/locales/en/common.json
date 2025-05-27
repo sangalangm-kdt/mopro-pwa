@@ -16,7 +16,8 @@
     "scan": "Scan",
     "close": "Close",
     "save": "Save",
-    "edit_progress": "Edit Progress"
+    "edit_progress": "Edit Progress",
+    "save_changes": "Save Changes"
   },
   "manual_entry": {
     "title": "Manual Entry",
@@ -106,5 +107,56 @@
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
     "requestAccount": "Request account"
+  },
+  "help": {
+    "title": "Help & Support",
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "scan_qr": "How do I scan a QR code?",
+      "scan_qr_answer": "Go to the Scan tab and point your camera at the QR code.",
+      "view_history": "Where can I view my scan history?",
+      "view_history_answer": "You can view your scan history from the home screen.",
+      "reset_password": "How can I reset my password?",
+      "reset_password_answer": "Go to your profile and select 'Change password'."
+    },
+    "contact": {
+      "title": "Contact Support",
+      "position": "Software Developer",
+      "company": "KHI Technical and Design Services, Inc."
+    }
+  },
+  "user_guidelines": {
+    "title": "User Guidelines",
+    "intro_title": "Welcome to MOPro!",
+    "intro_description": "This guide will help you understand how to navigate and use the app effectively.",
+    "general_title": "General Guidelines",
+    "general_item_1": "Use the QR scanner to update your progress.",
+    "general_item_2": "Verify product information before confirming.",
+    "general_item_3": "Do not share your credentials.",
+    "general_item_4": "Change your password regularly.",
+    "general_item_5": "Log out when done using a shared device.",
+    "troubleshooting_title": "Troubleshooting Tips",
+    "troubleshooting_item_1": "Try better lighting if scanning fails.",
+    "troubleshooting_item_2": "Clear cache if you experience issues.",
+    "troubleshooting_item_3": "Contact support if problems persist.",
+    "support_title": "Need Help?",
+    "support_description": "Visit Help & Support in the menu to reach out or view FAQs."
+  },
+  "profile": {
+    "edit_button": "Edit Profile",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "Email",
+    "role": {
+      "label": "Role",
+      "operator": "Operator",
+      "vendor": "Vendor",
+      "admin": "Admin",
+      "unknown": "Unknown Role"
+    }
+  },
+
+  "routes": {
+    "home": "Home"
   }
 }
