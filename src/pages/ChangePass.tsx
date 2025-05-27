@@ -1,19 +1,20 @@
-import { useAuth } from "@/api/auth";
-import Button from "@/components/buttons/Button";
-import Header from "@/components/navigation/Header";
-import type { PasswordField } from "@/types/passField";
-import { getPasswordFields } from "@/utils/password-fields";
-import { Eye, EyeOff, Home } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/api/auth";
+import Header from "@/components/navigation/Header";
+import Button from "@/components/buttons/Button";
+import { getPasswordFields } from "@/utils/password-fields";
+import type { PasswordField } from "@/types/passField";
+import { Eye, EyeOff, Home } from "lucide-react";
 
 const ChangePass = () => {
   const navigate = useNavigate();
   const { changePassword } = useAuth();
 
   const [form, setForm] = useState({
-    currentPassword: "12345678",
-    password: "87654321",
-    passwordConfirmation: "87654321",
+    currentPassword: "",
+    password: "",
+    passwordConfirmation: "",
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -32,35 +33,38 @@ const ChangePass = () => {
 
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    // setFormErrors((prev) => ({ ...prev, [field]: "" })); // clear error on typing
+    setFormErrors((prev) => ({ ...prev, [field]: "" })); // clear error on typing
   };
 
   const toggleVisibility = (field: keyof typeof showPassword) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleChangePassword = () => {
-    const errors: Record<string, string> = {};
-    // const { currentPassword, password, passwordConfirmation } = form;
+  const handleChangePassword = async () => {
+    const { currentPassword, password, passwordConfirmation } = form;
+    const errors: typeof formErrors = {
+      currentPassword: "",
+      password: "",
+      passwordConfirmation: "",
+    };
 
-    // if (!currentPassword)
-    //     errors.currentPassword = "Current password is required.";
-    // if (!password) errors.password = "New password is required.";
-    // if (!passwordConfirmation)
-    //     errors.confirmPassword = "Please confirm your new password.";
-    // if (
-    //     password &&
-    //     passwordConfirmation &&
-    //     password !== passwordConfirmation
-    // )
-    //     errors.confirmPassword = "New passwords do not match.";
+    if (!currentPassword)
+      errors.currentPassword = "Current password is required.";
+    if (!password) errors.password = "New password is required.";
+    if (!passwordConfirmation)
+      errors.passwordConfirmation = "Please confirm your new password.";
+    if (password !== passwordConfirmation)
+      errors.passwordConfirmation = "New passwords do not match.";
 
-    setFormErrors(errors as typeof formErrors);
+    setFormErrors(errors);
 
-    if (Object.keys(errors).length === 0) {
-      console.log("Changing password...", form);
-      changePassword(form);
-    }
+    if (Object.values(errors).some((e) => e)) return;
+
+    await changePassword({
+      currentPassword,
+      newPassword: password,
+      confirmPassword: passwordConfirmation,
+    });
   };
 
   return (
@@ -85,7 +89,7 @@ const ChangePass = () => {
           choose a new one.
         </p>
 
-        <div className="w-full max-w-md bg-white dark:bg-zinc-800 rounded-xl space-y-6 ">
+        <div className="w-full px-4 py-6 max-w-md bg-white dark:bg-zinc-800 rounded-xl space-y-6">
           {fields.map(({ name, label, placeholder }) => (
             <div key={name}>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
