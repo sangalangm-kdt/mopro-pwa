@@ -1,6 +1,6 @@
 import Header from "@/components/navigation/Header";
 import { ROUTES } from "@/constants";
-import { KeySquare } from "lucide-react";
+import { KeySquare, UserPen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/auth/useAuth";
 import { useTranslation } from "react-i18next";
@@ -55,35 +55,39 @@ const Profile = () => {
           <p className="text-gray-500 dark:text-gray-400 text-sm italic">
             {getRoleLabel(user?.roleId)}
           </p>
-
-          {/* Show Edit button if not Operator */}
-          {user?.roleId !== 1 && (
-            <button
-              className="mt-4 text-sm font-semibold text-primary-700 hover:underline dark:text-primary-400"
-              onClick={() => navigate(ROUTES.EDIT_PROFILE)}
-            >
-              {t("profile.edit_button")}
-            </button>
-          )}
         </section>
 
-        {/* Change Password */}
-        <h2 className="w-full text-sm font-semibold uppercase text-left px-2 my-2 text-gray-800 dark:text-white">
-          {t("profile.account_settings")}
-        </h2>
-
-        <section className="w-full max-w-md border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-gray-700">
-          <button
-            onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
-            className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
-          >
-            <span className="text-gray-700 dark:text-gray-200">
-              <KeySquare />
-            </span>
-            <span className="text-gray-800 dark:text-gray-100 font-medium">
-              {t("profile.change_password")}
-            </span>
-          </button>
+        {/* Account Settings */}
+        <section className="w-full max-w-md px-2">
+          <h2 className="text-sm font-semibold uppercase text-gray-800 dark:text-white mb-4">
+            {t("profile.account_settings")}
+          </h2>
+          <div className="w-full border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-gray-700">
+            {user?.roleId !== 1 && (
+              <button
+                onClick={() => navigate(ROUTES.EDIT_PROFILE)}
+                className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
+              >
+                <span className="text-gray-700 dark:text-gray-200">
+                  <UserPen />
+                </span>
+                <span className="text-gray-800 dark:text-gray-100 font-medium">
+                  {t("profile.edit_profile_button")}
+                </span>
+              </button>
+            )}
+            <button
+              onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
+              className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
+            >
+              <span className="text-gray-700 dark:text-gray-200">
+                <KeySquare />
+              </span>
+              <span className="text-gray-800 dark:text-gray-100 font-medium">
+                {t("profile.change_password")}
+              </span>
+            </button>
+          </div>
         </section>
       </div>
     </div>

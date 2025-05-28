@@ -1,20 +1,21 @@
 import type { PasswordField } from "@/types/passField";
-export function getPasswordFields(): PasswordField[] {
+
+export function getPasswordFields(t: (key: string) => string): PasswordField[] {
   return [
     {
       name: "currentPassword",
-      label: "Current Password",
-      placeholder: "Enter current password",
+      label: t("change_password.current_password.label"),
+      placeholder: t("change_password.current_password.placeholder"),
     },
     {
-      name: "newPassword",
-      label: "New Password",
-      placeholder: "Enter new password",
+      name: "password",
+      label: t("change_password.new_password.label"),
+      placeholder: t("change_password.new_password.placeholder"),
     },
     {
-      name: "confirmPassword",
-      label: "Confirm New Password",
-      placeholder: "Re-enter new password",
+      name: "passwordConfirmation",
+      label: t("change_password.confirm_password.label"),
+      placeholder: t("change_password.confirm_password.placeholder"),
     },
   ];
 }

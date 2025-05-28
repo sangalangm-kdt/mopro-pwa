@@ -4,7 +4,7 @@ import { Home } from "lucide-react";
 import Header from "@/components/navigation/Header";
 import Button from "@/components/buttons/Button";
 import { useAuthContext } from "@/context/auth/useAuth";
-import { CustomDropdown } from "@/components/CustomDropdown";
+
 import { useTranslation } from "react-i18next";
 
 const EditProfile = () => {
@@ -15,7 +15,6 @@ const EditProfile = () => {
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [roleId, setRoleId] = useState<number>(user?.roleId ?? 1);
 
   const getInitials = (): string => {
     const first = firstName[0] || "";
@@ -37,7 +36,6 @@ const EditProfile = () => {
       firstName,
       lastName,
       email,
-      role: getRoleLabel(roleId),
     });
   };
 
@@ -123,24 +121,12 @@ const EditProfile = () => {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("profile.role.label")}
               </label>
-              {user?.roleId === 3 ? (
-                <CustomDropdown
-                  value={roleId}
-                  onChange={setRoleId}
-                  options={[
-                    { value: 1, label: t("profile.role.operator") },
-                    { value: 2, label: t("profile.role.vendor") },
-                    { value: 3, label: t("profile.role.admin") },
-                  ]}
-                />
-              ) : (
-                <input
-                  type="text"
-                  value={getRoleLabel(user?.roleId)}
-                  disabled
-                  className="w-full px-4 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-zinc-700 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                />
-              )}
+              <input
+                type="text"
+                value={getRoleLabel(user?.roleId)}
+                disabled
+                className="w-full px-4 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-zinc-700 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              />
             </div>
           </div>
 

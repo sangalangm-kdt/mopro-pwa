@@ -1,0 +1,8 @@
+{
+  "scan_title": "シリアルをスキャン",
+  "scan_description": "QRコードやバーコードをスキャンして追跡を開始します。",
+  "enter_title": "作業進捗の入力",
+  "enter_description": "スキャンされたアイテムに関連する作業指示の詳細を入力します。",
+  "track_title": "進捗の追跡",
+  "track_description": "検査時間とステータスをリアルタイムで監視できます。"
+}

@@ -1,0 +1,8 @@
+{
+  "scan_title": "Scan the Serial",
+  "scan_description": "Use your device to scan the QR or barcode of the product to begin tracking.",
+  "enter_title": "Enter Work Progress",
+  "enter_description": "Fill in the work order details to associate with the scanned item.",
+  "track_title": "Track Progress",
+  "track_description": "Monitor inspection time and status in real-time."
+}

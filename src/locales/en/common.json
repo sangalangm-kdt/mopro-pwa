@@ -16,8 +16,9 @@
     "scan": "Scan",
     "close": "Close",
     "save": "Save",
-    "edit_progress": "Edit Progress",
-    "save_changes": "Save Changes"
+    "edit_progress": "Edit progress",
+    "save_changes": "Save changes",
+    "update_password": "Update password"
   },
   "manual_entry": {
     "title": "Manual Entry",
@@ -121,8 +122,8 @@
     },
     "contact": {
       "title": "Contact Support",
-      "position": "Software Developer",
-      "company": "KHI Technical and Design Services, Inc."
+      "position": "Assistant Software Engineer",
+      "company": "KHI Design and Technical Services, Inc."
     }
   },
   "user_guidelines": {
@@ -143,6 +144,7 @@
     "support_description": "Visit Help & Support in the menu to reach out or view FAQs."
   },
   "profile": {
+    "title": "Profile Settings",
     "edit_button": "Edit Profile",
     "first_name": "First Name",
     "last_name": "Last Name",
@@ -153,10 +155,35 @@
       "vendor": "Vendor",
       "admin": "Admin",
       "unknown": "Unknown Role"
-    }
+    },
+    "edit_profile_button": "Edit Profile",
+    "account_settings": "Account Settings",
+    "change_password": "Change Password"
   },
 
   "routes": {
+    "home": "Home",
+    "change_pass": "Change Password"
+  },
+  "successModal": {
+    "title": "Progress Saved",
+    "subtitle": "Your updates have been successfully saved.",
+    "scanAgain": "Scan again",
     "home": "Home"
+  },
+  "change_password": {
+    "password_instruction": "For your account's security, please enter your current password and choose a new one.",
+    "current_password": {
+      "label": "Current Password",
+      "placeholder": "Enter current password"
+    },
+    "new_password": {
+      "label": "New Password",
+      "placeholder": "Enter new password"
+    },
+    "confirm_password": {
+      "label": "Confirm New Password",
+      "placeholder": "Re-enter new password"
+    }
   }
 }

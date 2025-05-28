@@ -17,7 +17,8 @@
     "close": "閉じる",
     "save": "保存",
     "edit_progress": "進捗を編集",
-    "save_changes": "変更を保存"
+    "save_changes": "変更を保存",
+    "update_password": "パスワードを更新する"
   },
   "manual_entry": {
     "title": "手動入力",
@@ -121,8 +122,8 @@
     },
     "contact": {
       "title": "サポートに連絡する",
-      "position": "ソフトウェア開発者",
-      "company": "KHIテクニカルアンドデザインサービス株式会社"
+      "position": "アシスタントソフトウェアエンジニア",
+      "company": "川崎重工設計技術サービス株式会社"
     }
   },
   "user_guidelines": {
@@ -143,6 +144,7 @@
     "support_description": "メニューの「ヘルプとサポート」からFAQを確認したり、サポートに連絡したりできます。"
   },
   "profile": {
+    "title": "プロフィール設定",
     "edit_button": "プロフィールを編集",
     "first_name": "名",
     "last_name": "姓",
@@ -153,9 +155,42 @@
       "vendor": "ベンダー",
       "admin": "管理者",
       "unknown": "不明な役割"
-    }
+    },
+    "edit_profile_button": "プロフィールを編集",
+    "account_settings": "アカウント設定",
+    "change_password": "パスワードを変更"
   },
   "routes": {
+    "home": "ホーム",
+    "change_pass": "パスワードの変更"
+  },
+  "successModal": {
+    "title": "進捗が保存されました",
+    "subtitle": "更新内容が正常に保存されました。",
+    "scanAgain": "もう一度スキャン",
     "home": "ホーム"
+  },
+  "change_password": {
+    "password_instruction": "アカウントの安全のため、現在のパスワードを入力し、新しいパスワードを選択してください。",
+    "current_password": {
+      "label": "現在のパスワード",
+      "placeholder": "現在のパスワードを入力してください"
+    },
+    "new_password": {
+      "label": "新しいパスワード",
+      "placeholder": "新しいパスワードを入力してください"
+    },
+    "confirm_password": {
+      "label": "新しいパスワード（確認）",
+      "placeholder": "新しいパスワードを再入力してください"
+    },
+    "error": {
+      "current_required": "現在のパスワードを入力してください。",
+      "new_required": "新しいパスワードを入力してください。",
+      "confirm_required": "新しいパスワードを確認してください。",
+      "mismatch": "新しいパスワードが一致しません。"
+    },
+    "success": "パスワードが正常に変更されました。ログアウトします...",
+    "failure": "パスワードの変更に失敗しました。もう一度お試しください。"
   }
 }

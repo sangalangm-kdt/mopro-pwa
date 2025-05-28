@@ -148,3 +148,22 @@ export const PROGRESS_SLIDER_TEXT_KEYS = {
   DECREASE: "progress_slider.decrease",
   INPUT: "progress_slider.input",
 };
+
+export const PROFILE_TEXT_KEYS = {
+  TITLE: "profile.title",
+  NO_NAME: "profile.no_name",
+  NO_EMAIL: "profile.no_email",
+  EDIT_PROFILE_BUTTON: "profile.edit_profile_button",
+  ACCOUNT_SETTINGS: "profile.account_settings",
+  CHANGE_PASSWORD: "profile.change_password",
+  ROLE_OPERATOR: "profile.role.operator",
+  ROLE_VENDOR: "profile.role.vendor",
+  ROLE_ADMIN: "profile.role.admin",
+  ROLE_UNKNOWN: "profile.role.unknown",
+};
+
+export const CHANGE_PASSWORD_KEYS = {
+  PASSWORD_INSTRUCTIONS: "change_password.password_instruction",
+  BUTTON: "button.update_password",
+  CHANGE_PASS: "routes.change_pass",
+};

@@ -1,68 +1,97 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/api/auth";
 import Header from "@/components/navigation/Header";
 import Button from "@/components/buttons/Button";
-import { Eye, EyeOff, Home } from "lucide-react";
 import { getPasswordFields } from "@/utils/password-fields";
 import type { PasswordField } from "@/types/passField";
+import { Eye, EyeOff, Home } from "lucide-react";
+import { toast } from "sonner";
+import { CHANGE_PASSWORD_KEYS, ROUTES } from "@/constants";
+import { useTranslation } from "react-i18next";
+import { useLocalizedText } from "@/utils/localized-text";
 
 const ChangePass = () => {
   const navigate = useNavigate();
+  const { changePassword, logout } = useAuth();
+  const { t } = useTranslation("common");
+
   const [form, setForm] = useState({
     currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    password: "",
+    passwordConfirmation: "",
   });
 
   const [formErrors, setFormErrors] = useState({
     currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    password: "",
+    passwordConfirmation: "",
   });
 
   const [showPassword, setShowPassword] = useState({
     currentPassword: false,
-    newPassword: false,
-    confirmPassword: false,
+    password: false,
+    passwordConfirmation: false,
   });
 
-  const fields: PasswordField[] = getPasswordFields();
+  const CHANGE_PASS_LABEL = useLocalizedText("common", CHANGE_PASSWORD_KEYS);
+
+  const fields: PasswordField[] = getPasswordFields(t);
 
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setFormErrors((prev) => ({ ...prev, [field]: "" }));
+    setFormErrors((prev) => ({ ...prev, [field]: "" })); // clear error on typing
   };
 
   const toggleVisibility = (field: keyof typeof showPassword) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleChangePassword = () => {
-    const errors: Record<string, string> = {};
-    const { currentPassword, newPassword, confirmPassword } = form;
+  const handleChangePassword = async () => {
+    const { currentPassword, password, passwordConfirmation } = form;
+    const errors: typeof formErrors = {
+      currentPassword: "",
+      password: "",
+      passwordConfirmation: "",
+    };
 
     if (!currentPassword)
       errors.currentPassword = "Current password is required.";
-    if (!newPassword) errors.newPassword = "New password is required.";
-    if (!confirmPassword)
-      errors.confirmPassword = "Please confirm your new password.";
-    if (newPassword && confirmPassword && newPassword !== confirmPassword)
-      errors.confirmPassword = "New passwords do not match.";
+    if (!password) errors.password = "New password is required.";
+    if (!passwordConfirmation)
+      errors.passwordConfirmation = "Please confirm your new password.";
+    if (password !== passwordConfirmation)
+      errors.passwordConfirmation = "New passwords do not match.";
 
-    setFormErrors(errors as typeof formErrors);
+    setFormErrors(errors);
 
-    if (Object.keys(errors).length === 0) {
-      console.log("Changing password...", form);
+    if (Object.values(errors).some((e) => e)) return;
+
+    try {
+      await changePassword({ currentPassword, password, passwordConfirmation });
+
+      toast.success("Password changed successfully. Logging out...");
+
+      setTimeout(() => {
+        logout();
+        window.location.href = ROUTES.LOGIN; // or call your logout function
+      }, 2000);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+      toast.error("Failed to change password. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100">
       <Header
-        title="Change Password"
+        title={CHANGE_PASS_LABEL.CHANGE_PASS}
         textColorClass="text-gray-800 dark:text-white"
         rightElement={
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(ROUTES.HOME)}
             className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
             aria-label="Go to home"
           >
@@ -73,11 +102,10 @@ const ChangePass = () => {
 
       <div className="flex flex-col items-center justify-center px-6 py-10">
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-justify">
-          For your account's security, please enter your current password and
-          choose a new one.
+          {CHANGE_PASS_LABEL.PASSWORD_INSTRUCTIONS}
         </p>
 
-        <div className="w-full max-w-md bg-white dark:bg-zinc-800 rounded-xl space-y-6 ">
+        <div className="w-full px-4 py-6 max-w-md bg-white dark:bg-zinc-800 rounded-xl space-y-6">
           {fields.map(({ name, label, placeholder }) => (
             <div key={name}>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -89,7 +117,7 @@ const ChangePass = () => {
                   value={form[name]}
                   onChange={(e) => handleChange(name, e.target.value)}
                   placeholder={placeholder}
-                  className={`w-full px-4 py-2 rounded-md border text-sm focus:outline-none focus:ring-2 ${
+                  className={`w-full px-2 py-2 rounded-md border text-sm focus:outline-none focus:ring-2 ${
                     formErrors[name]
                       ? "border-red-500 focus:ring-red-500"
                       : "border-gray-300 dark:border-gray-600 focus:ring-primary-600"
@@ -114,7 +142,7 @@ const ChangePass = () => {
           ))}
 
           <Button fullWidth onClick={handleChangePassword}>
-            Update Password
+            {CHANGE_PASS_LABEL.BUTTON}
           </Button>
         </div>
       </div>

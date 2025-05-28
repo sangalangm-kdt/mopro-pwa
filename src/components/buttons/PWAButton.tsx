@@ -4,6 +4,7 @@ import Button from "./Button";
 import { useAuthContext } from "@/context/auth/useAuth";
 import { Download, X } from "lucide-react";
 import { PWA_TEXT_KEYS } from "@/constants";
+import { createPortal } from "react-dom";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -90,7 +91,7 @@ export default function PWAButton() {
         </>
       ) : (
         <Button onClick={handleInstall} fullWidth>
-          <div className="flex items-center gap-2 justify-center">
+          <div className="flex items-center gap-2 justify-center ">
             <Download className="h-4 w-4" />
             {t(PWA_TEXT_KEYS.PWA_GENERIC_LABEL)}
           </div>
@@ -98,36 +99,38 @@ export default function PWAButton() {
       )}
 
       {/* Safari Instructions Modal */}
-      {showInstructions && (
-        <div
-          onClick={() => setShowInstructions(false)}
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity animate-fade"
-        >
+      {showInstructions &&
+        createPortal(
           <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center relative animate-fade-up"
+            onClick={() => setShowInstructions(false)}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity animate-fade"
           >
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowInstructions(false)}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full m-4 text-center relative animate-fade-up"
             >
-              <X className="w-5 h-5" />
-            </button>
-            <h2 className="text-lg font-semibold mb-4">
-              {t(PWA_TEXT_KEYS.HOW_TO_INSTALL_APP)}
-            </h2>
-            <p className="text-sm text-gray-600 mb-2">
-              {t(PWA_TEXT_KEYS.INSTRUCTION_SHARE)}
-            </p>
-            <p className="text-sm text-gray-600 mb-4">
-              {t(PWA_TEXT_KEYS.INSTRUCTION_ADD_HOME)}
-            </p>
-            <Button onClick={() => setShowInstructions(false)} fullWidth>
-              {t(PWA_TEXT_KEYS.GOT_IT)}
-            </Button>
-          </div>
-        </div>
-      )}
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                onClick={() => setShowInstructions(false)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-lg font-semibold mb-4">
+                {t(PWA_TEXT_KEYS.HOW_TO_INSTALL_APP)}
+              </h2>
+              <p className="text-sm text-gray-600 mb-2">
+                {t(PWA_TEXT_KEYS.INSTRUCTION_SHARE)}
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                {t(PWA_TEXT_KEYS.INSTRUCTION_ADD_HOME)}
+              </p>
+              <Button onClick={() => setShowInstructions(false)} fullWidth>
+                {t(PWA_TEXT_KEYS.GOT_IT)}
+              </Button>
+            </div>
+          </div>,
+          document.getElementById("modal-root")!
+        )}
     </>
   );
 }
