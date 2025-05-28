@@ -103,25 +103,25 @@ export default function PWAButton() {
         createPortal(
           <div
             onClick={() => setShowInstructions(false)}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity animate-fade"
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity animate-fade "
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full m-4 text-center relative animate-fade-up"
+              className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full m-4 text-center relative animate-fade-up dark:bg-zinc-800 dark:text-white"
             >
               <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-100"
                 onClick={() => setShowInstructions(false)}
               >
                 <X className="w-5 h-5" />
               </button>
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className="text-lg font-semibold mb-4 ">
                 {t(PWA_TEXT_KEYS.HOW_TO_INSTALL_APP)}
               </h2>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-gray-600 mb-2 dark:text-gray-300">
                 {t(PWA_TEXT_KEYS.INSTRUCTION_SHARE)}
               </p>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-600 mb-4 dark:text-gray-300">
                 {t(PWA_TEXT_KEYS.INSTRUCTION_ADD_HOME)}
               </p>
               <Button onClick={() => setShowInstructions(false)} fullWidth>
