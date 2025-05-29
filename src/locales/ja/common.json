@@ -171,7 +171,7 @@
     "home": "ホーム"
   },
   "change_password": {
-    "password_instruction": "アカウントの安全のため、現在のパスワードを入力し、新しいパスワードを選択してください。",
+    "password_instruction": "アカウントの安全のため、現在のパスワードを入力し、新しいパスワードを設定してください。",
     "current_password": {
       "label": "現在のパスワード",
       "placeholder": "現在のパスワードを入力してください"
@@ -185,12 +185,12 @@
       "placeholder": "新しいパスワードを再入力してください"
     },
     "error": {
-      "current_required": "現在のパスワードを入力してください。",
-      "new_required": "新しいパスワードを入力してください。",
-      "confirm_required": "新しいパスワードを確認してください。",
-      "mismatch": "新しいパスワードが一致しません。"
+      "error_current_required": "現在のパスワードを入力してください。",
+      "error_new_required": "新しいパスワードを入力してください。",
+      "error_confirm_required": "新しいパスワードを確認してください。",
+      "error_mismatch": "新しいパスワードが一致しません。",
+      "error_generic": "パスワードの変更に失敗しました。もう一度お試しください。"
     },
-    "success": "パスワードが正常に変更されました。ログアウトします...",
-    "failure": "パスワードの変更に失敗しました。もう一度お試しください。"
+    "success": "パスワードが正常に変更されました。ログアウトします..."
   }
 }

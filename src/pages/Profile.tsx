@@ -1,5 +1,5 @@
 import Header from "@/components/navigation/Header";
-import { ROUTES } from "@/constants";
+import { APP_CONFIG, ROUTES } from "@/constants";
 import { KeySquare, UserPen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/auth/useAuth";
@@ -29,6 +29,12 @@ const Profile = () => {
     return roles[roleId ?? 0] || t("profile.role.unknown");
   };
 
+  const handleCopyEmail = () => {
+    if (user?.email) {
+      navigator.clipboard.writeText(user.email);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100">
       <Header
@@ -36,10 +42,9 @@ const Profile = () => {
         textColorClass="text-gray-800 dark:text-white"
       />
 
-      <div className="flex flex-col items-center justify-center py-4 px-4 space-y-6">
+      <div className="flex flex-col items-center justify-center py-3 px-4 space-y-6">
         {/* Profile Info */}
         <section className="flex flex-col items-center px-6 py-6">
-          {/* Avatar */}
           <div className="py-2">
             <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary-800 via-primary-700 to-primary-600 p-[4px] shadow-lg shadow-primary-50 hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full rounded-full bg-white dark:bg-zinc-900 flex items-center justify-center text-xl font-semibold text-primary-700 dark:text-primary-300">
@@ -49,13 +54,20 @@ const Profile = () => {
           </div>
 
           <h1 className="text-xl font-semibold mb-1">{getFullName()}</h1>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
+          <p
+            onClick={handleCopyEmail}
+            className="text-gray-600 dark:text-gray-400 text-sm cursor-pointer hover:underline"
+            title="Tap to copy email"
+          >
             {user?.email || t("profile.no_email")}
           </p>
           <p className="text-gray-500 dark:text-gray-400 text-sm italic">
             {getRoleLabel(user?.roleId)}
           </p>
         </section>
+
+        {/* Divider */}
+        <div className="w-full max-w-md border-t border-gray-200 dark:border-gray-700" />
 
         {/* Account Settings */}
         <section className="w-full max-w-md px-2">
@@ -66,11 +78,10 @@ const Profile = () => {
             {user?.roleId !== 1 && (
               <button
                 onClick={() => navigate(ROUTES.EDIT_PROFILE)}
-                className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
+                className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
+                aria-label="Edit Profile"
               >
-                <span className="text-gray-700 dark:text-gray-200">
-                  <UserPen />
-                </span>
+                <UserPen className="text-gray-700 dark:text-gray-200" />
                 <span className="text-gray-800 dark:text-gray-100 font-medium">
                   {t("profile.edit_profile_button")}
                 </span>
@@ -78,11 +89,10 @@ const Profile = () => {
             )}
             <button
               onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
-              className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
+              className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
+              aria-label="Change Password"
             >
-              <span className="text-gray-700 dark:text-gray-200">
-                <KeySquare />
-              </span>
+              <KeySquare className="text-gray-700 dark:text-gray-200" />
               <span className="text-gray-800 dark:text-gray-100 font-medium">
                 {t("profile.change_password")}
               </span>
@@ -90,6 +100,9 @@ const Profile = () => {
           </div>
         </section>
       </div>
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-600 ">
+        {APP_CONFIG.APP_NAME} v{APP_CONFIG.VERSION}
+      </footer>
     </div>
   );
 };

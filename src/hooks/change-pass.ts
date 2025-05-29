@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useLocalizedText } from "@/utils/localized-text";
+import { CHANGE_PASSWORD_KEYS } from "@/constants";
 
 type FormState = {
   currentPassword: string;
@@ -34,7 +35,7 @@ const initialVisibility: VisibilityState = {
 };
 
 export function useChangePassForm() {
-  const { t } = useTranslation("common");
+  const labels = useLocalizedText("common", CHANGE_PASSWORD_KEYS);
 
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<ErrorState>(initialErrors);
@@ -55,12 +56,15 @@ export function useChangePassForm() {
     const newErrors: ErrorState = { ...initialErrors };
 
     if (!currentPassword)
-      newErrors.currentPassword = t("change_pass.error_current_required");
-    if (!password) newErrors.password = t("change_pass.error_new_required");
+      newErrors.currentPassword = labels.ERROR_CURRENT_REQUIRED;
+
+    if (!password) newErrors.password = labels.ERROR_NEW_REQUIRED;
+
     if (!passwordConfirmation)
-      newErrors.passwordConfirmation = t("change_pass.error_confirm_required");
+      newErrors.passwordConfirmation = labels.ERROR_CONFIRM_REQUIRED;
+
     if (password && passwordConfirmation && password !== passwordConfirmation) {
-      newErrors.passwordConfirmation = t("change_pass.error_mismatch");
+      newErrors.passwordConfirmation = labels.ERROR_MISMATCH;
     }
 
     setErrors(newErrors);
@@ -74,5 +78,6 @@ export function useChangePassForm() {
     handleChange,
     toggleVisibility,
     validateForm,
+    labels, // expose labels for UI usage (e.g. placeholders and button text)
   };
 }

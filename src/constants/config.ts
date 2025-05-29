@@ -1,6 +1,6 @@
 export const APP_CONFIG = {
-  APP_NAME: "QR Scanner App",
-  VERSION: "1.0.0",
+  APP_NAME: "MOPro",
+  VERSION: __APP_VERSION__, // Injected at build
 };
 
 export const SCAN_RESULT_CONFIG = {

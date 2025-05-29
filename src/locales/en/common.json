@@ -184,6 +184,14 @@
     "confirm_password": {
       "label": "Confirm New Password",
       "placeholder": "Re-enter new password"
-    }
+    },
+    "error": {
+      "error_current_required": "Current password is required.",
+      "error_new_required": "New password is required.",
+      "error_confirm_required": "Please confirm your new password.",
+      "error_mismatch": "New passwords do not match.",
+      "error_generic": "Failed to change password. Please try again."
+    },
+    "success": "Password changed successfully. Logging out..."
   }
 }
