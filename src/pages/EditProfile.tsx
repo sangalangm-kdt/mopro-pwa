@@ -1,4 +1,3 @@
-import { useUser } from "@/api/user";
 import Button from "@/components/buttons/Button";
 import Header from "@/components/navigation/Header";
 import { useAuthContext } from "@/context/auth/useAuth";
@@ -12,9 +11,6 @@ const EditProfile = () => {
     const { user } = useAuthContext();
     const navigate = useNavigate();
     const { t } = useTranslation("common");
-    const { user } = useAuthContext();
-    const { updateUser } = useUser();
-    const navigate = useNavigate();
 
     const [firstName, setFirstName] = useState(user?.firstName || "");
     const [lastName, setLastName] = useState(user?.lastName || "");
@@ -40,21 +36,6 @@ const EditProfile = () => {
             firstName,
             lastName,
             email,
-        });
-    };
-    const handleSubmit = () => {
-        console.log("Saving changes...", {
-            firstName,
-            lastName,
-            email,
-            role: getRoleLabel(roleId),
-        });
-        updateUser({
-            firstName,
-            lastName,
-            email,
-            roleId: roleId,
-            isEnable: 1,
         });
     };
 
