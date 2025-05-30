@@ -145,7 +145,7 @@ export default function FullscreenScanHistory({
                     {formatDate(entry.createdAt, undefined, locale)}
                   </span>
                   <div className="mt-1">
-                    <RadialProgress size={42} percentage={entry.percent} />
+                    <RadialProgress size={50} percentage={entry.percent} />
                   </div>
                 </div>
               </li>

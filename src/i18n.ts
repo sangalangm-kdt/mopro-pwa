@@ -21,6 +21,9 @@ import commonJA from "@locales/ja/common.json";
 import scanResultEN from "@locales/en/qrscanner/scanResult.json";
 import scanResultJA from "@locales/ja/qrscanner/scanResult.json";
 
+import onboardingEN from "@locales/en/onboarding.json";
+import onboardingJA from "@locales/ja/onboarding.json";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -38,6 +41,7 @@ i18n
         scan: qrScannerEN,
         common: commonEN,
         scanResult: scanResultEN,
+        onboarding: onboardingEN,
       },
       ja: {
         translation: {},
@@ -50,6 +54,7 @@ i18n
         scan: qrScannerJA,
         common: commonJA,
         scanResult: scanResultJA,
+        onboarding: onboardingJA,
       },
     },
 
@@ -63,6 +68,7 @@ i18n
       "scan",
       "common",
       "scanResult",
+      "onboarding",
     ],
     defaultNS: "translation", // ✅ Optional, but recommended
     fallbackLng: "ja",

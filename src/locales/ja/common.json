@@ -16,7 +16,9 @@
     "scan": "スキャン",
     "close": "閉じる",
     "save": "保存",
-    "edit_progress": "進捗を編集"
+    "edit_progress": "進捗を編集",
+    "save_changes": "変更を保存",
+    "update_password": "パスワードを更新する"
   },
   "manual_entry": {
     "title": "手動入力",
@@ -106,5 +108,89 @@
     "rememberMe": "ログイン状態を保持する",
     "forgotPassword": "パスワードをお忘れですか？",
     "requestAccount": "アカウントをリクエスト"
+  },
+  "help": {
+    "title": "ヘルプとサポート",
+    "faq": {
+      "title": "よくある質問",
+      "scan_qr": "QRコードはどうやってスキャンしますか？",
+      "scan_qr_answer": "スキャンタブに移動し、カメラをQRコードにかざしてください。",
+      "view_history": "スキャン履歴はどこで確認できますか？",
+      "view_history_answer": "ホーム画面からスキャン履歴を確認できます。",
+      "reset_password": "パスワードはどうやってリセットしますか？",
+      "reset_password_answer": "プロフィール画面で「パスワード変更」を選択してください。"
+    },
+    "contact": {
+      "title": "サポートに連絡する",
+      "position": "アシスタントソフトウェアエンジニア",
+      "company": "川崎重工設計技術サービス株式会社"
+    }
+  },
+  "user_guidelines": {
+    "title": "ユーザーガイドライン",
+    "intro_title": "MOProへようこそ！",
+    "intro_description": "このガイドは、アプリの使い方やナビゲーションを理解するのに役立ちます。",
+    "general_title": "一般的なガイドライン",
+    "general_item_1": "QRスキャナーを使用して進捗を更新してください。",
+    "general_item_2": "確認する前に製品情報を確認してください。",
+    "general_item_3": "ログイン情報は他人と共有しないでください。",
+    "general_item_4": "定期的にパスワードを変更してください。",
+    "general_item_5": "共有デバイスを使用した後は必ずログアウトしてください。",
+    "troubleshooting_title": "トラブルシューティングのヒント",
+    "troubleshooting_item_1": "スキャンが失敗する場合は、明るい場所で再試行してください。",
+    "troubleshooting_item_2": "問題が発生した場合はキャッシュをクリアしてください。",
+    "troubleshooting_item_3": "問題が解決しない場合はサポートに連絡してください。",
+    "support_title": "お困りですか？",
+    "support_description": "メニューの「ヘルプとサポート」からFAQを確認したり、サポートに連絡したりできます。"
+  },
+  "profile": {
+    "title": "プロフィール設定",
+    "edit_button": "プロフィールを編集",
+    "first_name": "名",
+    "last_name": "姓",
+    "email": "メールアドレス",
+    "role": {
+      "label": "役割",
+      "operator": "オペレーター",
+      "vendor": "ベンダー",
+      "admin": "管理者",
+      "unknown": "不明な役割"
+    },
+    "edit_profile_button": "プロフィールを編集",
+    "account_settings": "アカウント設定",
+    "change_password": "パスワードを変更"
+  },
+  "routes": {
+    "home": "ホーム",
+    "change_pass": "パスワードの変更"
+  },
+  "successModal": {
+    "title": "進捗が保存されました",
+    "subtitle": "更新内容が正常に保存されました。",
+    "scanAgain": "もう一度スキャン",
+    "home": "ホーム"
+  },
+  "change_password": {
+    "password_instruction": "アカウントの安全のため、現在のパスワードを入力し、新しいパスワードを設定してください。",
+    "current_password": {
+      "label": "現在のパスワード",
+      "placeholder": "現在のパスワードを入力してください"
+    },
+    "new_password": {
+      "label": "新しいパスワード",
+      "placeholder": "新しいパスワードを入力してください"
+    },
+    "confirm_password": {
+      "label": "新しいパスワード（確認）",
+      "placeholder": "新しいパスワードを再入力してください"
+    },
+    "error": {
+      "error_current_required": "現在のパスワードを入力してください。",
+      "error_new_required": "新しいパスワードを入力してください。",
+      "error_confirm_required": "新しいパスワードを確認してください。",
+      "error_mismatch": "新しいパスワードが一致しません。",
+      "error_generic": "パスワードの変更に失敗しました。もう一度お試しください。"
+    },
+    "success": "パスワードが正常に変更されました。ログアウトします..."
   }
 }

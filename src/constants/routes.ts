@@ -10,4 +10,5 @@ export const ROUTES = {
   EDIT_PROGRESS: "/edit-progress/:lineNumber",
   USER_GUIDELINES: "/user-guidelines",
   HELP_AND_SUPPORT: "/help-&-support",
+  ONBOARDING: "/onboarding",
 };

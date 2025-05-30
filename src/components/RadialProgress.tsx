@@ -47,7 +47,7 @@ export default function RadialProgress({
           cy={size / 2}
           r={radius}
           fill="transparent"
-          className="text-primary-500 dark:text-primary-500 transition-[stroke-dashoffset] duration-700 ease-out"
+          className="text-primary-500  dark:text-primary-500 transition-[stroke-dashoffset] duration-700 ease-out"
           stroke="currentColor"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}

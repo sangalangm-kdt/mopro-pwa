@@ -1,13 +1,17 @@
 import { useUser } from "@/api/user";
 import Button from "@/components/buttons/Button";
-import { CustomDropdown } from "@/components/CustomDropdown";
 import Header from "@/components/navigation/Header";
 import { useAuthContext } from "@/context/auth/useAuth";
 import { Home } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useTranslation } from "react-i18next";
+
 const EditProfile = () => {
+    const { user } = useAuthContext();
+    const navigate = useNavigate();
+    const { t } = useTranslation("common");
     const { user } = useAuthContext();
     const { updateUser } = useUser();
     const navigate = useNavigate();
@@ -15,7 +19,6 @@ const EditProfile = () => {
     const [firstName, setFirstName] = useState(user?.firstName || "");
     const [lastName, setLastName] = useState(user?.lastName || "");
     const [email, setEmail] = useState(user?.email || "");
-    const [roleId, setRoleId] = useState<number>(user?.roleId ?? 1);
 
     const getInitials = (): string => {
         const first = firstName[0] || "";
@@ -25,13 +28,20 @@ const EditProfile = () => {
 
     const getRoleLabel = (roleId?: number): string => {
         const roles: Record<number, string> = {
-            1: "Operator",
-            2: "Vendor",
-            3: "Admin",
+            1: t("profile.role.operator"),
+            2: t("profile.role.vendor"),
+            3: t("profile.role.admin"),
         };
-        return roles[roleId ?? 0] || "Unknown Role";
+        return roles[roleId ?? 0] || t("profile.role.unknown");
     };
 
+    const handleSubmit = () => {
+        console.log("Saving changes...", {
+            firstName,
+            lastName,
+            email,
+        });
+    };
     const handleSubmit = () => {
         console.log("Saving changes...", {
             firstName,
@@ -51,13 +61,13 @@ const EditProfile = () => {
     return (
         <div className="min-h-screen bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100">
             <Header
-                title="Edit Profile"
+                title={t("profile.edit_button")}
                 textColorClass="text-gray-800 dark:text-white"
                 rightElement={
                     <button
                         onClick={() => navigate("/")}
                         className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
-                        aria-label="Go to home"
+                        aria-label={t("routes.home")}
                     >
                         <Home className="w-5 h-5 text-gray-700 dark:text-white" />
                     </button>
@@ -80,7 +90,7 @@ const EditProfile = () => {
                         {/* First Name */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                First Name
+                                {t("profile.first_name")}
                             </label>
                             <input
                                 type="text"
@@ -93,7 +103,7 @@ const EditProfile = () => {
                         {/* Last Name */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Last Name
+                                {t("profile.last_name")}
                             </label>
                             <input
                                 type="text"
@@ -106,7 +116,7 @@ const EditProfile = () => {
                         {/* Email */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Email
+                                {t("profile.email")}
                             </label>
                             {user?.roleId === 3 ? (
                                 <input
@@ -128,32 +138,20 @@ const EditProfile = () => {
                         {/* Role */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Role
+                                {t("profile.role.label")}
                             </label>
-                            {user?.roleId === 3 ? (
-                                <CustomDropdown
-                                    value={roleId}
-                                    onChange={setRoleId}
-                                    options={[
-                                        { value: 1, label: "Operator" },
-                                        { value: 2, label: "Vendor" },
-                                        { value: 3, label: "Admin" },
-                                    ]}
-                                />
-                            ) : (
-                                <input
-                                    type="text"
-                                    value={getRoleLabel(user?.roleId)}
-                                    disabled
-                                    className="w-full px-4 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-zinc-700 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                                />
-                            )}
+                            <input
+                                type="text"
+                                value={getRoleLabel(user?.roleId)}
+                                disabled
+                                className="w-full px-4 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-zinc-700 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                            />
                         </div>
                     </div>
 
                     {/* Submit Button */}
                     <Button fullWidth variant="primary" onClick={handleSubmit}>
-                        Save Changes
+                        {t("button.save_changes")}
                     </Button>
                 </div>
             </div>

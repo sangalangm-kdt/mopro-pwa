@@ -148,3 +148,34 @@ export const PROGRESS_SLIDER_TEXT_KEYS = {
   DECREASE: "progress_slider.decrease",
   INPUT: "progress_slider.input",
 };
+
+export const PROFILE_TEXT_KEYS = {
+  TITLE: "profile.title",
+  NO_NAME: "profile.no_name",
+  NO_EMAIL: "profile.no_email",
+  EDIT_PROFILE_BUTTON: "profile.edit_profile_button",
+  ACCOUNT_SETTINGS: "profile.account_settings",
+  CHANGE_PASSWORD: "profile.change_password",
+  ROLE_OPERATOR: "profile.role.operator",
+  ROLE_VENDOR: "profile.role.vendor",
+  ROLE_ADMIN: "profile.role.admin",
+  ROLE_UNKNOWN: "profile.role.unknown",
+};
+
+export const CHANGE_PASSWORD_KEYS = {
+  PASSWORD_INSTRUCTIONS: "change_password.password_instruction",
+  CURRENT_PASSWORD_LABEL: "change_password.current_password.label",
+  CURRENT_PASSWORD_PLACEHOLDER: "change_password.current_password.placeholder",
+  NEW_PASSWORD_LABEL: "change_password.new_password.label",
+  NEW_PASSWORD_PLACEHOLDER: "change_password.new_password.placeholder",
+  CONFIRM_PASSWORD_LABEL: "change_password.confirm_password.label",
+  CONFIRM_PASSWORD_PLACEHOLDER: "change_password.confirm_password.placeholder",
+  BUTTON: "button.update_password",
+  CHANGE_PASS: "routes.change_pass",
+  SUCCESS: "change_password.success",
+  ERROR_CURRENT_REQUIRED: "change_password.error.error_current_required",
+  ERROR_NEW_REQUIRED: "change_password.error.error_new_required",
+  ERROR_CONFIRM_REQUIRED: "change_password.error.error_confirm_required",
+  ERROR_MISMATCH: "change_password.error.error_mismatch",
+  ERROR_GENERIC: "change_password.error.error_generic",
+};

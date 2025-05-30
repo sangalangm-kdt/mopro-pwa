@@ -1,26 +1,38 @@
-const steps = [
-  {
-    title: "Scan the Serial",
-    description:
-      "Use your device to scan the QR or barcode of the product to begin tracking.",
-    image: "/assets/scan.png",
-  },
-  {
-    title: "Enter Work Progress",
-    description:
-      "Fill in the work order details to associate with the scanned item.",
-    image: "/assets/enter.png",
-  },
-  {
-    title: "Track Progress",
-    description: "Monitor inspection time and status in real-time.",
-    image: "/assets/track.png",
-  },
-];
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { markOnboardingComplete } from "@/hooks/onboarding-direct";
+import Button from "@/components/buttons/Button";
+
+interface Step {
+  title: string;
+  description: string;
+  image: string;
+}
 
 export default function BoardingScreen() {
+  const { t } = useTranslation("onboarding");
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [autoSlide, setAutoSlide] = useState(true);
+
+  const steps: Step[] = [
+    {
+      title: t("scan_title"),
+      description: t("scan_description"),
+      image: "/assets/scan.png",
+    },
+    {
+      title: t("enter_title"),
+      description: t("enter_description"),
+      image: "/assets/enter.png",
+    },
+    {
+      title: t("track_title"),
+      description: t("track_description"),
+      image: "/assets/track.png",
+    },
+  ];
 
   const step = steps[index];
 
@@ -30,7 +42,7 @@ export default function BoardingScreen() {
       setIndex((prev) => (prev + 1) % steps.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [autoSlide]);
+  }, [autoSlide, steps.length]);
 
   const next = () => {
     setAutoSlide(false);
@@ -42,8 +54,18 @@ export default function BoardingScreen() {
     setIndex((prev) => (prev - 1 + steps.length) % steps.length);
   };
 
+  const handleFinish = () => {
+    markOnboardingComplete();
+    navigate("/login");
+  };
+
+  const handleSkip = () => {
+    markOnboardingComplete();
+    navigate("/login");
+  };
+
   return (
-    <div className="flex flex-col items-start justify-center text-left text-primary-200 dark:text-whitepx-6 sm:px-10 lg:px-20 py-10 h-full w-full max-w-xl mx-auto">
+    <div className="flex flex-col justify-center text-left px-6 sm:px-10 lg:px-20 py-10 h-full w-full max-w-xl mx-auto">
       {/* Image */}
       <img
         src={step.image}
@@ -56,29 +78,49 @@ export default function BoardingScreen() {
         <h2 className="text-2xl font-display font-semibold mb-2 text-primary-100 dark:text-primary-600">
           {step.title}
         </h2>
-        <p className="max-w-md text-sm text-primary-200 dark:text-white mb-6  ">
+        <p className="max-w-md text-sm text-primary-200 dark:text-white mb-6">
           {step.description}
         </p>
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex gap-4 mb-4">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+        {index === steps.length - 1 ? (
+          <Button onClick={handleFinish} fullWidth>
+            {t("get_started")}
+          </Button>
+        ) : (
+          <>
+            <Button onClick={next} fullWidth>
+              {t("next")}
+            </Button>
+            <Button variant="outlined" onClick={handleSkip} fullWidth>
+              {t("skip")}
+            </Button>
+          </>
+        )}
+      </div>
+
+      {/* Prev/Next controls (optional) */}
+      <div className="flex justify-between items-center w-full mb-4">
         <button
           onClick={prev}
-          className="text-sm px-4 py-2 rounded bg-primary-400 hover:bg-primary-500 text-white transition"
+          className="text-sm px-3 py-1 rounded text-primary-500 hover:text-primary-700"
+          aria-label="Previous step"
         >
-          Prev
+          {t("prev")}
         </button>
         <button
           onClick={next}
-          className="text-sm px-4 py-2 rounded bg-primary-400 hover:bg-primary-500 text-white transition"
+          className="text-sm px-3 py-1 rounded text-primary-500 hover:text-primary-700"
+          aria-label="Next step"
         >
-          Next
+          {t("next")}
         </button>
       </div>
 
-      {/* Dot Indicators - Clickable */}
-      <div className="flex gap-2 mt-2">
+      {/* Step Indicators */}
+      <div className="flex justify-center gap-2 mt-2">
         {steps.map((_, i) => (
           <button
             key={i}
@@ -86,6 +128,7 @@ export default function BoardingScreen() {
               setAutoSlide(false);
               setIndex(i);
             }}
+            aria-label={`Go to step ${i + 1}`}
             className={`w-2 h-2 rounded-full transition ${
               i === index
                 ? "bg-primary-700 dark:bg-primary-200"

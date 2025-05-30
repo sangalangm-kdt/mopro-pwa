@@ -57,10 +57,10 @@ export default function ScanHistoryCard({
               className="py-3 flex flex-row justify-between gap-3 sm:gap-1"
             >
               <div className="flex flex-col">
-                <p className="font-medium text-gray-800 dark:text-white truncate max-w-[160px] sm:max-w-[200px]">
+                <p className="font-medium text-gray-800 dark:text-white truncate max-w-[200px] sm:max-w-[200px]">
                   {entry.product.productList.name}
                 </p>
-                <p className="text-xs py-4 text-gray-500 dark:text-gray-400">
+                <p className="text-xs py-4 text-gray-500 truncate dark:text-gray-400">
                   {t(
                     `process.${entry.process.processList.name}`,
                     entry.process.processList.name

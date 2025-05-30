@@ -20,6 +20,7 @@ const EditProgress = lazy(() => import("@pages/EditProgress"));
 const UserGuidelines = lazy(() => import("@pages/UserGuidelines"));
 const HelpAndSupport = lazy(() => import("@pages/HelpAndSupport"));
 const ModalWrapper = lazy(() => import("@layouts/ModalWrapper"));
+const OnboardingScreen = lazy(() => import("@components/BoardingScreen"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
@@ -44,6 +45,16 @@ const router = createBrowserRouter([
       <PublicRoute>
         <Suspense fallback={<LoadingScreen />}>
           <Login />
+        </Suspense>
+      </PublicRoute>
+    ),
+  },
+  {
+    path: ROUTES.ONBOARDING,
+    element: (
+      <PublicRoute>
+        <Suspense fallback={<LoadingScreen />}>
+          <OnboardingScreen />
         </Suspense>
       </PublicRoute>
     ),
@@ -81,7 +92,7 @@ const router = createBrowserRouter([
         element: (
           <ScanResult
             qrData={""}
-            onClose={function (): void {
+            onClose={() => {
               throw new Error("Function not implemented.");
             }}
           />

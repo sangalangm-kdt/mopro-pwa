@@ -8,11 +8,15 @@ import AutoImport from "unplugin-auto-import/vite";
 import svgr from "vite-plugin-svgr";
 import viteCompression from "vite-plugin-compression"; // ✅ NEW
 import { allIcons } from "./src/assets/icons";
+import pkg from "./package.json";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -51,6 +55,7 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+
   build: {
     minify: "terser",
     terserOptions: {

@@ -1,12 +1,14 @@
 import Header from "@/components/navigation/Header";
-import { ROUTES } from "@/constants";
-import { KeySquare } from "lucide-react";
+import { APP_CONFIG, ROUTES } from "@/constants";
+import { KeySquare, UserPen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/auth/useAuth";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { t } = useTranslation("common");
 
   const getInitials = (): string => {
     const first = user?.firstName?.[0] || "";
@@ -15,70 +17,93 @@ const Profile = () => {
   };
 
   const getFullName = (): string =>
-    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "No Name";
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+    t("profile.no_name");
 
   const getRoleLabel = (roleId?: number): string => {
     const roles: Record<number, string> = {
-      1: "Operator",
-      2: "Vendor",
-      3: "Admin",
+      1: t("profile.role.operator"),
+      2: t("profile.role.vendor"),
+      3: t("profile.role.admin"),
     };
-    return roles[roleId ?? 0] || "Unknown Role";
+    return roles[roleId ?? 0] || t("profile.role.unknown");
+  };
+
+  const handleCopyEmail = () => {
+    if (user?.email) {
+      navigator.clipboard.writeText(user.email);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100">
       <Header
-        title="Profile Settings"
+        title={t("profile.title")}
         textColorClass="text-gray-800 dark:text-white"
       />
 
-      <div className="flex flex-col items-center justify-center py-4 px-4 space-y-6">
-        {/* Profile Info */}
-        <section className="flex flex-col items-center px-6 py-6 ">
-          {/* Avatar */}
-          <div className="py-2">
-            <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary-800 via-praimry-700 to-primary-600 p-[4px] shadow-lg shadow-primary-50 hover:scale-105 transition-transform duration-300">
-              <div className="w-full h-full rounded-full bg-white dark:bg-zinc-900 flex items-center justify-center text-xl font-semibold text-primary-700 dark:text-primary-300">
-                {getInitials()}
-              </div>
+      {/* Static Profile Info (always at top) */}
+      <section className="flex flex-col items-center px-6 pt-3 pb-6">
+        <div className="py-2">
+          <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary-800 via-primary-700 to-primary-600 p-[4px] shadow-lg shadow-primary-50 hover:scale-105 transition-transform duration-300">
+            <div className="w-full h-full rounded-full bg-white dark:bg-zinc-900 flex items-center justify-center text-xl font-semibold text-primary-700 dark:text-primary-300">
+              {getInitials()}
             </div>
           </div>
+        </div>
 
-          <h1 className="text-xl font-semibold mb-1">{getFullName()}</h1>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            {user?.email || "No email"}
-          </p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm italic">
-            {getRoleLabel(user?.roleId)}
-          </p>
+        <h1 className="text-xl font-semibold mb-1">{getFullName()}</h1>
+        <p
+          onClick={handleCopyEmail}
+          className="text-gray-600 dark:text-gray-400 text-sm cursor-pointer hover:underline"
+          title="Tap to copy email"
+        >
+          {user?.email || t("profile.no_email")}
+        </p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm italic">
+          {getRoleLabel(user?.roleId)}
+        </p>
+      </section>
 
-          {/* Show Edit button if not Operator (roleId !== 1) */}
-          {user?.roleId !== 1 && (
+      {/* Scrollable Account Settings */}
+      <main className="flex-1 w-full flex flex-col items-center overflow-y-auto px-4 space-y-6">
+        <div className="w-full max-w-md border-t border-gray-200 dark:border-gray-700" />
+
+        <section className="w-full max-w-md px-2 pb-6">
+          <h2 className="text-sm font-semibold uppercase text-gray-800 dark:text-white mb-4">
+            {t("profile.account_settings")}
+          </h2>
+          <div className="w-full border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-gray-700">
+            {user?.roleId !== 1 && (
+              <button
+                onClick={() => navigate(ROUTES.EDIT_PROFILE)}
+                className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
+                aria-label="Edit Profile"
+              >
+                <UserPen className="text-gray-700 dark:text-gray-200" />
+                <span className="text-gray-800 dark:text-gray-100 font-medium">
+                  {t("profile.edit_profile_button")}
+                </span>
+              </button>
+            )}
             <button
-              className="mt-4 text-sm font-semibold text-primary-700 hover:underline dark:text-primary-400"
-              onClick={() => navigate(ROUTES.EDIT_PROFILE)}
+              onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
+              className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
+              aria-label="Change Password"
             >
-              Edit Profile
+              <KeySquare className="text-gray-700 dark:text-gray-200" />
+              <span className="text-gray-800 dark:text-gray-100 font-medium">
+                {t("profile.change_password")}
+              </span>
             </button>
-          )}
+          </div>
         </section>
+      </main>
 
-        {/* Change Password */}
-        <section className="w-full max-w-md border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-gray-700">
-          <button
-            onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
-            className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
-          >
-            <span className="text-gray-700 dark:text-gray-200">
-              <KeySquare />
-            </span>
-            <span className="text-gray-800 dark:text-gray-100 font-medium">
-              Change password
-            </span>
-          </button>
-        </section>
-      </div>
+      {/* Footer pinned to bottom */}
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-600 py-3">
+        {APP_CONFIG.APP_NAME} v{APP_CONFIG.VERSION}
+      </footer>
     </div>
   );
 };
