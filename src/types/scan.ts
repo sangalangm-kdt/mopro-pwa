@@ -23,7 +23,7 @@ export interface ScanSuccessData {
   serialNumber: string;
   orderNumber: string;
   name: string;
-  updatedAt: string;
+  updatedAt: string | Date;
   remarks: string;
   productDetails: Product;
   percent: number;
@@ -35,7 +35,7 @@ export interface RawProgressEntry {
   id: number;
   lineNumber: string;
   percent: number;
-  updatedAt: string;
+  updatedAt: string | Date;
   product: {
     lineNumber: string;
     weight: number;

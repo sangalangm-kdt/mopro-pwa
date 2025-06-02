@@ -3,7 +3,7 @@ import i18next from "i18next";
 export function formatDate(
   dateInput: string | Date,
   options?: Intl.DateTimeFormatOptions,
-  locale: string = i18next.language // dynamically use current i18n language
+  locale: string = i18next.language
 ): string {
   if (!dateInput) return "";
 
@@ -17,10 +17,11 @@ export function formatDate(
 
   const defaultOptions: Intl.DateTimeFormatOptions = {
     year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    month: "short", // ✅ e.g. "Jun"
+    day: "numeric", // ✅ e.g. "2"
+    hour: "numeric", // ✅ e.g. "8"
+    minute: "2-digit", // ✅ e.g. "45"
+    hour12: true, // ✅ shows AM/PM
   };
 
   return new Intl.DateTimeFormat(locale, options || defaultOptions).format(
