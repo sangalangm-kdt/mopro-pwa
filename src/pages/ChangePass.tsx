@@ -32,7 +32,7 @@ const ChangePass = () => {
 
     try {
       await changePassword(form);
-      toast.success(t("change_pass.success"));
+      toast.success(t("change_password.success"));
 
       setTimeout(() => {
         logout();

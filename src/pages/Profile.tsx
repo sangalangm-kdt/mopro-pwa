@@ -46,7 +46,7 @@ const Profile = () => {
       <section className="flex flex-col items-center px-6 pt-3 pb-6">
         <div className="py-2">
           <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary-800 via-primary-700 to-primary-600 p-[4px] shadow-lg shadow-primary-50 hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full rounded-full bg-white dark:bg-zinc-900 flex items-center justify-center text-xl font-semibold text-primary-700 dark:text-primary-300">
+            <div className="w-full h-full rounded-full dark:text-white bg-white dark:bg-zinc-900 flex items-center justify-center text-xl font-semibold text-primary-700 ">
               {getInitials()}
             </div>
           </div>
@@ -73,29 +73,58 @@ const Profile = () => {
           <h2 className="text-sm font-semibold uppercase text-gray-800 dark:text-white mb-4">
             {t("profile.account_settings")}
           </h2>
-          <div className="w-full border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-gray-700">
-            {user?.roleId !== 1 && (
-              <button
-                onClick={() => navigate(ROUTES.EDIT_PROFILE)}
-                className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
-                aria-label="Edit Profile"
+          <div className="w-full border rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900">
+            {user?.roleId !== 1 ? (
+              <>
+                <div
+                  role="button"
+                  onClick={() => navigate(ROUTES.EDIT_PROFILE)}
+                  className="flex items-center w-full gap-3 px-4 py-4 rounded-t-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
+                  aria-label="Edit Profile"
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && navigate(ROUTES.EDIT_PROFILE)
+                  }
+                >
+                  <UserPen className="text-gray-700 dark:text-gray-200" />
+                  <span className="text-gray-800 dark:text-gray-100 font-medium">
+                    {t("profile.edit_profile_button")}
+                  </span>
+                </div>
+
+                <div
+                  role="button"
+                  onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
+                  className="flex items-center w-full gap-3 px-4 py-4 rounded-b-xl border-t border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
+                  aria-label="Change Password"
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && navigate(ROUTES.CHANGE_PASSWORD)
+                  }
+                >
+                  <KeySquare className="text-gray-700 dark:text-gray-200" />
+                  <span className="text-gray-800 dark:text-gray-100 font-medium">
+                    {t("profile.change_password")}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div
+                role="button"
+                onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
+                className="flex items-center w-full gap-3 px-4 py-4 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
+                aria-label="Change Password"
+                tabIndex={0}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && navigate(ROUTES.CHANGE_PASSWORD)
+                }
               >
-                <UserPen className="text-gray-700 dark:text-gray-200" />
+                <KeySquare className="text-gray-700 dark:text-gray-200" />
                 <span className="text-gray-800 dark:text-gray-100 font-medium">
-                  {t("profile.edit_profile_button")}
+                  {t("profile.change_password")}
                 </span>
-              </button>
+              </div>
             )}
-            <button
-              onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}
-              className="flex items-center w-full gap-3 px-4 py-4 hover:bg-gray-100 dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px]"
-              aria-label="Change Password"
-            >
-              <KeySquare className="text-gray-700 dark:text-gray-200" />
-              <span className="text-gray-800 dark:text-gray-100 font-medium">
-                {t("profile.change_password")}
-              </span>
-            </button>
           </div>
         </section>
       </main>
