@@ -13,8 +13,6 @@ import type {
 } from "@/types/scan";
 
 import { useIsMobile } from "./is-mobile-screen";
-import { formatDate } from "@/utils/format-date";
-import i18n from "@/i18n";
 
 export function useScanResult(
   qrData: string,
@@ -27,7 +25,6 @@ export function useScanResult(
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(true);
   const startY = useRef<number | null>(null);
-  const locale = i18n.language || "en";
 
   const matchedProject = useMemo(() => {
     return projects?.find((project) =>
@@ -85,11 +82,7 @@ export function useScanResult(
           orderNumber: matchedProject.orderNumber,
           percent: reconstructedProduct.percent,
           name: matchedProject.name,
-          updatedAt: formatDate(
-            new Date(latestProgress?.updatedAt ?? "Date is not set"),
-            undefined,
-            locale
-          ),
+          updatedAt: new Date(latestProgress?.updatedAt ?? "Date is not set"),
           remarks: matchedProject.remarks,
           productDetails: reconstructedProduct,
         }
