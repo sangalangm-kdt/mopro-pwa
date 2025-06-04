@@ -46,7 +46,7 @@ export default function MenuLinks({ onClose }: { onClose: () => void }) {
           }}
           className={SIDEBAR_MENU_BUTTON_CLASSES}
         >
-          <span className="flex items-center gap-2 text-sm">
+          <span className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
             {t("profile_settings")}
           </span>

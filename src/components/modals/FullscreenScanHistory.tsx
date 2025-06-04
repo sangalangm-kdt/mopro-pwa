@@ -60,7 +60,7 @@ export default function FullscreenScanHistory({
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-zinc-700">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+        <h2 className="text-xl sm:text-lg font-semibold text-gray-800 dark:text-white">
           {t(HOME_TEXT_KEYS.SCAN_HISTORY)}
         </h2>
         <button
@@ -80,13 +80,14 @@ export default function FullscreenScanHistory({
             placeholder="Search product or process"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition"
+            className="w-full pl-10 pr-3 py-2 text-base sm:text-sm rounded-md border border-gray-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition"
           />
+
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-zinc-400 pointer-events-none" />
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex gap-2 justify-start overflow-x-auto whitespace-nowrap mb-4 text-xs sm:text-sm w-full scrollbar-hide">
+        <div className="flex gap-2 justify-start overflow-x-auto whitespace-nowrap mb-4 text-sm w-full scrollbar-hide">
           {filterOptions.map((opt) => (
             <button
               key={opt.value}
@@ -114,7 +115,7 @@ export default function FullscreenScanHistory({
               >
                 {/* Left side: Product and Process */}
                 <div className="flex flex-col gap-1 max-w-[70%]">
-                  <p className="font-medium text-gray-800 dark:text-white truncate">
+                  <p className="font-medium text-base sm:text-sm text-gray-800 dark:text-white truncate">
                     <span
                       dangerouslySetInnerHTML={{
                         __html: highlightMatch(
@@ -124,7 +125,7 @@ export default function FullscreenScanHistory({
                       }}
                     />
                   </p>
-                  <p className="text-xs text-gray-500 py-2 dark:text-gray-400">
+                  <p className="text-sm text-gray-500 py-2 dark:text-gray-400">
                     <span
                       dangerouslySetInnerHTML={{
                         __html: highlightMatch(
@@ -141,7 +142,7 @@ export default function FullscreenScanHistory({
 
                 {/* Right side: Date and RadialProgress */}
                 <div className="flex flex-col items-end min-w-[75px]">
-                  <span className="text-[11px] text-gray-400">
+                  <span className="text-sm text-gray-400">
                     {formatDate(entry.createdAt, undefined, locale)}
                   </span>
                   <div className="mt-1">
@@ -152,7 +153,7 @@ export default function FullscreenScanHistory({
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-sm text-center mt-10">
+          <p className="text-gray-500 dark:text-gray-400 text-base sm:text-sm text-center mt-10">
             {t(HOME_TEXT_KEYS.SCAN_HISTORY_EMPTY)}
           </p>
         )}

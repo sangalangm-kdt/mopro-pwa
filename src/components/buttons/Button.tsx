@@ -34,7 +34,7 @@ export default function Button({
       {...props}
       disabled={isDisabled}
       className={`  
-        inline-flex items-center justify-center px-4 py-3 rounded-md text-sm font-semibold sm:text-base transition-colors duration-200 ease-in-out
+        inline-flex items-center justify-center px-4 py-3 rounded-md text-base sm:text-[15px] font-semibold transition-colors duration-200 ease-in-out
         whitespace-nowrap min-w-fit
         ${fullWidth ? "w-full" : ""}
         ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
@@ -43,7 +43,7 @@ export default function Button({
       `}
     >
       {loading && (
-        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+        <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></span>
       )}
       {children}
     </button>

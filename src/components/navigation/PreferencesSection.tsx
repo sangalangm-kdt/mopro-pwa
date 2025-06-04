@@ -39,7 +39,7 @@ export default function PreferencesSection() {
       <div>
         <button
           onClick={() => setLangOpen((prev) => !prev)}
-          className="w-full flex justify-between items-center text-sm font-body px-3 py-1 bg-transparent text-gray-800 dark:text-gray-100"
+          className="w-full flex justify-between items-center text-base font-body px-3 py-1 bg-transparent text-gray-800 dark:text-gray-100"
         >
           <span className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
@@ -58,7 +58,7 @@ export default function PreferencesSection() {
               <button
                 key={lang.code}
                 onClick={() => changeLanguage(lang.code)}
-                className={`w-full text-left px-3 py-1 rounded hover:bg-primary-100 dark:hover:bg-primary-700 transition text-sm ${
+                className={`w-full text-left px-3 py-2 rounded hover:bg-primary-100 dark:hover:bg-primary-700 transition text-base ${
                   lang.code === current.code
                     ? "font-semibold text-primary-700 dark:text-primary-300"
                     : "text-gray-700 dark:text-gray-300"
@@ -76,7 +76,7 @@ export default function PreferencesSection() {
         {/* <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
           {t("theme")}
         </label> */}
-        <div className="w-full flex justify-between items-center text-sm font-body px-3 py-1 bg-transparent text-gray-800 dark:text-gray-100">
+        <div className="w-full flex justify-between items-center text-base font-body px-3 py-1 bg-transparent text-gray-800 dark:text-gray-100">
           <span className="flex items-center gap-2">
             <SunMoon className="w-4 h-4 " />
             {t("current", {

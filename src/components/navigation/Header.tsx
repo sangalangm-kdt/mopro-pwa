@@ -27,10 +27,10 @@ export default function Header({
           <button
             aria-label="Go back"
             onClick={() => navigate(-1)}
-            className={`p-2 rounded-full ${textColorClass} hover:bg-gray-200 dark:hover:bg-zinc-800 active:bg-gray-300 dark:active:bg-zinc-700 transition group`}
+            className={`p-2.5 rounded-full ${textColorClass} hover:bg-gray-200 dark:hover:bg-zinc-800 active:bg-gray-300 dark:active:bg-zinc-700 transition group`}
           >
             <ArrowLeft
-              size={24}
+              size={28}
               className="group-hover:-translate-x-1 transition-transform duration-200"
             />
           </button>
@@ -39,7 +39,7 @@ export default function Header({
 
       {/* Title */}
       <div className="w-3/5 text-center">
-        <h1 className="text-base font-semibold truncate">{title}</h1>
+        <h1 className="text-lg sm:text-sm font-semibold truncate">{title}</h1>
       </div>
 
       {/* Right side */}

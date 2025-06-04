@@ -50,19 +50,24 @@ export function useLoginForm() {
     if (!validate()) return;
 
     setLoading(true);
-    const success = await login({ email: trimmedEmail, password });
 
-    if (!success) {
-      toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS);
-      setLoading(false);
-      return;
+    try {
+      const success = await login({ email: trimmedEmail, password });
+      console.log("Login success:", success);
+      if (!success) {
+        toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS);
+      } else {
+        toast.success(TOAST_MESSAGES.LOGIN_SUCCESS);
+        setTimeout(() => {
+          navigate(from, { replace: true });
+        }, 500);
+      }
+    } catch (err) {
+      console.error("Login failed:", err);
+      toast.error("Server error. Please try again later.");
+    } finally {
+      setLoading(false); // ✅ THIS ensures the loading resets
     }
-
-    toast.success(TOAST_MESSAGES.LOGIN_SUCCESS);
-    setTimeout(() => {
-      navigate(from, { replace: true });
-      setLoading(false);
-    }, 500);
   };
 
   return {

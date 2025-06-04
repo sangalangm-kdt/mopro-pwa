@@ -10,8 +10,8 @@ export default function Navbar() {
   const { user } = useAuthContext();
   const firstName = user?.firstName?.split(" ")[0] || "User";
   const { t } = useTranslation("common");
-  console.log(user);
-  console.log(firstName);
+  // console.log(user);
+  // console.log(firstName);
   return (
     <>
       <header className="w-full px-4 sm:px-6 py-4 grid grid-cols-3 items-center bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-700 shadow-sm fixed top-0 left-0 right-0 z-30">
@@ -27,7 +27,7 @@ export default function Navbar() {
         </div>
 
         {/* Center */}
-        <div className="flex justify-center  text-base sm:text-sm font-medium text-gray-700 dark:text-white truncate">
+        <div className="flex justify-center  text-base  font-medium text-gray-700 dark:text-white truncate">
           {t("home.hi")}&nbsp;
           <span className="text-primary-800 font-semibold">{firstName}</span>
         </div>

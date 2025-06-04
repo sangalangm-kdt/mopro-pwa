@@ -93,7 +93,7 @@ export default function ProcessDropdown({
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder || TEXT.PLACEHOLDER}
-          className="flex-1 bg-transparent border-none outline-none truncate overflow-hidden whitespace-nowrap"
+          className="flex-1 text-sm bg-transparent border-none outline-none truncate overflow-hidden whitespace-nowrap"
         />
 
         {value && (

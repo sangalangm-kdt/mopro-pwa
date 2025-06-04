@@ -5,7 +5,7 @@ export const SIDEBAR_PREFERENCES_CONTAINER_CLASSES =
 export const SIDEBAR_MENU_LINK_CONTAINER_CLASSES = "space-y-4 pt-4";
 
 export const SIDEBAR_MENU_BUTTON_CLASSES =
-  "block w-full text-left px-3 py-2 rounded-md hover:bg-primary-100 dark:hover:bg-primary-700 dark:hover:text-primary-100 hover:text-primary-800 hover:font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500";
+  "block w-full text-left px-3 py-2 text-base font-medium rounded-md hover:bg-primary-100 dark:hover:bg-primary-700 dark:hover:text-primary-100 hover:text-primary-800 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500";
 
 export const SIDEBAR_ASIDE_CLASSES = `fixed top-0 left-0 w-64 h-full bg-white dark:bg-zinc-800 z-50 shadow-lg transition-transform duration-300 flex flex-col $OPEN`;
 

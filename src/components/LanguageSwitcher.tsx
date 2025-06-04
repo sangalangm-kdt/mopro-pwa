@@ -46,7 +46,7 @@ export default function LanguageDropdown() {
       >
         <button
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
+          className="flex items-center gap-1 px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
         >
           <Icon name="languages" className="w-4 h-4 text-primary-800" />
           <span className="block sm:hidden">{currentLang.short}</span>

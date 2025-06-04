@@ -32,7 +32,7 @@ const ManualEntryModal = ({ onClose, onSubmit }: ManualEntryModalProps) => {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-lg shadow-xl p-6 border border-gray-200 dark:border-zinc-700 animate-slide-up"
+        className="relative w-full max-w-lg bg-white m-1 dark:bg-zinc-900 rounded-lg shadow-xl p-6 border border-gray-200 dark:border-zinc-700 animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -45,10 +45,10 @@ const ManualEntryModal = ({ onClose, onSubmit }: ManualEntryModalProps) => {
         </button>
 
         {/* Modal Content */}
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
           {TEXT.title}
         </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+        <p className="text-base text-gray-600 dark:text-gray-300 mb-6">
           {TEXT.description}
         </p>
 
@@ -58,7 +58,7 @@ const ManualEntryModal = ({ onClose, onSubmit }: ManualEntryModalProps) => {
           placeholder={TEXT.placeholder}
           value={drawingNumber}
           onChange={(e) => setDrawingNumber(e.target.value)}
-          className="w-full rounded-md border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2 text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full rounded-md border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2 text- text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
 
         {/* Action Buttons */}

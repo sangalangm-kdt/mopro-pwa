@@ -76,7 +76,7 @@ export default function PWAButton() {
     <>
       {user ? (
         <>
-          <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+          <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
             {t(PWA_TEXT_KEYS.INSTALL_APP)}
           </span>
           <button
@@ -90,7 +90,7 @@ export default function PWAButton() {
           </button>
         </>
       ) : (
-        <Button onClick={handleInstall} fullWidth>
+        <Button onClick={handleInstall}>
           <div className="flex items-center gap-2 justify-center ">
             <Download className="h-4 w-4" />
             {t(PWA_TEXT_KEYS.PWA_GENERIC_LABEL)}

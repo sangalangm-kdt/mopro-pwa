@@ -60,7 +60,7 @@ export default function IntervalDropdown({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full h-9 pl-3 pr-8 rounded-md text-sm bg-white dark:bg-zinc-800 text-gray-800 dark:text-white border border-gray-300 dark:border-zinc-600 text-left relative focus:outline-none focus:ring-2 focus:ring-primary-500"
+        className="w-full h-9 pl-3 pr-8 rounded-md text-base bg-white dark:bg-zinc-800 text-gray-800 dark:text-white border border-gray-300 dark:border-zinc-600 text-left relative focus:outline-none focus:ring-2 focus:ring-primary-500"
       >
         {value}
         <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />

@@ -1,197 +1,202 @@
 {
-    "home": {
-        "welcome_title": "Welcome to <1>MOPro</1>",
-        "welcome_description": "Manage inspections, track progress, and scan your project QR codes effortlessly and efficiently.",
-        "scan_title": "Scan QR Code",
-        "scan_subtitle": "Click here to update your progress",
-        "scan_history": "Scan History",
-        "scan_button": "Scan",
-        "scan_history_empty": "No recent scans.",
-        "scan_history_load_more": "Load more...",
-        "hi": "Hi,"
-    },
-    "button": {
-        "confirm": "Confirm",
-        "cancel": "Cancel",
-        "scan": "Scan",
-        "close": "Close",
-        "save": "Save",
-        "edit_progress": "Edit progress",
-        "save_changes": "Save changes",
-        "update_password": "Update password"
-    },
-    "manual_entry": {
-        "title": "Manual Entry",
-        "description": "Fill in the drawing number manually.",
-        "placeholder": "Drawing Number",
-        "cancel": "Cancel",
-        "submit": "Submit"
-    },
-    "date_filter": {
-        "all": "All",
-        "latest": "Latest",
-        "today": "Today",
-        "week": "This Week",
-        "month": "This Month",
-        "last7days": "Last 7 Days"
-    },
-    "scan_result": {
-        "title": "Scan Result",
-        "header_title": "Scanned Details",
-        "drawing_number": "Drawing number",
-        "overview": "Overview",
-        "product_details": "Product Details",
-        "error_message": "Please check the QR code and try again. If the problem persists, contact your leader.",
-        "error_note": "You may also try scanning again or use manual enter the QR code.",
-        "read_more": "Read more",
-        "read_less": "Read less"
-    },
-    "scan_labels": {
-        "project_name": "Project name",
-        "order_number": "Order number",
-        "last_updated": "Last updated",
-        "last_modified_by": "Last modified by",
-        "drawing_name": "Drawing name",
-        "weight": "Weight",
-        "current_process": "Current process",
-        "progress": "Progress (%)",
-        "remarks": "Remarks"
-    },
-    "edit_progress": {
-        "title": "Edit Progress",
-        "subtitle": "Update the current process and progress of the product",
-        "product_info_title": "Product information",
-        "product_info_note": "These details are pulled from the scanned QR code and are not editable.",
-        "drawing_number": "Drawing number",
-        "product_name": "Product Name",
-        "progress_title": "Progress update",
-        "progress_note": "Select the current process and update the progress value below.",
-        "process_label": "Process",
-        "process_required": "Process is required.",
-        "progress_required": "Progress must be greater than 0%.",
-        "last_updated": "Last Updated:",
-        "cancel": "Cancel",
-        "save": "Save",
-        "saving": "Saving...",
-        "process_placeholder": "Please select a process",
-        "clear_selection": "Clear selected value",
-        "no_matches": "No matches found"
-    },
-    "progress_slider": {
-        "label": "Progress",
-        "interval": "Interval",
-        "increase": "Increase progress",
-        "decrease": "Decrease progress",
-        "input": "Progress input"
-    },
-    "login": {
-        "title": "Log in",
-        "subheader": "Hello, welcome to <0>MoPro</0>.",
-        "subheading": "Stay informed, stay productive—track progress anytime, anywhere with <0>MoPro</0>.",
-        "email": "Email",
-        "password": "Password",
-        "placeholder": {
-            "email": "Enter your email",
-            "password": "Enter your password"
-        },
-        "submit": "Login",
-        "loading": "Logging in...",
-        "error": {
-            "email": {
-                "required": "Email is required",
-                "invalid": "Please enter a valid email address"
-            },
-            "password": {
-                "required": "Password is required"
-            }
-        },
-        "rememberMe": "Remember me",
-        "forgotPassword": "Forgot password?",
-        "requestAccount": "Request account"
-    },
-    "help": {
-        "title": "Help & Support",
-        "faq": {
-            "title": "Frequently Asked Questions",
-            "scan_qr": "How do I scan a QR code?",
-            "scan_qr_answer": "Go to the Scan tab and point your camera at the QR code.",
-            "view_history": "Where can I view my scan history?",
-            "view_history_answer": "You can view your scan history from the home screen.",
-            "reset_password": "How can I reset my password?",
-            "reset_password_answer": "Go to your profile and select 'Change password'."
-        },
-        "contact": {
-            "title": "Contact Support",
-            "position": "Assistant Software Engineer",
-            "company": "KHI Design and Technical Services, Inc."
-        }
-    },
-    "user_guidelines": {
-        "title": "User Guidelines",
-        "intro_title": "Welcome to MOPro!",
-        "intro_description": "This guide will help you understand how to navigate and use the app effectively.",
-        "general_title": "General Guidelines",
-        "general_item_1": "Use the QR scanner to update your progress.",
-        "general_item_2": "Verify product information before confirming.",
-        "general_item_3": "Do not share your credentials.",
-        "general_item_4": "Change your password regularly.",
-        "general_item_5": "Log out when done using a shared device.",
-        "troubleshooting_title": "Troubleshooting Tips",
-        "troubleshooting_item_1": "Try better lighting if scanning fails.",
-        "troubleshooting_item_2": "Clear cache if you experience issues.",
-        "troubleshooting_item_3": "Contact support if problems persist.",
-        "support_title": "Need Help?",
-        "support_description": "Visit Help & Support in the menu to reach out or view FAQs."
-    },
-    "profile": {
-        "title": "Profile Settings",
-        "edit_button": "Edit Profile",
-        "first_name": "First Name",
-        "last_name": "Last Name",
-        "email": "Email",
-        "role": {
-            "label": "Role",
-            "operator": "Operator",
-            "vendor": "Vendor",
-            "admin": "Admin",
-            "unknown": "Unknown Role"
-        },
-        "edit_profile_button": "Edit Profile",
-        "account_settings": "Account Settings",
-        "change_password": "Change Password"
-    },
-
-    "routes": {
-        "home": "Home",
-        "change_pass": "Change Password"
-    },
-    "successModal": {
-        "title": "Progress Saved",
-        "subtitle": "Your updates have been successfully saved.",
-        "scanAgain": "Scan again",
-        "home": "Home"
-    },
-    "change_password": {
-        "password_instruction": "For your account's security, please enter your current password and choose a new one.",
-        "current_password": {
-            "label": "Current Password",
-            "placeholder": "Enter current password"
-        },
-        "new_password": {
-            "label": "New Password",
-            "placeholder": "Enter new password"
-        },
-        "confirm_password": {
-            "label": "Confirm New Password",
-            "placeholder": "Re-enter new password"
-        },
-        "error": {
-            "error_current_required": "Current password is required.",
-            "error_new_required": "New password is required.",
-            "error_confirm_required": "Please confirm your new password.",
-            "error_mismatch": "New passwords do not match.",
-            "error_generic": "Failed to change password. Please try again."
-        },
-        "success": "Password changed successfully. Logging out..."
+  "home": {
+    "welcome_title": "Welcome to <1>MOPro</1>",
+    "welcome_description": "Manage inspections, track progress, and scan your project QR codes effortlessly and efficiently.",
+    "scan_title": "Scan QR Code",
+    "scan_subtitle": "Click here to update your progress",
+    "scan_history": "Scan History",
+    "scan_button": "Scan",
+    "scan_history_empty": "No recent scans.",
+    "scan_history_load_more": "Load more...",
+    "hi": "Hi,"
+  },
+  "button": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "scan": "Scan",
+    "close": "Close",
+    "save": "Save",
+    "edit_progress": "Edit progress",
+    "save_changes": "Save changes",
+    "update_password": "Update password"
+  },
+  "manual_entry": {
+    "title": "Manual Entry",
+    "description": "Fill in the drawing number manually.",
+    "placeholder": "Drawing Number",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "date_filter": {
+    "all": "All",
+    "latest": "Latest",
+    "today": "Today",
+    "week": "This Week",
+    "month": "This Month",
+    "last7days": "Last 7 Days"
+  },
+  "scan_result": {
+    "title": "Scan Result",
+    "header_title": "Scanned Details",
+    "drawing_number": "Drawing number",
+    "overview": "Overview",
+    "product_details": "Product Details",
+    "error_message": "Please check the QR code and try again. If the problem persists, contact your leader.",
+    "error_note": "You may also try scanning again or use manual enter the QR code.",
+    "read_more": "Read more",
+    "read_less": "Read less"
+  },
+  "scan_labels": {
+    "project_name": "Project name",
+    "order_number": "Order number",
+    "last_updated": "Last updated",
+    "last_modified_by": "Last modified by",
+    "drawing_name": "Drawing name",
+    "weight": "Weight",
+    "current_process": "Current process",
+    "progress": "Progress (%)",
+    "remarks": "Remarks"
+  },
+  "edit_progress": {
+    "title": "Edit Progress",
+    "subtitle": "Update the current process and progress of the product.",
+    "product_info_title": "Product information",
+    "product_info_note": "These details are pulled from the scanned QR code and are not editable.",
+    "drawing_number": "Drawing number",
+    "product_name": "Product Name",
+    "progress_title": "Progress update",
+    "progress_note": "Select the current process and update the progress value below.",
+    "process_label": "Process",
+    "process_required": "Process is required.",
+    "progress_required": "Progress must be greater than 0%.",
+    "last_updated": "Last Updated:",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "process_placeholder": "Please select a process",
+    "clear_selection": "Clear selected value",
+    "no_matches": "No matches found"
+  },
+  "progress_slider": {
+    "label": "Progress",
+    "interval": "Interval",
+    "increase": "Increase progress",
+    "decrease": "Decrease progress",
+    "input": "Progress input",
+    "error": {
+      "invalid": "Value must be ≥ {{min}} and divisible by {{interval}}"
     }
+  },
+  "login": {
+    "title": "Log in",
+    "subheader": "Hello, welcome to <0>MoPro</0>.",
+    "subheading": "Stay informed, stay productive—track progress anytime, anywhere with <0>MoPro</0>.",
+    "email": "Email",
+    "password": "Password",
+    "placeholder": {
+      "email": "Enter your email",
+      "password": "Enter your password"
+    },
+    "submit": "Login",
+    "loading": "Logging in...",
+    "error": {
+      "email": {
+        "required": "Email is required",
+        "invalid": "Please enter a valid email address"
+      },
+      "password": {
+        "required": "Password is required"
+      }
+    },
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "requestAccount": "Request account",
+    "pwa_banner_title": "Want a mobile-like experience?",
+    "pwa_banner_description": "Install the app to your home screen."
+  },
+  "help": {
+    "title": "Help & Support",
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "scan_qr": "How do I scan a QR code?",
+      "scan_qr_answer": "Go to the Scan tab and point your camera at the QR code.",
+      "view_history": "Where can I view my scan history?",
+      "view_history_answer": "You can view your scan history from the home screen.",
+      "reset_password": "How can I reset my password?",
+      "reset_password_answer": "Go to your profile and select 'Change password'."
+    },
+    "contact": {
+      "title": "Contact Support",
+      "position": "Assistant Software Engineer",
+      "company": "KHI Design and Technical Services, Inc."
+    }
+  },
+  "user_guidelines": {
+    "title": "User Guidelines",
+    "intro_title": "Welcome to MOPro!",
+    "intro_description": "This guide will help you understand how to navigate and use the app effectively.",
+    "general_title": "General Guidelines",
+    "general_item_1": "Use the QR scanner to update your progress.",
+    "general_item_2": "Verify product information before confirming.",
+    "general_item_3": "Do not share your credentials.",
+    "general_item_4": "Change your password regularly.",
+    "general_item_5": "Log out when done using a shared device.",
+    "troubleshooting_title": "Troubleshooting Tips",
+    "troubleshooting_item_1": "Try better lighting if scanning fails.",
+    "troubleshooting_item_2": "Clear cache if you experience issues.",
+    "troubleshooting_item_3": "Contact support if problems persist.",
+    "support_title": "Need Help?",
+    "support_description": "Visit Help & Support in the menu to reach out or view FAQs."
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "edit_button": "Edit Profile",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "Email",
+    "role": {
+      "label": "Role",
+      "operator": "Operator",
+      "vendor": "Vendor",
+      "admin": "Admin",
+      "unknown": "Unknown Role"
+    },
+    "edit_profile_button": "Edit Profile",
+    "account_settings": "Account Settings",
+    "change_password": "Change Password"
+  },
+
+  "routes": {
+    "home": "Home",
+    "change_pass": "Change Password"
+  },
+  "successModal": {
+    "title": "Progress Saved",
+    "subtitle": "Your updates have been successfully saved.",
+    "scanAgain": "Scan again",
+    "home": "Home"
+  },
+  "change_password": {
+    "password_instruction": "For your account's security, please enter your current password and choose a new one.",
+    "current_password": {
+      "label": "Current Password",
+      "placeholder": "Enter current password"
+    },
+    "new_password": {
+      "label": "New Password",
+      "placeholder": "Enter new password"
+    },
+    "confirm_password": {
+      "label": "Confirm New Password",
+      "placeholder": "Re-enter new password"
+    },
+    "error": {
+      "error_current_required": "Current password is required.",
+      "error_new_required": "New password is required.",
+      "error_confirm_required": "Please confirm your new password.",
+      "error_mismatch": "New passwords do not match.",
+      "error_generic": "Failed to change password. Please try again."
+    },
+    "success": "Password changed successfully. Logging out..."
+  }
 }

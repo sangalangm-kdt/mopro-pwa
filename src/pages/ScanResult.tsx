@@ -38,13 +38,13 @@ function Section({ label, value, icon }: FieldItem) {
     <div className="flex items-start gap-2">
       <Icon name={icon} className="w-4 h-4 text-gray-500" />
       <div>
-        <p className="text-gray-500 text-xs">{label}</p>
-        <p className="font-medium text-gray-800 dark:text-white break-words text-sm">
+        <p className="text-gray-500 text-base">{label}</p>
+        <p className="font-medium text-gray-800 dark:text-white break-words text-base">
           {displayValue}
           {shouldTruncate && (
             <button
               onClick={() => setShowFull(!showFull)}
-              className="ml-1 text-primary-500 text-xs underline"
+              className="ml-1 text-primary-500 text-sm underline"
             >
               {showFull ? SCAN_RESULT.READ_LESS : SCAN_RESULT.READ_MORE}
             </button>
@@ -166,17 +166,17 @@ export default function ScanResult({
             </div>
           ) : (
             <>
-              <div className="text-center mb-4">
-                <h3 className="text-xl font-bold text-primary-800">
+              <div className="text-center py-2 mb-2">
+                <h3 className="text-2xl font-bold text-primary-800">
                   {parsed.lineNumber}
                 </h3>
-                <p className="text-xs text-gray-500">
+                <p className="text-base text-gray-500">
                   {SCAN_RESULT.DRAWING_NUMBER}
                 </p>
               </div>
 
               <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow border border-gray-200 dark:border-zinc-700 space-y-4">
-                <p className="text-base font-bold text-gray-800 dark:text-white">
+                <p className="text-lg font-bold text-gray-800 dark:text-white">
                   {SCAN_RESULT.OVERVIEW}
                 </p>
                 {overviewFields.map((field) => (
@@ -186,7 +186,7 @@ export default function ScanResult({
 
               {productDetailsFields.length > 0 && (
                 <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow border mt-3 border-gray-200 dark:border-zinc-700 space-y-4">
-                  <p className="text-base font-bold text-gray-800 dark:text-white">
+                  <p className="text-lg font-bold text-gray-800 dark:text-white">
                     {SCAN_RESULT.PRODUCT_DETAILS}
                   </p>
                   {productDetailsFields.map((field) => (

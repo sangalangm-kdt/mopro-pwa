@@ -68,7 +68,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           {/* User Info */}
           <div className="flex items-center gap-4 px-1">
             <div
-              className="flex items-center justify-center w-10 h-10 text-[13px] rounded-full text-gray-600 dark:text-white shadow-md ring-2 ring-primary-700 dark:ring-primary-800
+              className="flex items-center justify-center w-10 h-10 text-[14px] rounded-full text-gray-600 dark:text-white shadow-md ring-2 ring-primary-700 dark:ring-primary-800
 "
             >
               {(user?.firstName?.charAt(0) ?? "") +
@@ -76,10 +76,10 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             </div>
 
             <div className="flex flex-col min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white leading-tight truncate">
+              <p className="text-base font-medium text-gray-900 dark:text-white leading-tight truncate">
                 {user?.firstName ?? "Unknown"} {user?.lastName ?? ""}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                 {user?.email?.split("@")[0]}
               </p>
             </div>
@@ -110,7 +110,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 border border-red-200 dark:border-zinc-700 rounded-md hover:bg-red-50 dark:hover:bg-zinc-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+            className="w-full flex items-center gap-2 px-4 py-2 text-base text-red-600 border border-red-200 dark:border-zinc-700 rounded-md hover:bg-red-50 dark:hover:bg-zinc-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
           >
             <LogOut className="h-4 w-4" />
             {t("log_out")}
