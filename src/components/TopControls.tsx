@@ -16,25 +16,37 @@ export default function TopControls() {
 
       {/* Theme Toggle Button */}
       <button
-        onClick={toggleTheme}
+        onClick={(e) => {
+          const btn = e.currentTarget;
+          toggleTheme();
+          setTimeout(() => btn?.blur(), 150);
+        }}
         aria-label={isDark ? "Enable light mode" : "Enable dark mode"}
-        className="relative flex items-center justify-center rounded-full p-5 border border-primary-600 text-primary-800 hover:bg-primary-100 dark:border-zinc-600 dark:text-white dark:hover:bg-zinc-800 transition-all duration-300 w-10 h-10"
+        className="relative flex items-center gap-2 px-4 py-3 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-600 hover:shadow transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-primary-500"
         title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       >
-        <Moon
-          className={`${baseIconClass} ${
-            isDark
-              ? "opacity-0 rotate-90 scale-75"
-              : "opacity-100 rotate-0 scale-100"
-          }`}
-        />
-        <Sun
-          className={`${baseIconClass} text-amber-300 ${
-            isDark
-              ? "opacity-100 rotate-0 scale-100"
-              : "opacity-0 -rotate-90 scale-75"
-          }`}
-        />
+        {/* Icons (Animated Transition) */}
+        <div className="relative w-5 h-5">
+          <Sun
+            className={`${baseIconClass} text-yellow-400 group-hover:scale-110 ${
+              isDark
+                ? "opacity-0 -rotate-90 scale-75"
+                : "opacity-100 rotate-0 scale-100"
+            }`}
+          />
+          <Moon
+            className={`${baseIconClass} text-gray-700 dark:text-gray-100 group-hover:scale-110 ${
+              isDark
+                ? "opacity-100 rotate-0 scale-100"
+                : "opacity-0 rotate-90 scale-75"
+            }`}
+          />
+        </div>
+
+        {/* Label */}
+        <span className="hidden sm:inline text-sm font-medium text-zinc-700 dark:text-zinc-200 select-none">
+          {isDark ? "Dark" : "Light"}
+        </span>
       </button>
     </div>
   );

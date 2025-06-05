@@ -21,6 +21,7 @@ const UserGuidelines = lazy(() => import("@pages/UserGuidelines"));
 const HelpAndSupport = lazy(() => import("@pages/HelpAndSupport"));
 const ModalWrapper = lazy(() => import("@layouts/ModalWrapper"));
 const OnboardingScreen = lazy(() => import("@components/BoardingScreen"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
@@ -103,6 +104,14 @@ const router = createBrowserRouter([
   {
     path: "/redirecting",
     element: <div style={{ display: "none" }}>Redirecting...</div>,
+  },
+  {
+    path: "*",
+    element: (
+      <Suspense fallback={<LoadingScreen />}>
+        <NotFound />
+      </Suspense>
+    ),
   },
 ]);
 

@@ -1,19 +1,19 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import { defineConfig, type UserConfigExport } from "vite";
+import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import AutoImport from "unplugin-auto-import/vite";
 import svgr from "vite-plugin-svgr";
-import viteCompression from "vite-plugin-compression"; // ✅ NEW
-import { allIcons } from "./src/assets/icons";
+import viteCompression from "vite-plugin-compression";
 import pkg from "./package.json";
 
+// __dirname polyfill for ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default defineConfig({
+const config: UserConfigExport = {
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
@@ -23,15 +23,11 @@ export default defineConfig({
     svgr(),
     VitePWA({
       registerType: "autoUpdate",
-      manifest: {
-        name: "MOPro",
-        short_name: "MOPro",
-        description: "A mobile-friendly QR scanner and monitoring progress app",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
-        display: "standalone",
-        icons: allIcons,
-      },
+      includeAssets: [
+        "favicon.ico",
+        "apple-touch-icon.png",
+        "safari-pinned-tab.svg",
+      ],
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
@@ -42,29 +38,31 @@ export default defineConfig({
       dts: "src/auto-imports.d.ts",
     }),
     viteCompression({
-      // ✅ Enable gzip
+      algorithm: "brotliCompress",
+      ext: ".br",
+    }),
+    viteCompression({
       algorithm: "gzip",
-      threshold: 10240, // Only assets > 10KB
+      threshold: 10240,
       ext: ".gz",
     }),
   ],
   preview: {
     host: "0.0.0.0",
-    port: 1000, // optional: set your preferred port
+    port: 1000,
   },
   server: {
     port: 3000,
   },
-
   build: {
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
+    minify: true,
+    target: "esnext",
+    // @ts-expect-error: esbuild config is valid in runtime but not recognized due to stale TS types
+    esbuild: {
+      drop: ["console", "debugger"],
     },
   },
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -80,4 +78,6 @@ export default defineConfig({
       "@types": path.resolve(__dirname, "src/types"),
     },
   },
-});
+};
+
+export default defineConfig(config);

@@ -13,50 +13,39 @@
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     />
 
-    <!-- Theme color for Chrome on Android -->
+    <!-- Theme & PWA Config -->
     <meta name="theme-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="MOPro" />
 
-    <!-- Title -->
+    <!-- Page Title -->
     <title>MOPro</title>
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.webmanifest" />
 
-    <!-- Favicons -->
-    <link rel="icon" href="/favicon.ico" />
+    <!-- Light/Dark Favicons -->
     <link
       rel="icon"
       type="image/png"
-      sizes="16x16"
-      href="/android/android-launchericon-48-48.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="/android/android-launchericon-72-72.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
+      href="/android/android-launchericon-light-192.png"
       sizes="192x192"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/android/android-launchericon-dark-192.png"
+      sizes="192x192"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link
+      rel="icon"
+      type="image/png"
       href="/android/android-launchericon-192-192.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="512x512"
-      href="/android/android-launchericon-512-512.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="1024x1024"
-      href="/icon-1024x1024.png"
+      sizes="192x192"
     />
 
     <!-- Apple Touch Icons -->
@@ -66,7 +55,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/ios/180.png" />
     <link rel="apple-touch-icon" sizes="1024x1024" href="/ios/1024.png" />
 
-    <!-- Apple Splash Screens (Optional for iOS) -->
+    <!-- Apple Splash Screens -->
     <link
       rel="apple-touch-startup-image"
       href="/splash/apple-splash-1125x2436.png"
@@ -99,17 +88,10 @@
     />
 
     <!-- Fonts -->
-    <!-- <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat&display=swap"
       rel="stylesheet"
     />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    /> -->
-    <!-- Preload Local Fonts (Inter + Raleway) -->
     <link
       rel="preload"
       href="/fonts/Inter-VariableFont_opsz,wght.ttf"
@@ -141,17 +123,13 @@
 
     <!-- Global Styles -->
     <link href="/src/styles.css" rel="stylesheet" />
-
-    <!-- <script
-      crossorigin="anonymous"
-      src="//unpkg.com/react-scan/dist/auto.global.js"
-    ></script> -->
   </head>
+
   <body>
     <div id="root"></div>
     <div id="modal-root"></div>
 
-    <!-- Main entry -->
+    <!-- Main App Entry -->
     <script type="module" src="/src/main.tsx"></script>
 
     <!-- PWA Service Worker Registration -->

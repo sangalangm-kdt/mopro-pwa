@@ -32,7 +32,7 @@ export default function LargeHeader({
       )}
 
       {subheading && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 tracking-wide">
+        <p className="text-base text-gray-600 dark:text-gray-400 tracking-wide">
           <Trans
             i18nKey={subheading}
             ns={namespace}

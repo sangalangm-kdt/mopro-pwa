@@ -234,6 +234,28 @@ body,
   }
 }
 
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+.font-sketch {
+  font-family: "Caveat", cursive;
+}
+
+.animate-wiggle {
+  animation: wiggle 1s infinite ease-in-out;
+}
+
+.shadow-sketch {
+  box-shadow: 3px 3px 0px #d97706;
+}
+
 /* --------------------------------- */
 /*          ANIMATION CLASSES        */
 /* --------------------------------- */

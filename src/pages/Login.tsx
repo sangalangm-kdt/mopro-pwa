@@ -5,14 +5,14 @@ import LargeHeader from "@/components/Header";
 import Button from "@/components/buttons/Button";
 import RememberMeCheckbox from "@/components/Checkbox";
 import Icon from "@/components/icons/Icons";
-import PWAButton from "@/components/buttons/PWAButton";
 import Logo from "@assets/logo/logo v2.svg?react";
-import { X } from "lucide-react";
 
 import { useLoginForm } from "@/hooks/login-form";
 import { ROUTES, LOGIN_TEXT_KEYS } from "@constants/index";
 import { useLocalizedText } from "@/utils/localized-text";
 import TopControls from "@/components/TopControls";
+import { isInStandaloneMode } from "@/utils/standalone-mode";
+import PwaPrompt from "@/components/PwaPrompt";
 
 export default function Login() {
   const {
@@ -29,7 +29,8 @@ export default function Login() {
   const TEXT = useLocalizedText("common", LOGIN_TEXT_KEYS);
 
   const [showPwaPrompt, setShowPwaPrompt] = useState(() => {
-    return localStorage.getItem("hidePwaPrompt") !== "true";
+    const isHidden = localStorage.getItem("hidePwaPrompt") === "true";
+    return !isInStandaloneMode() && !isHidden;
   });
 
   // Auto-dismiss after 10 seconds
@@ -54,30 +55,13 @@ export default function Login() {
       <div className="relative w-full md:w-[45%] lg:w-[40%] xl:w-[35%] flex items-center justify-center p-6 dark:bg-bg-color">
         {/* ✅ PWA Prompt Banner */}
         {showPwaPrompt && (
-          <div className="absolute top-4 left-4 right-4 max-w-md mx-auto bg-primary-50 dark:bg-zinc-800 border border-primary-200 dark:border-zinc-700 rounded-lg px-4 py-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 z-10 transition-all animate-fade-in-up">
-            <button
-              onClick={handleDismissPwaPrompt}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-              aria-label="Dismiss PWA prompt"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="flex flex-row pt-1 sm:flex-row sm:items-center sm:justify-between w-full">
-              <div className="flex-1 text-sm text-gray-700 dark:text-gray-300 leading-tight mb-2 sm:mb-0">
-                <p className="font-medium">
-                  {TEXT.PWA_BANNER_TITLE ?? "Want a mobile-like experience?"}
-                </p>
-                <p className="text-xs">
-                  {TEXT.PWA_BANNER_DESCRIPTION ??
-                    "Install the app to your home screen."}
-                </p>
-              </div>
-              <div className="shrink-0">
-                <PWAButton />
-              </div>
-            </div>
-          </div>
+          <PwaPrompt
+            text={{
+              PWA_BANNER_TITLE: TEXT.PWA_BANNER_TITLE,
+              PWA_BANNER_DESCRIPTION: TEXT.PWA_BANNER_DESCRIPTION,
+            }}
+            onDismiss={handleDismissPwaPrompt}
+          />
         )}
 
         {/* Content Block */}
@@ -124,7 +108,7 @@ export default function Login() {
               <RememberMeCheckbox label={TEXT.REMEMBER_ME} />
               <button
                 type="button"
-                className="text-gray-600 dark:text-gray-400 hover:underline transition"
+                className="text-gray-600 text-right dark:text-gray-400 hover:underline transition"
               >
                 {TEXT.FORGOT_PASSWORD}
               </button>

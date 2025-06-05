@@ -1,53 +1,26 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "./Button";
 import { useAuthContext } from "@/context/auth/useAuth";
 import { Download, X } from "lucide-react";
 import { PWA_TEXT_KEYS } from "@/constants";
 import { createPortal } from "react-dom";
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{
-    outcome: "accepted" | "dismissed";
-    platform: string;
-  }>;
-}
+import { usePwaInstallPrompt } from "@/utils/install-pwa";
 
 export default function PWAButton() {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
-  const [isSafari, setIsSafari] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(false);
   const { user } = useAuthContext();
   const { t } = useTranslation("pwa");
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [isVisible, setIsVisible] = useState(false); // ✅ Declare visibility
+
+  const { deferredPrompt, isSafari, isInstallable, promptInstall } =
+    usePwaInstallPrompt();
 
   useEffect(() => {
-    const ua = window.navigator.userAgent.toLowerCase();
-    const isSafariBrowser =
-      /safari/.test(ua) && !/chrome/.test(ua) && !/android/.test(ua);
-    setIsSafari(isSafariBrowser);
-
-    const handleBeforeInstall = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setIsVisible(true);
-      console.log("🔥 beforeinstallprompt event captured");
-    };
-
-    if (!isSafariBrowser) {
-      window.addEventListener("beforeinstallprompt", handleBeforeInstall);
-    } else {
-      setIsVisible(true);
+    if (isSafari || deferredPrompt) {
+      setIsVisible(true); // ✅ Trigger button visibility
     }
-
-    return () => {
-      if (!isSafariBrowser) {
-        window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
-      }
-    };
-  }, []);
+  }, [isSafari, deferredPrompt]);
 
   const handleInstall = async () => {
     if (isSafari) {
@@ -57,25 +30,24 @@ export default function PWAButton() {
 
     if (!deferredPrompt) return;
 
-    deferredPrompt.prompt();
+    await promptInstall?.(); // This internally calls deferredPrompt.prompt()
+
     const result = await deferredPrompt.userChoice;
 
     if (result.outcome === "accepted") {
       console.log("✅ PWA installed");
+      setIsVisible(false); // ✅ Auto-hide button
     } else {
       console.log("❌ PWA install dismissed");
     }
-
-    setDeferredPrompt(null);
-    setIsVisible(false);
   };
 
-  if (!isVisible) return null;
+  if (!isInstallable || !isVisible) return null; // ✅ Final visibility check
 
   return (
     <>
       {user ? (
-        <>
+        <div>
           <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
             {t(PWA_TEXT_KEYS.INSTALL_APP)}
           </span>
@@ -88,7 +60,7 @@ export default function PWAButton() {
               ? t(PWA_TEXT_KEYS.HOW_TO_INSTALL)
               : t(PWA_TEXT_KEYS.INSTALL_APP)}
           </button>
-        </>
+        </div>
       ) : (
         <Button onClick={handleInstall}>
           <div className="flex items-center gap-2 justify-center ">

@@ -1,37 +1,29 @@
 export const allIcons = [
-  // ✅ Light mode icons
   {
     src: "/android/android-launchericon-light-192.png",
     sizes: "192x192",
     type: "image/png",
     purpose: "any maskable",
-    media: "(prefers-color-scheme: light)",
   },
   {
     src: "/android/android-launchericon-light-512.png",
     sizes: "512x512",
     type: "image/png",
     purpose: "any maskable",
-    media: "(prefers-color-scheme: light)",
   },
-
-  // ✅ Dark mode icons
   {
     src: "/android/android-launchericon-dark-192.png",
     sizes: "192x192",
     type: "image/png",
     purpose: "any maskable",
-    media: "(prefers-color-scheme: dark)",
   },
   {
     src: "/android/android-launchericon-dark-512.png",
     sizes: "512x512",
     type: "image/png",
     purpose: "any maskable",
-    media: "(prefers-color-scheme: dark)",
   },
-
-  // ✅ iOS and default icons (neutral)
+  // iOS and default icons
   {
     src: "/ios/120.png",
     sizes: "120x120",
@@ -57,8 +49,6 @@ export const allIcons = [
     sizes: "1024x1024",
     type: "image/png",
   },
-
-  // ✅ Optional: fallback
   {
     src: "/ios/144.png",
     sizes: "144x144",

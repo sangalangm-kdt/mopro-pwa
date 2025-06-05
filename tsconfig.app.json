@@ -35,7 +35,10 @@
       "@hooks/*": ["hooks/*"],
       "@context/*": ["context/*"],
       "@types/*": ["types/*"]
-    }
+    },
+
+    // ✅ Moved here!
+    "types": ["vite/client", "node"]
   },
   "include": ["src", "i18n.ts", "src/types"]
 }

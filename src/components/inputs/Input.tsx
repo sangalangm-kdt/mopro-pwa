@@ -35,7 +35,7 @@ export default function TextInput({
       {label && (
         <label
           htmlFor={name}
-          className="block text-sm sm:text-base font-medium text-gray-700 dark:text-gray-200 mb-1"
+          className="block text-base sm:text-base font-medium text-gray-700 dark:text-gray-200 mb-1"
         >
           {label}
         </label>
@@ -64,7 +64,7 @@ export default function TextInput({
           autoComplete={autoComplete}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className={`w-full text-sm sm:text-base px-3 py-2 sm:py-3 border ${
+          className={`w-full text-base sm:text-base px-3 py-2 sm:py-3 border ${
             error
               ? "border-red-500 dark:border-red-400"
               : "border-gray-300 dark:border-gray-600"
