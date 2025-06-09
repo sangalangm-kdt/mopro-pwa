@@ -11,6 +11,7 @@ import {
   Weight,
   UserPen,
   Frown,
+  User,
 } from "lucide-react";
 
 // Lazy-loaded custom icons
@@ -39,6 +40,8 @@ const lucideIcons: Record<string, LucideIcon> = {
   home: Home,
   weight: Weight,
   "last-modified-by": UserPen,
+  "first-name": User,
+  "last-name": User,
 };
 
 interface IconProps extends SVGProps<SVGSVGElement> {

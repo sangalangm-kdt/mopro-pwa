@@ -72,6 +72,7 @@ i18n
     ],
     defaultNS: "translation", // ✅ Optional, but recommended
     fallbackLng: "ja",
+    pluralSeparator: "_",
     interpolation: {
       escapeValue: false,
     },

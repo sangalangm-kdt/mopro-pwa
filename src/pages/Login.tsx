@@ -32,6 +32,14 @@ export default function Login() {
     const isHidden = localStorage.getItem("hidePwaPrompt") === "true";
     return !isInStandaloneMode() && !isHidden;
   });
+  const [direction, setDirection] = useState("animate-slide-left");
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("transitionDirection");
+    setDirection(
+      saved === "right" ? "animate-slide-right" : "animate-slide-left"
+    );
+  }, []);
 
   // Auto-dismiss after 10 seconds
   useEffect(() => {
@@ -74,70 +82,82 @@ export default function Login() {
             </div>
           </div>
 
-          <LargeHeader
-            header={LOGIN_TEXT_KEYS.TITLE}
-            subheader={LOGIN_TEXT_KEYS.SUBHEADER}
-            subheading={LOGIN_TEXT_KEYS.SUBHEADING}
-          />
-
-          {/* Form */}
-          <form onSubmit={handleLogin} className="mt-6 space-y-4">
-            <TextInput
-              label={TEXT.EMAIL}
-              type="text"
-              name="email"
-              placeholder={TEXT.PLACEHOLDER_EMAIL}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={errors.email}
-              icon={<Icon name="email" className="w-5 h-5 text-primary-700" />}
+          <div className={direction}>
+            <LargeHeader
+              header={LOGIN_TEXT_KEYS.TITLE}
+              subheader={LOGIN_TEXT_KEYS.SUBHEADER}
+              subheading={LOGIN_TEXT_KEYS.SUBHEADING}
             />
 
-            <TextInput
-              label={TEXT.PASSWORD}
-              type="password"
-              name="password"
-              placeholder={TEXT.PLACEHOLDER_PASSWORD}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
-              icon={<Icon name="lock" className="w-5 h-5 text-primary-700" />}
-            />
+            {/* Form */}
+            <form onSubmit={handleLogin} className="mt-6 space-y-4">
+              <TextInput
+                label={TEXT.EMAIL}
+                type="text"
+                name="email"
+                placeholder={TEXT.PLACEHOLDER_EMAIL}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={errors.email}
+                icon={
+                  <Icon name="email" className="w-5 h-5 text-primary-700" />
+                }
+              />
 
-            <div className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
-              <RememberMeCheckbox label={TEXT.REMEMBER_ME} />
-              <button
-                type="button"
-                className="text-gray-600 text-right dark:text-gray-400 hover:underline transition"
+              <TextInput
+                label={TEXT.PASSWORD}
+                type="password"
+                name="password"
+                placeholder={TEXT.PLACEHOLDER_PASSWORD}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+                icon={<Icon name="lock" className="w-5 h-5 text-primary-700" />}
+              />
+
+              <div className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
+                <RememberMeCheckbox label={TEXT.REMEMBER_ME} />
+                <button
+                  type="button"
+                  className="text-gray-600 text-right dark:text-gray-400 hover:underline transition"
+                >
+                  {TEXT.FORGOT_PASSWORD}
+                </button>
+              </div>
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="primary"
+                loading={loading}
               >
-                {TEXT.FORGOT_PASSWORD}
-              </button>
+                {loading ? TEXT.LOADING : TEXT.SUBMIT}
+              </Button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex items-center my-4 py-4">
+              <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
+              <span className="mx-2 text-sm text-gray-500 dark:text-gray-400">
+                or
+              </span>
+              <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
             </div>
 
-            <Button type="submit" fullWidth variant="primary" loading={loading}>
-              {loading ? TEXT.LOADING : TEXT.SUBMIT}
+            {/* Request Account */}
+            <Button
+              type="button"
+              fullWidth
+              variant="secondary"
+              className="mt-2"
+              onClick={() => {
+                sessionStorage.setItem("transitionDirection", "left");
+                navigate(ROUTES.REQUEST_ACCOUNT);
+              }}
+            >
+              {TEXT.REQUEST_ACCOUNT}
             </Button>
-          </form>
-
-          {/* Divider */}
-          <div className="flex items-center my-4 py-4">
-            <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
-            <span className="mx-2 text-sm text-gray-500 dark:text-gray-400">
-              or
-            </span>
-            <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
           </div>
-
-          {/* Request Account */}
-          <Button
-            type="button"
-            fullWidth
-            variant="secondary"
-            className="mt-2"
-            onClick={() => navigate(ROUTES.REQUEST_ACCOUNT)}
-          >
-            {TEXT.REQUEST_ACCOUNT}
-          </Button>
         </div>
       </div>
 

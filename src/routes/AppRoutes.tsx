@@ -13,6 +13,7 @@ const Home = lazy(() => import("@/pages/Home"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const EditProfile = lazy(() => import("@/pages/EditProfile"));
 const ChangePass = lazy(() => import("@pages/ChangePass"));
+const RequestAccount = lazy(() => import("@pages/RequestAccount"));
 
 const Login = lazy(() => import("@/pages/Login"));
 const ScanResult = lazy(() => import("@/pages/ScanResult"));
@@ -25,6 +26,7 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
+import BoardingScreen from "@components/BoardingScreen";
 
 const LoadingScreen = () => (
   <div className="flex justify-center items-center min-h-screen p-8 bg-bg-color">
@@ -101,9 +103,18 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/redirecting",
     element: <div style={{ display: "none" }}>Redirecting...</div>,
+  },
+  {
+    path: ROUTES.REQUEST_ACCOUNT,
+    element: (
+      <Suspense fallback={<BoardingScreen />}>
+        <RequestAccount />
+      </Suspense>
+    ),
   },
   {
     path: "*",
