@@ -8,9 +8,11 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
+  roleId: number;
+  manufacturerId: string;
 }
 
-type FormErrors = FormData;
+type FormErrors = Omit<FormData, "roleId">;
 
 export function useRequestAccountForm(
   navigate: NavigateFunction,
@@ -27,6 +29,8 @@ export function useRequestAccountForm(
     email: "",
     password: "",
     confirmPassword: "",
+    roleId: 3,
+    manufacturerId: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({
@@ -35,6 +39,7 @@ export function useRequestAccountForm(
     email: "",
     password: "",
     confirmPassword: "",
+    manufacturerId: "",
   });
 
   useEffect(() => {
@@ -54,7 +59,7 @@ export function useRequestAccountForm(
   };
 
   useEffect(() => {
-    if (step !== 2 || !form.email.includes("@")) return;
+    if (step !== 3 || !form.email.includes("@")) return;
     const controller = new AbortController();
     const timeout = setTimeout(async () => {
       const exists = await checkEmailExists(form.email);
@@ -74,27 +79,41 @@ export function useRequestAccountForm(
 
   const handleChange = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+
     setErrors((prev) => {
       const newErrors = { ...prev };
 
-      if (field === "firstName" && step === 1)
+      if (field === "firstName" && step === 1) {
         newErrors.firstName = value.trim() ? "" : "First name is required";
-      if (field === "lastName" && step === 1)
+      }
+      if (field === "lastName" && step === 1) {
         newErrors.lastName = value.trim() ? "" : "Last name is required";
-      if (field === "email" && step === 2)
+      }
+
+      if (field === "manufacturerId" && step === 2) {
+        newErrors.manufacturerId = value.trim()
+          ? ""
+          : "Company name is required";
+      }
+
+      if (field === "email" && step === 3) {
         newErrors.email = value.includes("@")
           ? ""
           : "Please enter a valid email";
-      if (field === "password" && step === 3) {
+      }
+
+      if (field === "password" && step === 4) {
         newErrors.password =
           value.length >= 6 ? "" : "Password must be at least 6 characters";
         newErrors.confirmPassword =
-          form.confirmPassword === value ? "" : "Passwords do not match";
+          value === form.confirmPassword ? "" : "Passwords do not match";
       }
-      if (field === "confirmPassword" && step === 3) {
+
+      if (field === "confirmPassword" && step === 4) {
         newErrors.confirmPassword =
           value === form.password ? "" : "Passwords do not match";
       }
+
       return newErrors;
     });
   };
@@ -113,11 +132,16 @@ export function useRequestAccountForm(
         isValid = false;
       }
     } else if (step === 2) {
+      if (!form.manufacturerId.trim()) {
+        newErrors.manufacturerId = "Company name is required";
+        isValid = false;
+      }
+    } else if (step === 3) {
       if (!form.email.includes("@")) {
         newErrors.email = "Please enter a valid email";
         isValid = false;
       }
-    } else if (step === 3) {
+    } else if (step === 4) {
       if (form.password.length < 6) {
         newErrors.password = "Password must be at least 6 characters";
         isValid = false;
@@ -138,10 +162,10 @@ export function useRequestAccountForm(
     }
   };
 
-  const handleBack = (routes: typeof ROUTES) => {
+  const handleBack = () => {
     if (step === 1) {
       sessionStorage.setItem("transitionDirection", "right");
-      navigate(routes.LOGIN);
+      navigate(ROUTES.LOGIN);
     } else {
       setStep((prev) => Math.max(prev - 1, 1));
     }
