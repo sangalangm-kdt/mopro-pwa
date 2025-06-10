@@ -9,19 +9,19 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // Extract line number from URL
-function useLineNumber(): number | null {
+function useLineNumber(): string | null {
   const { lineNumber } = useParams<{ lineNumber?: string }>();
-  return useMemo(() => (lineNumber ? +lineNumber : null), [lineNumber]);
+  return useMemo(() => lineNumber ?? null, [lineNumber]);
 }
 
 // Match project by lineNumber
-function useMatchedProject(lineNumber: number | null): Project | undefined {
+function useMatchedProject(lineNumber: string | null): Project | undefined {
   const { projects } = useProject();
   return useMemo(() => {
-    if (!projects || lineNumber === null) return undefined;
+    if (!projects || !lineNumber) return undefined;
     return projects.find((project: Project) =>
       project.products.some((product: Product) =>
-        isMatchingSerial(String(product.lineNumber), String(lineNumber))
+        isMatchingSerial(product.lineNumber, lineNumber)
       )
     );
   }, [projects, lineNumber]);
