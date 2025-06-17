@@ -1,3 +1,5 @@
+import { useAuth } from "@/api/auth";
+import { useProductUserAssign } from "@/api/product-user-assign";
 import { useProgress } from "@/api/progress";
 import { useProject } from "@/api/project";
 import Button from "@/components/buttons/Button";
@@ -14,11 +16,25 @@ import { toast } from "sonner";
 import ScanResult from "./ScanResult";
 
 const QRScanner = () => {
+    const user = useAuth().user.data;
     const { projects } = useProject();
+    const { productUserAssigns } = useProductUserAssign();
+    const projectsWithAssignments = productUserAssigns?.filter(
+        (prod) => prod.userId === user?.id
+    );
 
-    const product = projects?.flatMap(
+    const assignedLineNumbers = projectsWithAssignments?.map(
+        (assign) => assign.lineNumber
+    );
+
+    const flatProducts = projects?.flatMap(
         (item: { products: unknown }) => item.products
     );
+
+    const products = flatProducts?.filter((prod) =>
+        assignedLineNumbers?.includes(prod.lineNumber)
+    );
+
     const { progress } = useProgress();
 
     const { t } = useTranslation("scan");
@@ -32,7 +48,7 @@ const QRScanner = () => {
         FLASHLIGHT_NOT_SUPPORTED,
     } = QR_SCANNER_TEXT_KEYS;
 
-    console.log(product);
+    console.log(products);
 
     const [torchOn, setTorchOn] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -48,7 +64,7 @@ const QRScanner = () => {
         setScanning,
     } = useQrScanner({
         onResult: (data) => {
-            const found = product.find(
+            const found = products.find(
                 (item: { lineNumber: string }) => item.lineNumber == data
             );
 
@@ -140,7 +156,7 @@ const QRScanner = () => {
                 <ManualEntryModal
                     onClose={() => setShowManualModal(false)}
                     onSubmit={({ drawingNumber }) => {
-                        const found = product.find(
+                        const found = products.find(
                             (item: { lineNumber: string }) =>
                                 item.lineNumber == drawingNumber
                         );
