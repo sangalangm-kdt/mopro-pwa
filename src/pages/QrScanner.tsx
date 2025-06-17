@@ -1,4 +1,3 @@
-import { useAuth } from "@/api/auth";
 import { useProgress } from "@/api/progress";
 import { useProject } from "@/api/project";
 import Button from "@/components/buttons/Button";
@@ -15,13 +14,9 @@ import { toast } from "sonner";
 import ScanResult from "./ScanResult";
 
 const QRScanner = () => {
-    const user = useAuth()?.user.data;
     const { projects } = useProject();
-    // Get only the projects that belong to the user's manufacturer
-    const userManufacturerProjects = projects.filter(
-        (proj) => proj.manufacturerId === user.manufacturerId
-    );
-    const product = userManufacturerProjects?.flatMap(
+
+    const product = projects?.flatMap(
         (item: { products: unknown }) => item.products
     );
     const { progress } = useProgress();
