@@ -6,6 +6,7 @@ import RadialProgress from "../RadialProgress";
 import { HOME_TEXT_KEYS } from "@/constants";
 
 export interface ScanEntry {
+  lineNumber: string;
   id: number;
   percent: number;
   drawingNumber: string;
@@ -36,6 +37,7 @@ export default function ScanHistoryCard({
 }: ScanHistoryCardProps) {
   const { t, i18n } = useTranslation(["common", "home"]);
   const locale = i18n.language || "en";
+  console.log(history);
 
   return (
     <div>
@@ -60,10 +62,7 @@ export default function ScanHistoryCard({
                   {entry.product.productList.name}
                 </p>
                 <p className="text-sm py-4 text-gray-500 truncate dark:text-gray-400">
-                  {t(
-                    `process.${entry.process.processList.name}`,
-                    entry.process.processList.name
-                  )}
+                  {entry.lineNumber}
                 </p>
               </div>
               <div className="flex flex-col items-end text-sm text-right">

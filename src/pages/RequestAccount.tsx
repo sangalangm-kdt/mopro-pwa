@@ -12,11 +12,13 @@ import { useRequestAccountForm } from "@/hooks/user-request";
 import ManufacturerInput from "@/components/ManufacturerDropdown";
 import { ROUTES } from "@/constants";
 import SuccessModal from "@/components/modals/RequestModal";
+import { FORM_STEP_CONTAINER_CLASSES } from "@/constants";
 
 export default function RequestAccount() {
   const navigate = useNavigate();
   const steps = ["Basic Info", "Company Info", "Email", "Password", "Review"];
   const [showSuccess, setShowSuccess] = useState(false);
+  const [didClickSubmit, setDidClickSubmit] = useState(false);
 
   const {
     step,
@@ -31,14 +33,28 @@ export default function RequestAccount() {
     totalSteps,
   } = useRequestAccountForm(navigate, steps);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // ✅ Prevent default form submission
-    setLoading(true); // ✅ Show loading state
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
+    if (step < totalSteps) {
+      // Prevent accidental submit — move to next step instead
+      handleNext();
+      return;
+    }
+
+    if (!didClickSubmit) {
+      return; // 🔒 Prevent accidental Enter submit
+    }
+
+    // ✅ Only run the real submit on final step
+    setLoading(true);
+
+    // Replace with your API call:
     setTimeout(() => {
-      setLoading(false); // ✅ Hide loading
-      setShowSuccess(true); // ✅ Trigger modal AFTER click
-    }, 1000); // You can replace this with an actual API call
+      setLoading(false);
+      setShowSuccess(true);
+      setDidClickSubmit(false);
+    }, 1000);
   };
 
   return (
@@ -103,7 +119,7 @@ export default function RequestAccount() {
             className={`${direction} mt-6 space-y-4 py-5`}
           >
             {step === 1 && (
-              <div className="p-4 rounded-md border border-gray-200 dark:border-zinc-700 shadow-sm bg-white dark:bg-zinc-900 space-y-4">
+              <div className={FORM_STEP_CONTAINER_CLASSES}>
                 <TextInput
                   label="First Name"
                   name="firstName"
@@ -136,7 +152,7 @@ export default function RequestAccount() {
             )}
 
             {step === 2 && (
-              <div className="p-4 rounded-md border border-gray-200 dark:border-zinc-700 shadow-sm bg-white dark:bg-zinc-900">
+              <div className={FORM_STEP_CONTAINER_CLASSES}>
                 <ManufacturerInput
                   label="Company Name"
                   value={form.manufacturerId}
@@ -153,7 +169,7 @@ export default function RequestAccount() {
             )}
 
             {step === 3 && (
-              <div className="p-4 rounded-md border border-gray-200 dark:border-zinc-700 shadow-sm bg-white dark:bg-zinc-900">
+              <div className={FORM_STEP_CONTAINER_CLASSES}>
                 <TextInput
                   label="Email"
                   name="email"
@@ -265,30 +281,39 @@ export default function RequestAccount() {
               </div>
             )}
 
-            {/* Navigation Buttons */}
-            <div className="flex justify-between pt-4">
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-base text-gray-500"
-                onClick={handleBack}
-              >
-                Back
-              </Button>
+            {/* Buttons & Already Have an Account */}
+            <div className="space-y-4 pt-4">
+              <div className="flex justify-between">
+                {step > 1 ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="text-base text-gray-500"
+                    onClick={handleBack}
+                  >
+                    Back
+                  </Button>
+                ) : (
+                  <span /> // Keeps spacing
+                )}
 
-              {step < totalSteps ? (
-                <Button type="button" variant="primary" onClick={handleNext}>
-                  Next
-                </Button>
-              ) : (
-                <Button type="submit" variant="primary" loading={loading}>
-                  {loading ? "Submitting..." : "Submit Request"}
-                </Button>
-              )}
-            </div>
+                {step < totalSteps ? (
+                  <Button type="button" variant="primary" onClick={handleNext}>
+                    Next
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    loading={loading}
+                    onClick={() => setDidClickSubmit(true)}
+                  >
+                    {loading ? "Submitting..." : "Submit Request"}
+                  </Button>
+                )}
+              </div>
 
-            {step >= 2 && (
-              <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-center text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?{" "}
                 <button
                   type="button"
@@ -298,7 +323,7 @@ export default function RequestAccount() {
                   Log in
                 </button>
               </div>
-            )}
+            </div>
           </form>
 
           {/* Success Modal */}

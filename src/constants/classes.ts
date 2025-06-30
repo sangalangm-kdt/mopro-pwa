@@ -27,3 +27,7 @@ export const SCAN_RESULT_CLASSES = {
   HANDLE_STYLE:
     "w-12 h-1.5 bg-gray-300 dark:bg-gray-700 mx-auto mt-2 mb-4 rounded-full",
 };
+
+// form step container (RequestAccount etc.)
+export const FORM_STEP_CONTAINER_CLASSES =
+  "p-4 rounded-md border border-gray-200 dark:border-zinc-700 space-y-4";

@@ -77,7 +77,7 @@ export default function FullscreenScanHistory({
         <div className="relative w-full sm:w-[240px] mb-4">
           <input
             type="text"
-            placeholder="Search product or process"
+            placeholder="Search by ID, product name or process"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-3 py-2 text-base sm:text-sm rounded-md border border-gray-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition"
@@ -128,13 +128,7 @@ export default function FullscreenScanHistory({
                   <p className="text-sm text-gray-500 py-2 dark:text-gray-400">
                     <span
                       dangerouslySetInnerHTML={{
-                        __html: highlightMatch(
-                          t(
-                            `process.${entry.process.processList.name}`,
-                            entry.process.processList.name
-                          ),
-                          searchTerm
-                        ),
+                        __html: highlightMatch(entry.lineNumber, searchTerm),
                       }}
                     />
                   </p>

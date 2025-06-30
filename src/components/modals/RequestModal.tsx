@@ -13,7 +13,7 @@ export default function SuccessModal({ show, onClose }: SuccessModalProps) {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 ">
       <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 w-full max-w-sm">
         <h2 className="text-lg font-semibold text-primary-700 dark:text-primary-400 mb-2">
           Request Submitted

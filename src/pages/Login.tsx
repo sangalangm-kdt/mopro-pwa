@@ -120,6 +120,7 @@ export default function Login() {
                 <button
                   type="button"
                   className="text-gray-600 text-right dark:text-gray-400 hover:underline transition"
+                  onClick={() => navigate(ROUTES.FORGOT_PASSWORD)}
                 >
                   {TEXT.FORGOT_PASSWORD}
                 </button>

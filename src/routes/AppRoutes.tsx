@@ -23,6 +23,7 @@ const HelpAndSupport = lazy(() => import("@pages/HelpAndSupport"));
 const ModalWrapper = lazy(() => import("@layouts/ModalWrapper"));
 const OnboardingScreen = lazy(() => import("@components/BoardingScreen"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const ForgotPassword = lazy(() => import("@pages/ForgotPassword"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
@@ -116,6 +117,25 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
+  {
+    path: ROUTES.FORGOT_PASSWORD,
+    element: (
+      <Suspense fallback={<LoadingScreen />}>
+        <ForgotPassword />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.CHANGE_PASSWORD_WITH_TOKEN, // e.g. '/change-password/:token'
+    element: (
+      <PublicRoute>
+        <Suspense fallback={<LoadingScreen />}>
+          <ChangePass />
+        </Suspense>
+      </PublicRoute>
+    ),
+  },
+
   {
     path: "*",
     element: (

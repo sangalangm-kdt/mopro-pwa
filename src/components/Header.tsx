@@ -1,5 +1,4 @@
 import { Trans, useTranslation } from "react-i18next";
-
 interface HeaderProps {
   header: string;
   subheader?: string;

@@ -11,6 +11,7 @@ export function searchScanHistory(
   return entries.filter(
     (entry) =>
       entry.product.productList.name.toLowerCase().includes(lowerSearch) ||
-      entry.process.processList.name.toLowerCase().includes(lowerSearch)
+      entry.process.processList.name.toLowerCase().includes(lowerSearch) ||
+      entry.lineNumber.toLowerCase().includes(lowerSearch)
   );
 }
