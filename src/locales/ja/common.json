@@ -204,5 +204,17 @@
     "seconds_one": "秒...",
     "seconds_other": "秒...",
     "go_home": "今すぐホームへ戻る"
+  },
+  "scan_history_details": {
+    "title": "スキャン履歴詳細",
+    "line_number": "図面番号",
+    "belongs_to": "所属プロジェクト",
+    "date": "日付",
+    "last_updated_by": "最終更新者",
+    "approved_by": "承認者",
+    "process": "プロセス",
+    "progress": "進捗",
+    "status": "ステータス",
+    "no_data": "データが見つかりません。スキャン履歴から移動してください。"
   }
 }

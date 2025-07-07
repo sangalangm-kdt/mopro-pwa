@@ -20,14 +20,14 @@ const Profile = () => {
     `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
     t("profile.no_name");
 
-  const getRoleLabel = (roleId?: number): string => {
-    const roles: Record<number, string> = {
-      1: t("profile.role.operator"),
-      2: t("profile.role.vendor"),
-      3: t("profile.role.admin"),
-    };
-    return roles[roleId ?? 0] || t("profile.role.unknown");
-  };
+  // const getRoleLabel = (roleId?: number): string => {
+  //   const roles: Record<number, string> = {
+  //     1: t("profile.role.operator"),
+  //     2: t("profile.role.vendor"),
+  //     3: t("profile.role.admin"),
+  //   };
+  //   return roles[roleId ?? 0] || t("profile.role.unknown");
+  // };
 
   const handleCopyEmail = () => {
     if (user?.email) {
@@ -61,7 +61,7 @@ const Profile = () => {
           {user?.email || t("profile.no_email")}
         </p>
         <p className="text-gray-500 dark:text-gray-400 text-sm italic">
-          {getRoleLabel(user?.roleId)}
+          {user?.employeeId}
         </p>
       </section>
 

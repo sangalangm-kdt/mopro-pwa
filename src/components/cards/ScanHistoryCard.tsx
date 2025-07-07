@@ -3,9 +3,20 @@ import ScanHistorySkeleton from "@components/skeletons/ScanHistorySkeleton";
 import { Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import RadialProgress from "../RadialProgress";
-import { HOME_TEXT_KEYS } from "@/constants";
+import { HOME_TEXT_KEYS, ROUTES } from "@/constants";
 
 export interface ScanEntry {
+  user: {
+    firstName: string;
+    lastName: string;
+  };
+  approvedBy: {
+    firstName: string;
+    lastName: string;
+  };
+  project: {
+    name: string;
+  };
   lineNumber: string;
   id: number;
   percent: number;
@@ -37,6 +48,7 @@ export default function ScanHistoryCard({
 }: ScanHistoryCardProps) {
   const { t, i18n } = useTranslation(["common", "home"]);
   const locale = i18n.language || "en";
+  const navigate = useNavigate();
   console.log(history);
 
   return (
@@ -55,6 +67,17 @@ export default function ScanHistoryCard({
           {history.map((entry) => (
             <li
               key={entry.id}
+              onClick={() =>
+                navigate(
+                  `${ROUTES.SCAN_HISTORY_DETAIL.replace(
+                    ":id",
+                    String(entry.id)
+                  )}`,
+                  {
+                    state: entry,
+                  }
+                )
+              }
               className="py-3 flex flex-row justify-between gap-3 sm:gap-1"
             >
               <div className="flex flex-col">

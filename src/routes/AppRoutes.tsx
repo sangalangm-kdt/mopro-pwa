@@ -24,6 +24,7 @@ const ModalWrapper = lazy(() => import("@layouts/ModalWrapper"));
 const OnboardingScreen = lazy(() => import("@components/BoardingScreen"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const ForgotPassword = lazy(() => import("@pages/ForgotPassword"));
+const ScanHistoryDetail = lazy(() => import("@/pages/ScanHistoryDetail"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
@@ -91,6 +92,7 @@ const router = createBrowserRouter([
       { path: ROUTES.EDIT_PROGRESS, element: <EditProgress /> },
       { path: ROUTES.USER_GUIDELINES, element: <UserGuidelines /> },
       { path: ROUTES.HELP_AND_SUPPORT, element: <HelpAndSupport /> },
+      { path: ROUTES.SCAN_HISTORY_DETAIL, element: <ScanHistoryDetail /> },
       {
         path: ROUTES.SCAN_RESULT,
         element: (

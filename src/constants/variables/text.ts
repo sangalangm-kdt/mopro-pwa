@@ -182,3 +182,16 @@ export const CHANGE_PASSWORD_KEYS = {
   ERROR_MISMATCH: "change_password.error.error_mismatch",
   ERROR_GENERIC: "change_password.error.error_generic",
 };
+
+export const SCAN_HISTORY_DETAIL_TEXT_KEYS = {
+  TITLE: "scan_history_details.title",
+  LINE_NUMBER: "scan_history_details.line_number",
+  BELONGS_TO: "scan_history_details.belongs_to",
+  DATE: "scan_history_details.date",
+  LAST_UPDATED_BY: "scan_history_details.last_updated_by",
+  APPROVED_BY: "scan_history_details.approved_by",
+  PROCESS: "scan_history_details.process",
+  PROGRESS: "scan_history_details.progress",
+  STATUS: "scan_history_details.status",
+  NO_DATA: "scan_history_details.no_data",
+};

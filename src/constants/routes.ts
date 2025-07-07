@@ -13,4 +13,5 @@ export const ROUTES = {
   ONBOARDING: "/onboarding",
   FORGOT_PASSWORD: "/forgot-password",
   CHANGE_PASSWORD_WITH_TOKEN: "/change-password/:token",
+  SCAN_HISTORY_DETAIL: "/scan-history/:id",
 };

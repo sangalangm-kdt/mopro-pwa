@@ -35,6 +35,7 @@ export default function FullscreenScanHistory({
   const [visible, setVisible] = useState(false);
   const [dateFilter, setDateFilter] = useState<DateFilterOption>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading) {
@@ -51,6 +52,9 @@ export default function FullscreenScanHistory({
     filterScanHistoryByDate(data, dateFilter),
     searchTerm
   );
+  function handleClick(entry: ScanEntry) {
+    navigate(`/scan-history/${entry.id}`, { state: entry });
+  }
 
   return (
     <div
@@ -111,7 +115,8 @@ export default function FullscreenScanHistory({
             {filteredData.map((entry) => (
               <li
                 key={entry.id}
-                className="py-3 flex justify-between items-start gap-2"
+                onClick={() => handleClick(entry)}
+                className="py-3 px-3 flex justify-between items-start gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-md transition"
               >
                 {/* Left side: Product and Process */}
                 <div className="flex flex-col gap-1 max-w-[70%]">

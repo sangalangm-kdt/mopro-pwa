@@ -206,5 +206,18 @@
     "seconds_one": "second...",
     "seconds_other": " seconds...",
     "go_home": "Go to Home Now"
+  },
+
+  "scan_history_details": {
+    "title": "Scan History Detail",
+    "line_number": "Drawing Number",
+    "belongs_to": "Belongs To",
+    "date": "Date",
+    "last_updated_by": "Last Updated By",
+    "approved_by": "Approved By",
+    "process": "Process",
+    "progress": "Progress",
+    "status": "Status",
+    "no_data": "No data found. Please navigate here from the scan history list."
   }
 }

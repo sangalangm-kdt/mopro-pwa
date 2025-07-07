@@ -11,4 +11,6 @@ export const TOAST_MESSAGES = {
   NO_DATA_RECORD_FOUND:
     "No matching record found for the scanned drawing number.",
   GENERIC_ERROR: "An unexpected error occurred. Please try again later.",
+  NETWORK_ERROR:
+    "Cannot connect to server. Please check your network or CORS settings.",
 };
