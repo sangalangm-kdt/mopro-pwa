@@ -11,7 +11,7 @@ const VARIANT_CLASSES = {
   primary:
     "text-white bg-primary-700 dark:bg-primary-800 hover:bg-primary-600 focus:ring-primary-600",
   secondary:
-    "text-primary-700 bg-white border border-primary-700 hover:text-primary-900 hover:bg-gray-100 dark:bg-transparent dark:border-primary-400 dark:text-primary-300 dark:hover:bg-primary-900/10",
+    "text-primary-700 bg-white border-2 border-primary-700 hover:text-primary-900 hover:bg-gray-100 dark:bg-transparent dark:border-primary-400 dark:text-primary-300 dark:hover:bg-primary-900/10",
   ghost:
     "text-primary-700 bg-transparent hover:bg-primary-50 dark:text-primary-300 dark:hover:bg-primary-900/10",
   outlined:
