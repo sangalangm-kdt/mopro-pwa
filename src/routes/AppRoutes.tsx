@@ -28,7 +28,6 @@ const ScanHistoryDetail = lazy(() => import("@/pages/ScanHistoryDetail"));
 
 // Fallback UI while loading
 import SkeletonLoader from "@/components/skeletons/SkeletonLoader";
-import BoardingScreen from "@components/BoardingScreen";
 
 const LoadingScreen = () => (
   <div className="flex justify-center items-center min-h-screen p-8 bg-bg-color">
@@ -114,7 +113,7 @@ const router = createBrowserRouter([
   {
     path: ROUTES.REQUEST_ACCOUNT,
     element: (
-      <Suspense fallback={<BoardingScreen />}>
+      <Suspense fallback={<LoadingScreen />}>
         <RequestAccount />
       </Suspense>
     ),
