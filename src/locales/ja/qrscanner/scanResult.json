@@ -1,0 +1,19 @@
+{
+  "scan_result_title": "スキャン結果",
+  "scan_result_header_title": "スキャン結果",
+  "confirm_button": "確認",
+  "line_number": "ライン番号",
+  "overview": "概要",
+  "product_details": "製品の詳細",
+  "project_name": "プロジェクト名",
+  "order_number": "注文番号",
+  "last_updated": "最終更新日",
+  "last_modified_by": "最終更新者",
+  "product_name": "製品名",
+  "weight": "重量",
+  "current_process": "現在の工程",
+  "progress": "進捗状況（％）",
+  "remarks": "備考",
+  "read_more": "もっと読む",
+  "read_less": "折りたたむ"
+}
