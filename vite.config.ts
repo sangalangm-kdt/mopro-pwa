@@ -49,7 +49,7 @@ const config: UserConfigExport = {
     ],
     preview: {
         host: "0.0.0.0",
-        port: 1000,
+        port: parseInt(process.env.PORT || "1000"),
     },
     server: {
         port: 4000,
