@@ -13,9 +13,6 @@ const HIDDEN_LAYOUT_PATTERNS = [
 
 export default function MainLayout() {
   const location = useLocation();
-  const [fontSize, setFontSize] = useState<"small" | "medium" | "large">(
-    "medium"
-  );
 
   const hideLayout = HIDDEN_LAYOUT_PATTERNS.some((pattern) =>
     matchPath({ path: pattern, end: true }, location.pathname)
@@ -23,7 +20,7 @@ export default function MainLayout() {
 
   return (
     <div className="min-h-screen flex flex-col ">
-      {!hideLayout && <Navbar fontSize={fontSize} setFontSize={setFontSize} />}
+      {!hideLayout && <Navbar />}
       <main
         className={`${
           hideLayout
