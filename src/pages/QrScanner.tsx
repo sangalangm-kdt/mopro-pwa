@@ -31,7 +31,7 @@ const QRScanner = () => {
     (item: { products: unknown }) => item.products
   );
 
-  const products = flatProducts?.filter((prod: { lineNumber: unknown }) =>
+  const products = flatProducts?.filter((prod: { lineNumber: string }) =>
     assignedLineNumbers?.includes(prod.lineNumber)
   );
 

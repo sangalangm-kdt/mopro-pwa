@@ -5,7 +5,7 @@ import LargeHeader from "@/components/Header";
 import Button from "@/components/buttons/Button";
 import RememberMeCheckbox from "@/components/Checkbox";
 import Icon from "@/components/icons/Icons";
-import Logo from "@assets/logo/logo v2.svg?react";
+import Logo from "@assets/logo/logo.svg?react";
 
 import { useLoginForm } from "@/hooks/login-form";
 import { ROUTES, LOGIN_TEXT_KEYS } from "@constants/index";

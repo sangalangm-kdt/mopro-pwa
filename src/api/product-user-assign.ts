@@ -1,17 +1,18 @@
+// src/api/product-user-assign.ts
 import axios from "@/lib/axios";
 import useSWR from "swr";
 
-export const useProductUserAssign = () => {
-    const { data: productUserAssigns, mutate } = useSWR(
-        "/api/product-user-assignment",
-        () =>
-            axios
-                .get("/api/product-user-assignment")
-                .then((res) => res.data)
-                .catch((error) => {
-                    if (error.response.status !== 409) throw error;
-                })
-    );
+export type ProductUserAssign = any; // type it later if you know exact shape
 
-    return { productUserAssigns, mutate };
+export const useProductUserAssign = () => {
+  const { data, error, isLoading, mutate } = useSWR(
+    "/api/product-user-assignment",
+    async () => {
+      const res = await axios.get("/api/product-user-assignment");
+      // if your API wraps data, adjust to res.data.data
+      return res.data as ProductUserAssign[];
+    }
+  );
+
+  return { productUserAssigns: data ?? [], isLoading, error, mutate };
 };
