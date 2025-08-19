@@ -54,6 +54,9 @@ const config: UserConfigExport = {
   server: {
     port: 4000,
   },
+  hmr: {
+    overlay: false, // Disables the browser error overlay
+  },
   build: {
     minify: true,
     target: "esnext",

@@ -12,15 +12,145 @@ import FullscreenScanHistory from "@/components/modals/FullscreenScanHistory";
 import { HOME_TEXT_KEYS, ROUTES } from "@constants/index";
 import { useLocalizedText } from "@/utils/localized-text";
 import { ScanQrCode } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useDayKeys } from "@/hooks/use-day-keys";
 import { usePeriodSummary } from "@/hooks/use-period-summary";
 import { useMyTasks } from "@/hooks/use-my-tasks";
 import type { ProgressUpdate } from "@/utils/progress-summary";
+import { useProgress } from "@/api/progress";
 
 type Mode = "progress" | "myTasks";
+
+/* ---------- helpers to keep header count in sync with list ---------- */
+const norm = (x: any) => String(x ?? "").trim();
+const normLn = (x: any) =>
+  norm(x)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+const getPid = (t: any) => t?.productId ?? t?.product?.id ?? null;
+const getLnRaw = (t: any) =>
+  t?.lineNumber ?? t?.product?.lineNumber ?? t?.drawingNumber ?? null;
+const getLn = (t: any) => {
+  const raw = getLnRaw(t);
+  return raw ? normLn(raw) : null;
+};
+
+// composite key: group pid-only and ln-only rows together
+const groupKey = (t: any) => {
+  const ln = getLn(t); // normalized (e.g., "5-1002" → "51002")
+  if (ln) return `ln:${ln}`;
+
+  const pid = getPid(t);
+  if (pid != null) return `pid:${String(pid).toLowerCase()}`;
+
+  return `id:${norm(t?.id)}`;
+};
+
+const toTime = (x: any) => {
+  const n = new Date(x ?? 0).getTime();
+  return Number.isFinite(n) ? n : 0;
+};
+const itemTs = (t: any) =>
+  Math.max(
+    toTime(t?.progressUpdatedAt),
+    toTime(t?.updatedAt),
+    toTime(t?.scheduledDate),
+    toTime(t?.createdAt)
+  );
+
+function makeProgressIndex(progressTasks?: any[]) {
+  const byPid = new Map<string, any>();
+  const byLn = new Map<string, any>();
+
+  const upsert = (
+    map: Map<string, any>,
+    key: any,
+    row: any,
+    normer: (v: any) => string
+  ) => {
+    const k = normer(key);
+    if (!k) return;
+    const prev = map.get(k);
+    if (!prev || itemTs(row) >= itemTs(prev)) map.set(k, row);
+  };
+
+  const nz = (v: any) => (v == null ? "" : String(v).trim().toLowerCase());
+  for (const p of progressTasks ?? []) {
+    upsert(byPid, getPid(p), p, nz);
+    upsert(byLn, getLnRaw(p), p, normLn);
+  }
+
+  const get = (t: any) => {
+    const pid = getPid(t);
+    const ln = getLn(t);
+    return (
+      (pid != null && byPid.get(nz(pid))) || (ln ? byLn.get(ln) : undefined)
+    );
+  };
+
+  return {
+    get,
+    has: (t: any) => !!get(t),
+    forApproval: (t: any) => !!(get(t) as any)?.forApproval,
+    percent: (t: any): number | null => {
+      const row = get(t) as any;
+      return typeof row?.percent === "number" ? row.percent : null;
+    },
+    updatedAt: (t: any) => {
+      const row = get(t) as any;
+      return row?.progressUpdatedAt ?? row?.updatedAt ?? row?.createdAt ?? null;
+    },
+  };
+}
+
+function dedupeForDisplay(
+  tasks: any[],
+  progressIdx: ReturnType<typeof makeProgressIndex>
+) {
+  const groups = new Map<string, any[]>();
+  for (const t of tasks ?? []) {
+    const k = groupKey(t);
+    const arr = groups.get(k);
+    if (arr) arr.push(t);
+    else groups.set(k, [t]);
+  }
+
+  const score = (t: any) => {
+    const hasProg = progressIdx.has(t) ? 1 : 0;
+    const ts = Math.max(itemTs(t), toTime(progressIdx.updatedAt(t)));
+    return hasProg * 1e12 + ts;
+  };
+
+  const out: any[] = [];
+  for (const [, arr] of groups) {
+    let best = arr[0];
+    for (const x of arr) if (score(x) >= score(best)) best = x;
+    out.push(best);
+  }
+  return out;
+}
+
+function totalsFromDisplay(
+  tasks: any[],
+  progressIdx: ReturnType<typeof makeProgressIndex>
+) {
+  let todo = 0,
+    in_progress = 0,
+    blocked = 0,
+    done = 0;
+  for (const t of tasks) {
+    if (progressIdx.forApproval(t)) blocked++;
+    else if (t.status === "in_progress") in_progress++;
+    else if (t.status === "done") done++;
+    else todo++;
+  }
+  const all = todo + in_progress + blocked + done;
+  return { todo, in_progress, blocked, done, all };
+}
+/* ------------------------------------------------------------------- */
 
 export default function Home() {
   const { user } = useAuth();
@@ -33,6 +163,7 @@ export default function Home() {
   const { productUserAssigns, isLoading: isAssignLoading } =
     useProductUserAssign();
 
+  const { progress } = useProgress(); // /api/progress via SWR
   const [windowDays, setWindowDays] = useState<15 | 30>(15);
   const [mode, setMode] = useState<Mode>("progress");
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null);
@@ -45,18 +176,39 @@ export default function Home() {
   );
 
   const {
-    totals: taskTotals,
+    // raw list (pre-dedupe)
     list: myAssignedTasks,
+    // latest progress mapped to tasks
+    tasksFromProgress,
+    // optional: used by list to mark "Assigned"
+    assignedKeys,
+    // old totals (pre-dedupe) – we'll replace with deduped totals below
     loading: myTasksLoading,
   } = useMyTasks({
     userId: user?.data?.id,
-    progressUpdates,
+    progressRows: progress, // ⬅ uses new useProgress() rows
     productUserAssigns,
     dayKeys,
     isLoadingProgress: isProgressLoading,
     isLoadingAssign: isAssignLoading,
   });
 
+  // ✅ Build the same deduped view model we render and derive totals from it
+  const progressIdx = useMemo(
+    () => makeProgressIndex(tasksFromProgress as any[]),
+    [tasksFromProgress]
+  );
+
+  const displayTasks = useMemo(
+    () => dedupeForDisplay(myAssignedTasks as any[], progressIdx),
+    [myAssignedTasks, progressIdx]
+  );
+
+  const displayTotals = useMemo(
+    () => totalsFromDisplay(displayTasks, progressIdx),
+    [displayTasks, progressIdx]
+  );
+  console.log("displayTasks length:", displayTasks.length);
   return (
     <div className="flex flex-col  items-center justify-start px-1 py-4 space-y-5 bg-bg-color ">
       {/* Controls row */}
@@ -79,7 +231,7 @@ export default function Home() {
           ))}
         </div>
 
-        {/* 15/30 filter — RIGHT (visible in BOTH modes) */}
+        {/* 15/30 filter — RIGHT */}
         <div className="flex gap-2 ml-auto">
           {[15, 30].map((n) => (
             <button
@@ -113,15 +265,21 @@ export default function Home() {
         />
       ) : (
         <>
+          {/* ⬇️ totals now come from the deduped view */}
           <TaskStatusBar
             title="My Tasks"
             rangeLabel={rangeLabel}
+            tasks={displayTasks}
+            progressTasks={tasksFromProgress}
             windowDays={windowDays}
-            totals={taskTotals}
+            totals={displayTotals}
             loading={myTasksLoading}
           />
           <MyTasksAssignedList
-            tasks={myAssignedTasks}
+            // pass the deduped list so header + list match exactly
+            tasks={displayTasks}
+            progressTasks={tasksFromProgress}
+            assignedKeys={assignedKeys}
             loading={myTasksLoading}
             onOpen={(_task) => {}}
           />
@@ -163,7 +321,6 @@ export default function Home() {
             history={progressUpdates?.slice(0, 5)}
             loading={isProgressLoading}
           />
-
           {!isProgressLoading && (
             <div className="text-center mt-2">
               <button
@@ -174,7 +331,6 @@ export default function Home() {
               </button>
             </div>
           )}
-
           {showFullHistory && (
             <FullscreenScanHistory
               data={progressUpdates}
@@ -194,7 +350,7 @@ export default function Home() {
           className={[
             "fixed z-50 right-5",
             "bottom-[calc(env(safe-area-inset-bottom,0)+16px)]",
-            "h-14 w-14 rounded-full shadow-lg",
+            "h-15 w-15 rounded-full shadow-lg",
             "bg-gradient-to-br from-primary-600 to-primary-500",
             "hover:from-primary-700 hover:to-primary-600",
             "active:scale-95 transition transform",

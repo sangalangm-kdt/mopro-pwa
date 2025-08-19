@@ -32,6 +32,7 @@ export interface ScanSuccessData {
 export type ScanResult = ScanSuccessData | { error: string };
 
 export interface RawProgressEntry {
+  createdAt: string | Date;
   id: number;
   lineNumber: string;
   percent: number;

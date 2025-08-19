@@ -5,48 +5,129 @@ import { mapProgressToTasks, type MyTask } from "@/utils/map-progress-to-tasks";
 
 type UseMyTasksInput = {
   userId?: number | string;
-  progressUpdates: any[] | undefined;
+  progressRows: any[] | undefined; // ← from useProgress().progress
   productUserAssigns: any[] | undefined;
   dayKeys: string[];
   isLoadingProgress?: boolean;
   isLoadingAssign?: boolean;
 };
 
-const keyFor = (t: MyTask) => t.lineNumber ?? String(t.id);
+// ---------- helpers ----------
+const norm = (x: any) => String(x ?? "").trim();
 
-const mergePreferNewest = (a: MyTask[], b: MyTask[]) => {
-  const map = new Map<string, MyTask>();
-  for (const t of a) map.set(keyFor(t), t);
-  for (const t of b) {
-    const k = keyFor(t);
-    const prev = map.get(k);
+// Robust key: productId → product.id → lineNumber → product.lineNumber → id
+const keyFor = (t: MyTask) => {
+  const pid = (t as any).productId ?? (t as any).product?.id ?? null;
+  if (pid != null) return `pid:${norm(pid)}`;
+  const ln = (t as any).lineNumber ?? (t as any).product?.lineNumber ?? null;
+  if (ln != null) return `ln:${norm(ln)}`;
+  return `id:${norm((t as any).id)}`;
+};
+
+const toTime = (x: any) => {
+  const n = new Date(x ?? 0).getTime();
+  return Number.isFinite(n) ? n : 0;
+};
+
+// Only for progress recency (do NOT include scheduledDate)
+const progressTs = (o: any) =>
+  Math.max(
+    toTime(o?.progressUpdatedAt),
+    toTime(o?.updatedAt),
+    toTime(o?.createdAt)
+  );
+
+// Merge: progress wins except when pending approval
+const mergePreferProgressRespectApproval = (
+  assigned: MyTask[],
+  progress: MyTask[]
+) => {
+  const byKey = new Map<string, MyTask>();
+  const appliedTs = new Map<string, number>(); // latest applied progress ts per key
+
+  for (const a of assigned) {
+    const k = keyFor(a);
+    byKey.set(k, a);
+    appliedTs.set(k, -Infinity);
+  }
+
+  // order doesn't matter due to ts guard, but keep desc for readability
+  const sortedProgress = [...progress].sort(
+    (a, b) => progressTs(b) - progressTs(a)
+  );
+
+  for (const p of sortedProgress) {
+    const k = keyFor(p);
+    const prev = byKey.get(k);
+    const ts = progressTs(p);
+    const prevTs = appliedTs.get(k) ?? -Infinity;
+
     if (!prev) {
-      map.set(k, t);
+      // no assigned baseline, still accept but guard by ts
+      if (ts >= prevTs) {
+        byKey.set(k, p);
+        appliedTs.set(k, ts);
+      }
       continue;
     }
-    const newer =
-      new Date(t.scheduledDate).getTime() >=
-      new Date(prev.scheduledDate).getTime();
-    map.set(k, newer ? t : prev);
+
+    // apply only if this progress is newer than what's already applied
+    if (ts < prevTs) continue;
+
+    const isPending = (p as any).forApproval === true;
+
+    const isNum = (x: any): x is number =>
+      typeof x === "number" && Number.isFinite(x);
+    const pPercent = (p as any).percent;
+    const prevPercent = isNum(prev.percent)
+      ? prev.percent
+      : isNum(prev.product?.percent)
+      ? (prev.product as any).percent
+      : null;
+
+    const nextPercent = isPending
+      ? prevPercent ?? (isNum(pPercent) ? pPercent : null)
+      : isNum(pPercent)
+      ? pPercent
+      : prevPercent ?? null;
+
+    const nextStatus = isPending ? prev.status : p.status ?? prev.status;
+
+    byKey.set(k, {
+      ...prev, // keep assigned baseline (dates, etc.)
+      ...p, // overlay progress fields
+      percent: nextPercent ?? undefined,
+      status: nextStatus,
+      product: {
+        ...(prev.product ?? {}),
+        ...(p as any).product,
+        percent: nextPercent ?? undefined,
+      },
+      // keep schedule stable if prev has it
+      scheduledDate: prev.scheduledDate || (p as any).scheduledDate,
+    });
+
+    appliedTs.set(k, ts);
   }
-  return [...map.values()];
+
+  return [...byKey.values()];
 };
 
 export function useMyTasks({
   userId,
-  progressUpdates,
+  progressRows,
   productUserAssigns,
   dayKeys,
   isLoadingProgress,
   isLoadingAssign,
 }: UseMyTasksInput) {
-  // 1) Map progress -> MyTask[]
+  // 1) Progress → MyTask[]
   const tasksFromProgress = useMemo(
-    () => mapProgressToTasks((progressUpdates ?? []) as any[], userId),
-    [progressUpdates, userId]
+    () => mapProgressToTasks((progressRows ?? []) as any[], userId),
+    [progressRows, userId]
   );
 
-  // 2) Map /api/product-user-assignment rows -> AssignedItem[]
+  // 2) Map /api/product-user-assignment rows → AssignedItem[]
   const assignedItems = useMemo(() => {
     const rows = Array.isArray(productUserAssigns) ? productUserAssigns : [];
     return rows.map((r: any, i: number) => {
@@ -75,15 +156,15 @@ export function useMyTasks({
     });
   }, [productUserAssigns]);
 
-  // 3) Assigned -> MyTask[]
+  // 3) Assigned → MyTask[]
   const baseAssignedTasks = useMemo(
     () => mapAssignedToTasks(assignedItems as any[], userId),
     [assignedItems, userId]
   );
 
-  // 4) Ensure todos land inside the current window (so they show)
+  // 4) Ensure todos land inside the window so they show up
   const normalizedAssignedTasks = useMemo(() => {
-    const daySet = new Set(dayKeys); // YYYY-MM-DD keys
+    const daySet = new Set(dayKeys); // YYYY-MM-DD
     return baseAssignedTasks.map((t) => {
       const key = new Date(t.scheduledDate).toLocaleDateString("en-CA");
       if (t.status === "todo" && !daySet.has(key)) {
@@ -93,9 +174,13 @@ export function useMyTasks({
     });
   }, [baseAssignedTasks, dayKeys]);
 
-  // 5) Merge preferring newest record
+  // 5) Merge with approval-aware rules
   const myTasks = useMemo(
-    () => mergePreferNewest(normalizedAssignedTasks, tasksFromProgress),
+    () =>
+      mergePreferProgressRespectApproval(
+        normalizedAssignedTasks,
+        tasksFromProgress
+      ),
     [normalizedAssignedTasks, tasksFromProgress]
   );
 

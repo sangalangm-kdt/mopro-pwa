@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Logo from "@assets/logo/logo v2.svg?react";
+import Logo from "@assets/logo/logo.svg?react";
 import Sidebar from "@/components/navigation/SideBar";
 import { Menu } from "lucide-react";
 import { useAuthContext } from "@/context/auth/useAuth";

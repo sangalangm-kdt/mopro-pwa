@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { isAxiosError } from "axios";
-import useSWR from "swr";
+import useSWR, { mutate as swrMutate } from "swr";
 
 interface ProgressUpdatePayload {
   processId: string;
@@ -48,7 +48,10 @@ export const useProgressUpdate = (userId?: number) => {
         console.log("Progress updated", response.data);
       }
 
-      await mutate(); // Refresh SWR cache
+      await Promise.all([
+        mutate(), // refresh /api/progress-update… for this user
+        swrMutate("/api/product-user-assignment"), // refresh assignments (feeds My Tasks)
+      ]);
       return true;
     } catch (error) {
       if (isAxiosError(error) && error.response) {

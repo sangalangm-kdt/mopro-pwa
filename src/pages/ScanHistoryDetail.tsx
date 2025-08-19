@@ -60,15 +60,31 @@ export default function ScanHistoryDetail() {
                   />
                   <DetailRow
                     label={TEXT.LAST_UPDATED_BY}
-                    value={`${entry.user?.firstName ?? ""} ${
+                    value={`${entry.user?.firstName ?? "--"} ${
                       entry.user?.lastName ?? ""
                     }`}
                   />
                   <DetailRow
                     label={TEXT.APPROVED_BY}
-                    value={`${entry.approvedBy?.firstName ?? ""} ${
-                      entry.approvedBy?.lastName ?? ""
-                    }`}
+                    value={
+                      entry.approvedBy
+                        ? `${entry.approvedBy.firstName ?? ""} ${
+                            entry.approvedBy.lastName ?? ""
+                          }`
+                        : ""
+                    }
+                    right={
+                      !entry.approvedBy ? (
+                        <span
+                          className="inline-flex items-center px-2 py-2 rounded-full text-xs font-medium
+                     bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                          aria-label="Waiting for approval"
+                          title="Waiting for approval"
+                        >
+                          Waiting for approval
+                        </span>
+                      ) : null
+                    }
                   />
                 </div>
               </div>
@@ -109,22 +125,34 @@ function DetailRow({
   label,
   value,
   isProgress = false,
+  right,
 }: {
   label: string;
   value: string;
   isProgress?: boolean;
+  right?: React.ReactNode;
 }) {
-  const percent = parseInt(value.replace("%", ""));
+  const percent = isProgress
+    ? Math.max(
+        0,
+        Math.min(100, Number.parseInt(value.replace("%", ""), 10) || 0)
+      )
+    : 0;
 
   return (
     <div className="py-3 md:py-4">
-      <div className="flex justify-between items-center mb-1">
+      <div className="flex justify-between items-center mb-1 gap-3">
         <span className="text-sm md:text-base text-gray-600 dark:text-gray-400 font-medium">
           {label}
         </span>
-        <span className="text-sm md:text-base text-gray-900 dark:text-gray-100">
-          {value}
-        </span>
+
+        {/* value + optional pill */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm md:text-base text-gray-900 dark:text-gray-100">
+            {value}
+          </span>
+          {right}
+        </div>
       </div>
 
       {isProgress && (
@@ -132,7 +160,8 @@ function DetailRow({
           <div
             className="bg-primary-500 h-2 rounded-full"
             style={{ width: `${percent}%` }}
-          ></div>
+            aria-label={`${percent}%`}
+          />
         </div>
       )}
     </div>

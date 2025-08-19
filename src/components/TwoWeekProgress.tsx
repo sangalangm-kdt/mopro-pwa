@@ -76,7 +76,7 @@ export default function TwoWeekProgress({
         </div>
       ) : (
         // Bars with baseline tracks
-        <div className="mt-4 -mx-1 sm:mx-0 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-px-3 overscroll-x-contain touch-pan-x">
+        <div className="mt-4 -mx-1 sm:mx-0 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-px-3 overscroll-x-contain touch-pan-x">
           <div
             className={`flex ${gapClass} ${chartHeight} items-end pr-2`}
             role="list"
