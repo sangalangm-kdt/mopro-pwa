@@ -10,8 +10,8 @@ export type MyTask = {
   percent?: number;
   forApproval?: boolean;
   productId?: number | string;
-  updatedAt?: string; // ← helps sorting
-  createdAt?: string; // ← helps sorting
+  updatedAt?: string;
+  createdAt?: string;
   product?: {
     id?: number | string;
     lineNumber?: string;
@@ -20,25 +20,31 @@ export type MyTask = {
     percent?: number;
     currentProcess?: string;
   };
+
+  // approval + progress metadata
+  approvedById?: number | string | null;
+  approvedBy?: any | null;
+  approvedAt?: string | null;
+  approved?: boolean;
+  progressUpdatedAt?: string | null;
 };
 
 type ProgressRow = {
   id?: number | string;
 
-  // who did the scan / updated the progress
   userId?: number | string;
   user?: { id?: number | string };
 
-  // who *owns* the task (preferred for assignee)
   assignedToId?: number | string;
   assigneeId?: number | string;
 
-  productId?: number | string; // possible shapes from API
+  productId?: number | string;
   product_id?: number | string;
   product?: {
     id?: number | string;
     assigneeId?: number | string;
     lineNumber?: string;
+    name?: string;
     productList?: { name?: string };
     project?: { name?: string };
     percent?: number;
@@ -46,31 +52,55 @@ type ProgressRow = {
   };
 
   percent?: number;
-  status?: "todo" | "in_progress" | "blocked" | "done"; // optional server status
+  progress?: number;
 
-  // approval fields (support snake_case too)
+  status?: "todo" | "in_progress" | "blocked" | "done";
+
   approvedById?: number | string | null;
   approved_by_id?: number | string | null;
+
   approvedBy?: {
     id?: number | string | null;
     firstName?: string;
     lastName?: string;
   } | null;
 
-  // dates
+  // ✅ single key with union (object OR number/string OR null)
+  approved_by?:
+    | {
+        id?: number | string | null;
+        first_name?: string;
+        last_name?: string;
+      }
+    | number
+    | string
+    | null;
+
+  approvedAt?: string | number | Date | null;
+  approved_at?: string | number | Date | null;
+  approved?: boolean;
+
   scheduledDate?: string | number | Date;
   updatedAt?: string | number | Date;
+  updated_at?: string | number | Date;
   createdAt?: string | number | Date;
+  created_at?: string | number | Date;
+  progressUpdatedAt?: string | number | Date | null;
+  progress_updated_at?: string | number | Date | null;
 
   lineNumber?: string;
+  line_number?: string;
   project?: { name?: string };
   process?: { processList?: { name?: string } };
 };
 
-function numId(x: unknown): number | null {
+const toIso = (x: any): string | undefined =>
+  x != null ? new Date(x).toISOString() : undefined;
+
+const numId = (x: unknown): number | null => {
   const n = Number(x);
-  return Number.isFinite(n) && n > 0 ? n : null; // treat 0/NaN/"" as not approved
-}
+  return Number.isFinite(n) && n > 0 ? n : null;
+};
 
 export function mapProgressToTasks(
   rows: ProgressRow[],
@@ -79,29 +109,49 @@ export function mapProgressToTasks(
   if (!Array.isArray(rows)) return [];
 
   const tasks = rows.map((r, i): MyTask => {
+    // identity
     const productId =
       r?.product?.id ?? r?.productId ?? r?.product_id ?? undefined;
 
-    const lineNumber = r?.product?.lineNumber ?? r?.lineNumber ?? undefined;
+    const lineNumber =
+      r?.product?.lineNumber ??
+      r?.lineNumber ??
+      (r as any)?.line_number ??
+      undefined;
 
+    // better title fallbacks
     const title =
-      r?.product?.productList?.name ?? lineNumber ?? r?.project?.name ?? "Item";
+      r?.product?.name ??
+      r?.product?.productList?.name ??
+      lineNumber ??
+      r?.project?.name ??
+      "Item";
 
+    // percent
     const rawPercent =
-      typeof r?.percent === "number" ? r.percent : r?.product?.percent;
+      typeof r?.percent === "number"
+        ? r.percent
+        : typeof r?.progress === "number"
+        ? r.progress
+        : r?.product?.percent;
     const percent =
       typeof rawPercent === "number"
         ? Math.max(0, Math.min(100, rawPercent))
         : 0;
 
+    // process
     const processName =
       r?.process?.processList?.name ?? r?.product?.currentProcess;
 
-    // prefer explicit scheduledDate if provided, else updatedAt, else createdAt
-    const rawDate =
-      r?.scheduledDate ?? r?.updatedAt ?? r?.createdAt ?? Date.now();
+    // dates
+    const updatedAt = r?.updatedAt ?? r?.updated_at ?? null;
+    const createdAt = r?.createdAt ?? r?.created_at ?? null;
+    const progressUpdatedAt =
+      r?.progressUpdatedAt ?? r?.progress_updated_at ?? updatedAt ?? null;
 
-    // prefer true assignee over updater
+    const scheduled = r?.scheduledDate ?? updatedAt ?? createdAt ?? Date.now();
+
+    // assignee
     const assignee =
       r?.assignedToId ??
       r?.assigneeId ??
@@ -110,36 +160,53 @@ export function mapProgressToTasks(
       r?.user?.id ??
       "unknown";
 
-    // ✅ Approval check: null/absent => pending; number => approved
-    const approvedId =
-      numId(r?.approvedById) ??
-      numId(r?.approved_by_id) ??
-      numId(r?.approvedBy?.id);
-    const forApproval = approvedId == null;
+    const rawApprovedByObj =
+      (r as any)?.approvedBy ?? (r as any)?.approved_by ?? null;
 
-    // If pending, always blocked; else prefer server status if valid; else derive from percent
+    // approvals (support camel, snake, and plain numeric approved_by)
+    const rawApprovedById =
+      (r as any)?.approvedById ??
+      (r as any)?.approved_by_id ??
+      // if object, take its id; if number/string, use it directly
+      (typeof rawApprovedByObj === "object" && rawApprovedByObj
+        ? rawApprovedByObj.id
+        : rawApprovedByObj) ??
+      null;
+
+    const approvedById = numId(rawApprovedById);
+
+    const approvedBy =
+      r?.approvedBy ??
+      r?.approved_by ??
+      (approvedById != null ? { id: approvedById } : null);
+
+    const approvedAtRaw =
+      (r as any)?.approvedAt ?? (r as any)?.approved_at ?? null;
+    const approvedAt =
+      approvedAtRaw != null
+        ? new Date(approvedAtRaw as any).toISOString()
+        : null;
+
+    const approved =
+      r?.approved === true || approvedById != null || approvedAt != null;
+
+    const forApproval = !approved;
+
+    // status: if approved but server says "blocked", force "in_progress"
     let status: MyTask["status"];
     if (forApproval) {
       status = "blocked";
-    } else if (
-      r?.status &&
-      ["todo", "in_progress", "blocked", "done"].includes(r.status)
-    ) {
-      status = r.status;
-    } else if (percent >= 100) {
+    } else if (r?.status === "done" || percent >= 100) {
       status = "done";
+    } else if (r?.status === "blocked") {
+      status = "in_progress";
+    } else if (r?.status && ["todo", "in_progress"].includes(r.status)) {
+      status = r.status;
     } else if (percent > 0) {
       status = "in_progress";
     } else {
       status = "todo";
     }
-
-    const updatedAtIso = r?.updatedAt
-      ? new Date(r.updatedAt as any).toISOString()
-      : undefined;
-    const createdAtIso = r?.createdAt
-      ? new Date(r.createdAt as any).toISOString()
-      : undefined;
 
     return {
       id: r?.id ?? `row-${i}`,
@@ -147,14 +214,17 @@ export function mapProgressToTasks(
 
       status,
       forApproval,
-      scheduledDate: new Date(rawDate as any).toISOString(),
-      updatedAt: updatedAtIso,
-      createdAt: createdAtIso,
+
+      scheduledDate: toIso(scheduled)!,
+      updatedAt: toIso(updatedAt),
+      createdAt: toIso(createdAt),
+      progressUpdatedAt: toIso(progressUpdatedAt) ?? null,
+
       lineNumber,
       title,
       percent,
-      productId:
-        (r as any).product?.id ?? (r as any).productId ?? (r as any).product_id,
+
+      productId,
       product: {
         id: productId,
         lineNumber,
@@ -163,6 +233,11 @@ export function mapProgressToTasks(
         percent,
         currentProcess: processName,
       },
+
+      approvedById,
+      approvedBy,
+      approvedAt,
+      approved,
     };
   });
 

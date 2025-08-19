@@ -26,7 +26,7 @@ const getLn = (t: any) => {
   return raw ? normLn(raw) : null;
 };
 
-// ✅ Composite grouping key: pid + normalized lineNumber (so pid-only and ln-only collapse)
+// Composite grouping key: pid + normalized lineNumber (pid-only and ln-only collapse)
 const groupKey = (t: MyTask) => {
   const pid = getPid(t as any);
   const ln = getLn(t as any);
@@ -58,6 +58,12 @@ function extractProcessName(t: any): string | null {
     null
   );
 }
+
+const isApproved = (o: any) =>
+  o?.approvedById != null ||
+  (o?.approvedBy && o.approvedBy.id != null) ||
+  o?.approvedAt != null ||
+  o?.approved === true;
 
 /** Progress index: match by pid OR normalized ln; latest row per key */
 function createProgressIndex(progressTasks?: MyTask[]) {
@@ -93,7 +99,11 @@ function createProgressIndex(progressTasks?: MyTask[]) {
   return {
     get,
     has: (t: MyTask) => !!get(t),
-    forApproval: (t: MyTask) => !!(get(t) as any)?.forApproval,
+    forApproval: (t: MyTask) => {
+      const row = get(t) as any;
+      if (!row) return false;
+      return !isApproved(row) && row?.forApproval === true;
+    },
     percent: (t: MyTask): number | null => {
       const row = get(t) as any;
       return typeof row?.percent === "number" ? row.percent : null;
@@ -134,14 +144,6 @@ type FilterKey =
   | "todo"
   | "done"
   | "assigned_only";
-// const FILTER_LABEL: Record<FilterKey, string> = {
-//   all: "All",
-//   for_approval: "For Approval",
-//   in_progress: "In Progress",
-//   todo: "To-do",
-//   done: "Done",
-//   assigned_only: "Assigned",
-// };
 
 /* ---------------- component ---------------- */
 
@@ -154,36 +156,11 @@ export default function MyTasksAssignedList({
   onOpen,
 }: Props) {
   const [filter] = useState<FilterKey>("all");
-  // const [collapseDupes] = useState<boolean>(true); // keep true to avoid redundants
 
   const progressIdx = useMemo(
     () => createProgressIndex(progressTasks),
     [progressTasks]
   );
-
-  // // counts (For Approval derived from progress rows)
-  // const counts = useMemo(() => {
-  //   let forApproval = 0,
-  //     in_progress = 0,
-  //     todo = 0,
-  //     done = 0,
-  //     assigned = 0;
-  //   for (const t of tasks ?? []) {
-  //     if (assignedKeys?.has(groupKey(t))) assigned++;
-  //     if (progressIdx.forApproval(t)) forApproval++;
-  //     else if (t.status === "in_progress") in_progress++;
-  //     else if (t.status === "todo") todo++;
-  //     else if (t.status === "done") done++;
-  //   }
-  //   return {
-  //     for_approval: forApproval,
-  //     in_progress,
-  //     todo,
-  //     done,
-  //     assigned,
-  //     all: (tasks ?? []).length,
-  //   };
-  // }, [tasks, assignedKeys, progressIdx]);
 
   // 1) Merge redundants by composite identity
   type Row = { task: MyTask; processes: string[] };
@@ -264,13 +241,12 @@ export default function MyTasksAssignedList({
         t?.projectName ?? t?.product?.project?.name ?? t?.project?.name ?? ""
       );
       const procs = [...r.processes].sort().join("|");
-      const forApproval = progressIdx.forApproval(t) ? "1" : "0";
-      const pct = (() => {
-        const p = progressIdx.percent(t);
-        return typeof p === "number"
+      const pending = progressIdx.forApproval(t) ? "1" : "0";
+      const p = progressIdx.percent(t);
+      const pct =
+        typeof p === "number"
           ? String(Math.round(Math.max(0, Math.min(100, p))))
           : "";
-      })();
       const updated = String(progressIdx.updatedAt(t) ?? "");
 
       const sig = [
@@ -278,7 +254,7 @@ export default function MyTasksAssignedList({
         ln,
         proj.toLowerCase(),
         procs.toLowerCase(),
-        forApproval,
+        pending,
         pct,
         updated,
       ].join("~");
@@ -318,9 +294,6 @@ export default function MyTasksAssignedList({
 
   return (
     <div className="w-full max-w-md space-y-2">
-      {/* filters header unchanged… */}
-      {/* ...omit for brevity; keep your existing filter bar ... */}
-
       <ul className="space-y-2">
         {rows.length === 0 ? (
           <li className="text-sm text-gray-600 dark:text-gray-300 px-1 py-2">
@@ -360,19 +333,31 @@ export default function MyTasksAssignedList({
               })
             : null;
 
-          const forApproval = progressIdx.forApproval(t);
+          // percent (always visible)
           const p = progressIdx.percent(t);
           const pct =
             typeof p === "number"
               ? `${Math.round(Math.max(0, Math.min(100, p)))}%`
               : null;
 
-          const chipStatus = (forApproval ? "blocked" : t.status) as
-            | MyTask["status"]
-            | "blocked";
-          const label = forApproval
+          // approval-driven chip
+          const pr = progressIdx.get(t);
+          const approved = isApproved(pr) || isApproved(t);
+          const pending =
+            !approved &&
+            ((pr as any)?.forApproval === true ||
+              (t as any).forApproval === true);
+
+          const effectiveStatus: MyTask["status"] = pending
+            ? "blocked"
+            : t.status === "blocked"
+            ? "in_progress"
+            : t.status;
+
+          const chipStatus = effectiveStatus as MyTask["status"] | "blocked";
+          const label = pending
             ? "For Approval"
-            : STATUS_LABEL[t.status] ?? String(t.status).replaceAll("_", " ");
+            : STATUS_LABEL[effectiveStatus] ?? "Unknown";
 
           return (
             <li key={String(id)}>
@@ -440,7 +425,6 @@ export default function MyTasksAssignedList({
                       {label}
                     </span>
 
-                    {/* show % always */}
                     {pct ? (
                       <span className="px-2 py-0.5 rounded-full text-[11px] leading-5 bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-zinc-700">
                         {pct}

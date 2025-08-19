@@ -163,7 +163,8 @@ export default function Home() {
   const { productUserAssigns, isLoading: isAssignLoading } =
     useProductUserAssign();
 
-  const { progress } = useProgress(); // /api/progress via SWR
+  const { progress } = useProgress();
+  console.log("progress:", progress);
   const [windowDays, setWindowDays] = useState<15 | 30>(15);
   const [mode, setMode] = useState<Mode>("progress");
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null);
@@ -208,7 +209,7 @@ export default function Home() {
     () => totalsFromDisplay(displayTasks, progressIdx),
     [displayTasks, progressIdx]
   );
-  console.log("displayTasks length:", displayTasks.length);
+  console.log("displayTasks:", displayTasks);
   return (
     <div className="flex flex-col  items-center justify-start px-1 py-4 space-y-5 bg-bg-color ">
       {/* Controls row */}
