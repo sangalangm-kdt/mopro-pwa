@@ -49,7 +49,7 @@ export default function ScanHistoryCard({
   const { t, i18n } = useTranslation(["common", "home"]);
   const locale = i18n.language || "en";
   const navigate = useNavigate();
-  console.log(history);
+  // console.log(history);
 
   return (
     <div>
