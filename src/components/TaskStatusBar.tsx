@@ -1,5 +1,8 @@
-// src/components/TaskStatusBar.tsx
+// src/components/TaskStatusBar.tsx (refactored with i18n + utils)
 import type { MyTask } from "@/utils/map-progress-to-tasks";
+import { useLocalizedText } from "@/utils/localized-text";
+import { HOME_TEXT_KEYS } from "@constants/index";
+import { makeProgressIndex } from "@/utils/home-helpers";
 
 type TaskTotals = {
   todo: number;
@@ -12,7 +15,7 @@ type TaskTotals = {
 type Props = {
   title?: string;
   rangeLabel: string;
-  windowDays: 15 | 30;
+  windowDays: string | number;
   loading?: boolean;
 
   // NEW: recount from these (preferred)
@@ -23,83 +26,18 @@ type Props = {
   totals?: TaskTotals;
 };
 
-/* ---------- helpers to align with the assigned list logic ---------- */
-const norm = (x: any) => String(x ?? "").trim();
-const normLn = (x: any) =>
-  norm(x)
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
-
-const getPid = (t: any) => t?.productId ?? t?.product?.id ?? null;
-const getLnRaw = (t: any) =>
-  t?.lineNumber ?? t?.product?.lineNumber ?? t?.drawingNumber ?? null;
-const getLn = (t: any) => {
-  const raw = getLnRaw(t);
-  return raw ? normLn(raw) : null;
-};
-
-const toTime = (x: any) => {
-  const n = new Date(x ?? 0).getTime();
-  return Number.isFinite(n) ? n : 0;
-};
-const itemTs = (t: any) =>
-  Math.max(
-    toTime(t?.progressUpdatedAt),
-    toTime(t?.updatedAt),
-    toTime(t?.scheduledDate),
-    toTime(t?.createdAt)
-  );
-
-// Build the same progress index your list uses
-function makeProgressIndex(progressTasks?: MyTask[]) {
-  const byPid = new Map<string, MyTask>();
-  const byLn = new Map<string, MyTask>();
-
-  const upsert = (
-    map: Map<string, MyTask>,
-    key: any,
-    row: MyTask,
-    normer: (v: any) => string
-  ) => {
-    const k = normer(key);
-    if (!k) return;
-    const prev = map.get(k);
-    if (!prev || itemTs(row as any) >= itemTs(prev as any)) map.set(k, row);
-  };
-
-  const nz = (v: any) => (v == null ? "" : String(v).trim().toLowerCase());
-  for (const p of progressTasks ?? []) {
-    upsert(byPid, getPid(p as any), p, nz);
-    upsert(byLn, getLnRaw(p as any), p, normLn);
-  }
-
-  const get = (t: MyTask): MyTask | undefined => {
-    const pid = getPid(t as any);
-    const ln = getLn(t as any);
-    return (
-      (pid != null && byPid.get(nz(pid))) || (ln ? byLn.get(ln) : undefined)
-    );
-  };
-
-  return {
-    forApproval: (t: MyTask) => !!(get(t) as any)?.forApproval,
-  };
-}
-/* ------------------------------------------------------------------- */
-
 export default function TaskStatusBar({
-  title = "My Tasks",
+  title,
   rangeLabel,
   windowDays,
   loading,
-
-  // preferred inputs
   tasks,
   progressTasks,
-
-  // fallback
   totals,
 }: Props) {
+  // i18n
+  const TEXT = useLocalizedText("common", HOME_TEXT_KEYS);
+
   // If tasks are provided, recount from them to mirror the list
   let todo = 0,
     in_progress = 0,
@@ -107,11 +45,11 @@ export default function TaskStatusBar({
     done = 0;
 
   if (tasks && tasks.length) {
-    const idx = makeProgressIndex(progressTasks);
+    const idx = makeProgressIndex(progressTasks as any);
     for (const t of tasks) {
-      if (idx.forApproval(t)) blocked++;
-      else if (t.status === "in_progress") in_progress++;
-      else if (t.status === "done") done++;
+      if ((idx as any).forApproval(t as any)) blocked++;
+      else if ((t as any).status === "in_progress") in_progress++;
+      else if ((t as any).status === "done") done++;
       else todo++;
     }
   } else if (totals) {
@@ -130,25 +68,25 @@ export default function TaskStatusBar({
   const segments = [
     {
       key: "todo",
-      label: "To-do",
+      label: TEXT.STATUS_TODO, // was "To-do"
       value: todo,
       cls: "bg-gray-300 dark:bg-zinc-600",
     },
     {
       key: "in_progress",
-      label: "In-Progress",
+      label: TEXT.STATUS_IN_PROGRESS, // was "In-Progress"
       value: in_progress,
       cls: "bg-primary-500/90 dark:bg-primary-400/90",
     },
     {
       key: "blocked",
-      label: "For Approval",
+      label: TEXT.STATUS_FOR_APPROVAL, // was "For Approval"
       value: blocked,
       cls: "bg-amber-500/90 dark:bg-amber-400/90",
     },
     {
       key: "done",
-      label: "Done",
+      label: TEXT.STATUS_DONE, // was "Done"
       value: done,
       cls: "bg-emerald-500/90 dark:bg-emerald-400/90",
     },
@@ -164,7 +102,7 @@ export default function TaskStatusBar({
       <div className="flex items-baseline justify-between">
         <div className="min-w-0">
           <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
-            {title} — {windowDays} Days
+            {title ?? TEXT.MY_TASKS} — {windowDays}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             {rangeLabel}
@@ -175,7 +113,7 @@ export default function TaskStatusBar({
             {loading ? "…" : totalCount}
           </p>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            Total tasks
+            {TEXT.TOTAL_TASKS}
           </p>
         </div>
       </div>

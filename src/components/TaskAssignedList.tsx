@@ -1,140 +1,29 @@
 import { useMemo, useState } from "react";
 import type { MyTask } from "@/utils/map-progress-to-tasks";
+import { useLocalizedText } from "@/utils/localized-text";
+import { HOME_TEXT_KEYS } from "@constants/index";
+import {
+  cx,
+  groupKeyComposite as groupKey,
+  getLnRaw,
+  itemTs,
+  toTime,
+  extractProcessName,
+  isApproved,
+  makeProgressIndexRich,
+} from "@/utils/home-helpers";
+
+/* =====================================================================================
+ * Types
+ * ===================================================================================== */
 
 type Props = {
   tasks: MyTask[];
   progressTasks?: MyTask[];
   assignedKeys?: Set<string>;
   loading?: boolean;
-  emptyText?: string;
+  emptyText?: string; // optional override
   onOpen?: (task: MyTask) => void;
-};
-
-/* ---------------- helpers ---------------- */
-
-const norm = (x: any) => String(x ?? "").trim();
-const normLn = (x: any) =>
-  norm(x)
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
-
-const getPid = (t: any) => t?.productId ?? t?.product?.id ?? null;
-const getLnRaw = (t: any) =>
-  t?.lineNumber ?? t?.product?.lineNumber ?? t?.drawingNumber ?? null;
-const getLn = (t: any) => {
-  const raw = getLnRaw(t);
-  return raw ? normLn(raw) : null;
-};
-
-// Composite grouping key: pid + normalized lineNumber (pid-only and ln-only collapse)
-const groupKey = (t: MyTask) => {
-  const pid = getPid(t as any);
-  const ln = getLn(t as any);
-  const pidPart = pid != null ? `pid:${norm(pid)}` : "";
-  const lnPart = ln ? `ln:${ln}` : "";
-  const composite = [pidPart, lnPart].filter(Boolean).join("|");
-  return composite || `id:${norm((t as any).id)}`;
-};
-
-const toTime = (x: any) => {
-  const n = new Date(x ?? 0).getTime();
-  return Number.isFinite(n) ? n : 0;
-};
-const itemTs = (t: any) =>
-  Math.max(
-    toTime(t?.progressUpdatedAt),
-    toTime(t?.updatedAt),
-    toTime(t?.scheduledDate),
-    toTime(t?.createdAt)
-  );
-
-function extractProcessName(t: any): string | null {
-  return (
-    t?.processName ??
-    t?.product?.currentProcess ??
-    t?.currentProcess ??
-    t?.process?.name ??
-    t?.process?.processList?.name ??
-    null
-  );
-}
-
-const isApproved = (o: any) =>
-  o?.approvedById != null ||
-  (o?.approvedBy && o.approvedBy.id != null) ||
-  o?.approvedAt != null ||
-  o?.approved === true;
-
-/** Progress index: match by pid OR normalized ln; latest row per key */
-function createProgressIndex(progressTasks?: MyTask[]) {
-  const byPid = new Map<string, MyTask>();
-  const byLn = new Map<string, MyTask>();
-
-  const upsert = (
-    map: Map<string, MyTask>,
-    key: any,
-    row: MyTask,
-    normalizer: (v: any) => string
-  ) => {
-    const k = normalizer(key);
-    if (!k) return;
-    const prev = map.get(k);
-    if (!prev || itemTs(row as any) >= itemTs(prev as any)) map.set(k, row);
-  };
-
-  const nz = (v: any) => (v == null ? "" : String(v).trim().toLowerCase());
-  for (const p of progressTasks ?? []) {
-    upsert(byPid, getPid(p as any), p, nz);
-    upsert(byLn, getLnRaw(p as any), p, normLn);
-  }
-
-  const get = (t: MyTask): MyTask | undefined => {
-    const pid = getPid(t as any);
-    const ln = getLn(t as any);
-    return (
-      (pid != null && byPid.get(nz(pid))) || (ln ? byLn.get(ln) : undefined)
-    );
-  };
-
-  return {
-    get,
-    has: (t: MyTask) => !!get(t),
-    forApproval: (t: MyTask) => {
-      const row = get(t) as any;
-      if (!row) return false;
-      return !isApproved(row) && row?.forApproval === true;
-    },
-    percent: (t: MyTask): number | null => {
-      const row = get(t) as any;
-      return typeof row?.percent === "number" ? row.percent : null;
-    },
-    updatedAt: (t: MyTask) => {
-      const row = get(t) as any;
-      return row?.progressUpdatedAt ?? row?.updatedAt ?? row?.createdAt ?? null;
-    },
-    productName: (t: MyTask) => {
-      const row = get(t) as any;
-      return row?.product?.name ?? row?.title ?? null;
-    },
-  };
-}
-
-/* ---------------- UI styles ---------------- */
-
-const STATUS_CHIP: Record<MyTask["status"] | "blocked", string> = {
-  todo: "bg-gray-200 text-gray-800 dark:bg-zinc-700/70 dark:text-gray-100 border border-gray-300/60 dark:border-zinc-600/60",
-  in_progress:
-    "bg-lime-100 text-lime-800 dark:bg-lime-900/40 dark:text-lime-100 border border-primary-200/70 dark:border-primary-800/60",
-  blocked:
-    "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200/70 dark:border-amber-800/60",
-  done: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800/60",
-};
-
-const STATUS_LABEL: Record<MyTask["status"], string> = {
-  todo: "To-do",
-  in_progress: "In Progress",
-  blocked: "Blocked",
-  done: "Done",
 };
 
 type FilterKey =
@@ -145,20 +34,36 @@ type FilterKey =
   | "done"
   | "assigned_only";
 
-/* ---------------- component ---------------- */
+/* =====================================================================================
+ * UI tokens
+ * ===================================================================================== */
+
+const STATUS_CHIP: Record<MyTask["status"] | "blocked", string> = {
+  todo: "bg-gray-200 text-gray-800 dark:bg-zinc-700/70 dark:text-gray-100 border border-gray-300/60 dark:border-zinc-600/60",
+  in_progress:
+    "bg-lime-100 text-lime-800 dark:bg-lime-900/40 dark:text-lime-100 border border-primary-200/70 dark:border-primary-800/60",
+  blocked:
+    "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200/70 dark:border-amber-800/60",
+  done: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800/60",
+};
+
+/* =====================================================================================
+ * Component
+ * ===================================================================================== */
 
 export default function MyTasksAssignedList({
   tasks,
   progressTasks,
   assignedKeys,
   loading,
-  emptyText = "No assigned tasks in this period.",
+  emptyText,
   onOpen,
 }: Props) {
+  const TEXT = useLocalizedText("common", HOME_TEXT_KEYS);
   const [filter] = useState<FilterKey>("all");
 
   const progressIdx = useMemo(
-    () => createProgressIndex(progressTasks),
+    () => makeProgressIndexRich(progressTasks as any),
     [progressTasks]
   );
 
@@ -174,8 +79,11 @@ export default function MyTasksAssignedList({
     }
 
     const score = (t: MyTask) => {
-      const hasProg = progressIdx.has(t) ? 1 : 0;
-      const ts = Math.max(itemTs(t as any), toTime(progressIdx.updatedAt(t)));
+      const hasProg = (progressIdx as any).has(t) ? 1 : 0;
+      const ts = Math.max(
+        itemTs(t as any),
+        toTime((progressIdx as any).updatedAt(t))
+      );
       return hasProg * 1e12 + ts;
     };
 
@@ -188,7 +96,7 @@ export default function MyTasksAssignedList({
       for (const x of arr) {
         const a = extractProcessName(x as any);
         if (a) set.add(a);
-        const pr: any = progressIdx.get(x);
+        const pr: any = (progressIdx as any).get(x);
         const b = extractProcessName(pr);
         if (b) set.add(b);
       }
@@ -204,7 +112,7 @@ export default function MyTasksAssignedList({
     let base = mergedRows;
     switch (filter) {
       case "for_approval":
-        base = base.filter((r) => progressIdx.forApproval(r.task));
+        base = base.filter((r) => (progressIdx as any).forApproval(r.task));
         break;
       case "in_progress":
       case "todo":
@@ -228,30 +136,30 @@ export default function MyTasksAssignedList({
     for (const r of filteredRows) {
       const t = r.task as any;
       const title =
-        progressIdx.productName(t) ??
+        (progressIdx as any).productName(t) ??
         t?.title ??
         t?.product?.name ??
         t?.product?.productList?.name ??
         t?.name ??
         getLnRaw(t) ??
-        "Assigned item";
+        TEXT.ASSIGNED_ITEM_FALLBACK;
 
-      const ln = norm(getLnRaw(t) ?? "");
-      const proj = norm(
+      const ln = String(getLnRaw(t) ?? "").trim();
+      const proj = String(
         t?.projectName ?? t?.product?.project?.name ?? t?.project?.name ?? ""
-      );
+      ).trim();
       const procs = [...r.processes].sort().join("|");
-      const pending = progressIdx.forApproval(t) ? "1" : "0";
-      const p = progressIdx.percent(t);
+      const pending = (progressIdx as any).forApproval(t) ? "1" : "0";
+      const p = (progressIdx as any).percent(t);
       const pct =
         typeof p === "number"
           ? String(Math.round(Math.max(0, Math.min(100, p))))
           : "";
-      const updated = String(progressIdx.updatedAt(t) ?? "");
+      const updated = String((progressIdx as any).updatedAt(t) ?? "");
 
       const sig = [
-        norm(title).toLowerCase(),
-        ln,
+        title.trim().toLowerCase(),
+        ln.toLowerCase(),
         proj.toLowerCase(),
         procs.toLowerCase(),
         pending,
@@ -265,7 +173,11 @@ export default function MyTasksAssignedList({
       }
     }
     return out;
-  }, [filteredRows, progressIdx]);
+  }, [filteredRows, progressIdx, TEXT.ASSIGNED_ITEM_FALLBACK]);
+
+  /* =====================================================================================
+   * Render
+   * ===================================================================================== */
 
   if (loading) {
     return (
@@ -285,19 +197,17 @@ export default function MyTasksAssignedList({
   if (!tasks?.length) {
     return (
       <div className="w-full max-w-md text-sm text-gray-600 dark:text-gray-300">
-        {emptyText}
+        {emptyText ?? TEXT.TASKS_EMPTY}
       </div>
     );
   }
-
-  /* ---- render ---- */
 
   return (
     <div className="w-full max-w-md space-y-2">
       <ul className="space-y-2">
         {rows.length === 0 ? (
           <li className="text-sm text-gray-600 dark:text-gray-300 px-1 py-2">
-            No tasks match this filter.
+            {TEXT.NO_TASKS_MATCH_FILTER}
           </li>
         ) : null}
 
@@ -308,14 +218,14 @@ export default function MyTasksAssignedList({
               (t as any).lineNumber ?? ""
             }`;
 
-          const titleFromProgress = progressIdx.productName(t);
+          const titleFromProgress = (progressIdx as any).productName(t);
           const fallbackTitle =
             (t as any).title ??
             (t as any).product?.name ??
             (t as any).product?.productList?.name ??
             (t as any).name ??
             getLnRaw(t) ??
-            "Assigned item";
+            TEXT.ASSIGNED_ITEM_FALLBACK;
           const title = titleFromProgress ?? fallbackTitle;
 
           const lineNumber = getLnRaw(t);
@@ -324,7 +234,7 @@ export default function MyTasksAssignedList({
             (t as any).product?.project?.name ??
             (t as any).project?.name;
 
-          const updatedAt = progressIdx.updatedAt(t);
+          const updatedAt = (progressIdx as any).updatedAt(t);
           const updatedStr = updatedAt
             ? new Date(updatedAt).toLocaleDateString(undefined, {
                 month: "short",
@@ -334,14 +244,14 @@ export default function MyTasksAssignedList({
             : null;
 
           // percent (always visible)
-          const p = progressIdx.percent(t);
+          const p = (progressIdx as any).percent(t);
           const pct =
             typeof p === "number"
               ? `${Math.round(Math.max(0, Math.min(100, p)))}%`
               : null;
 
           // approval-driven chip
-          const pr = progressIdx.get(t);
+          const pr = (progressIdx as any).get(t);
           const approved = isApproved(pr) || isApproved(t);
           const pending =
             !approved &&
@@ -356,15 +266,18 @@ export default function MyTasksAssignedList({
 
           const chipStatus = effectiveStatus as MyTask["status"] | "blocked";
           const label = pending
-            ? "For Approval"
-            : STATUS_LABEL[effectiveStatus] ?? "Unknown";
+            ? TEXT.STATUS_FOR_APPROVAL
+            : (t.status === "todo" && TEXT.STATUS_TODO) ||
+              (t.status === "in_progress" && TEXT.STATUS_IN_PROGRESS) ||
+              (t.status === "done" && TEXT.STATUS_DONE) ||
+              TEXT.STATUS_UNKNOWN;
 
           return (
             <li key={String(id)}>
               <button
                 type="button"
                 onClick={() => onOpen?.(t)}
-                className={[
+                className={cx(
                   "w-full text-left rounded-xl border",
                   "border-gray-200 dark:border-zinc-700",
                   "bg-white dark:bg-zinc-900",
@@ -372,8 +285,8 @@ export default function MyTasksAssignedList({
                   "transition-colors",
                   "hover:bg-gray-50 dark:hover:bg-zinc-800/60",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
-                  "active:opacity-95",
-                ].join(" ")}
+                  "active:opacity-95"
+                )}
               >
                 <div className="flex items-start justify-between gap-3">
                   {/* Left */}
@@ -385,13 +298,13 @@ export default function MyTasksAssignedList({
                     <div className="mt-1 text-[12px] text-gray-600 dark:text-gray-300 flex flex-wrap gap-x-2 gap-y-0.5">
                       {lineNumber && (
                         <span className="font-mono">
-                          Drawing:{" "}
+                          {TEXT.LABEL_DRAWING}:{" "}
                           <span className="font-semibold">{lineNumber}</span>
                         </span>
                       )}
                       {projectName && (
                         <span className="truncate">
-                          • Project:{" "}
+                          • {TEXT.LABEL_PROJECT}:{" "}
                           <span className="font-medium">{projectName}</span>
                         </span>
                       )}
@@ -401,13 +314,17 @@ export default function MyTasksAssignedList({
                       <div className="mt-1 text-[12px] text-gray-600 dark:text-gray-300 flex flex-wrap gap-x-2 gap-y-0.5">
                         {processes.length ? (
                           <span>
-                            Processes:{" "}
+                            {TEXT.LABEL_PROCESSES}:{" "}
                             <span className="font-medium">
                               {processes.join(", ")}
                             </span>
                           </span>
                         ) : null}
-                        {updatedStr && <span>• Updated: {updatedStr}</span>}
+                        {updatedStr && (
+                          <span>
+                            • {TEXT.LABEL_UPDATED}: {updatedStr}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -415,10 +332,10 @@ export default function MyTasksAssignedList({
                   {/* Right */}
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <span
-                      className={[
+                      className={cx(
                         "px-2 py-0.5 rounded-full text-[11px] leading-5",
-                        STATUS_CHIP[chipStatus],
-                      ].join(" ")}
+                        STATUS_CHIP[chipStatus]
+                      )}
                       title={label}
                       aria-label={label}
                     >

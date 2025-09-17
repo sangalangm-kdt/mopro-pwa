@@ -8,7 +8,41 @@
     "scan_button": "Scan",
     "scan_history_empty": "No recent scans.",
     "scan_history_load_more": "Load more...",
-    "hi": "Hi,"
+    "hi": "Hi,",
+    "my_tasks_chip_title": "My Tasks",
+    "progress_chip_title": "Progress",
+    "days": "days",
+    "progress_days_title": "{{count}}-Day Progress",
+    "status": {
+      "todo": "To-do",
+      "in_progress": "In-Progress",
+      "for_approval": "For Approval",
+      "done": "Done",
+      "unknown": "Unknown"
+    },
+    "labels": {
+      "drawing": "Drawing",
+      "project": "Project",
+      "processes": "Processes",
+      "updated": "Updated"
+    },
+    "tasks_empty": "No assigned tasks in this period.",
+    "no_tasks_match_filter": "No tasks match this filter.",
+    "assigned_item_fallback": "Assigned item",
+    "tasks_view_all": "View all",
+    "range_label": "{{start, short}} – {{end, short}}",
+    "date_format": "{{val, short}}",
+    "latest": "Latest",
+    "last_n_days_title": "Last {{count}} Days",
+    "days_active_label": "{{active}}/{{total}} days active",
+    "latest_prefix": "Latest",
+    "avg_completion": "Avg completion",
+    "no_progress_period": "No progress recorded in this period.",
+    "scan_to_start": "Scan a QR to start tracking.",
+    "daily_completion_chart": "Daily completion chart",
+    "today": "Today",
+    "tap_day_to_filter": "Tap a day to filter history",
+    "clear_filter": "Clear filter"
   },
   "button": {
     "confirm": "Confirm",
@@ -218,6 +252,7 @@
     "process": "Process",
     "progress": "Progress",
     "status": "Status",
-    "no_data": "No data found. Please navigate here from the scan history list."
+    "no_data": "No data found. Please navigate here from the scan history list.",
+    "waiting_for_approval": "Waiting for Approval"
   }
 }

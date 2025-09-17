@@ -81,7 +81,7 @@ export default function ScanHistoryDetail() {
                           aria-label="Waiting for approval"
                           title="Waiting for approval"
                         >
-                          Waiting for approval
+                          {TEXT.WAITING_FOR_APPROVAL}
                         </span>
                       ) : null
                     }

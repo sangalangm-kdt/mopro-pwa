@@ -8,7 +8,42 @@
     "scan_button": "スキャン",
     "scan_history_empty": "最近のスキャンはありません。",
     "scan_history_load_more": "さらに読み込む...",
-    "hi": "やあ、"
+    "hi": "やあ、",
+    "my_tasks_chip_title": "マイタスク",
+    "progress_chip_title": "進捗",
+    "progress_days_title": "{{count}}日間の進捗",
+    "days": "日間",
+    "status": {
+      "todo": "未着手",
+      "in_progress": "進行中",
+      "for_approval": "承認待ち",
+      "done": "完了",
+      "unknown": "不明"
+    },
+    "labels": {
+      "drawing": "図番",
+      "project": "プロジェクト",
+      "processes": "工程",
+      "updated": "更新日"
+    },
+    "no_tasks_match_filter": "この条件に一致するタスクはありません。",
+    "assigned_item_fallback": "割り当て項目",
+    "total_tasks": "合計タスク",
+    "tasks_empty": "タスクはまだありません。",
+    "tasks_view_all": "すべて表示",
+    "range_label": "{{start, short}} – {{end, short}}",
+    "date_format": "{{val, short}}",
+    "latest": "最新",
+    "last_n_days_title": "直近{{count}}日",
+    "days_active_label": "{{active}}／{{total}} 日間アクティブ",
+    "latest_prefix": "最新",
+    "avg_completion": "平均完了率",
+    "no_progress_period": "この期間の進捗は記録されていません。",
+    "scan_to_start": "QR をスキャンして記録を開始してください。",
+    "daily_completion_chart": "日次完了チャート",
+    "today": "今日",
+    "tap_day_to_filter": "日付をタップして履歴を絞り込み",
+    "clear_filter": "フィルターを解除"
   },
   "button": {
     "confirm": "確認",
@@ -215,6 +250,7 @@
     "process": "プロセス",
     "progress": "進捗",
     "status": "ステータス",
-    "no_data": "データが見つかりません。スキャン履歴から移動してください。"
+    "no_data": "データが見つかりません。スキャン履歴から移動してください。",
+    "waiting_for_approval": "承認待ち"
   }
 }

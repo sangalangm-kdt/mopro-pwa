@@ -28,7 +28,6 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    // ✅ Missing `.init({` previously
     resources: {
       en: {
         translation: {},
@@ -75,6 +74,15 @@ i18n
     pluralSeparator: "_",
     interpolation: {
       escapeValue: false,
+      format: (value, format, lng) => {
+        if (value instanceof Date) {
+          return new Intl.DateTimeFormat(lng, {
+            month: format === "short" ? "short" : "long",
+            day: "numeric",
+          }).format(value);
+        }
+        return value;
+      },
     },
     detection: {
       order: ["localStorage", "navigator"],
