@@ -5,9 +5,12 @@ import { mapProgressToTasks, type MyTask } from "@/utils/map-progress-to-tasks";
 
 type UseMyTasksInput = {
   userId?: number | string;
-  progressRows: any[] | undefined; // from useProgress().progress
-  productUserAssigns: any[] | undefined;
-  dayKeys: string[]; // list of YYYY-MM-DD strings in the current window
+  /** legacy prop name (still supported) */
+  progressUpdates?: any[] | undefined;
+  /** preferred: from useProgress().progress */
+  progressRows?: any[] | undefined;
+  productUserAssigns?: any[] | undefined;
+  dayKeys: string[];
   isLoadingProgress?: boolean;
   isLoadingAssign?: boolean;
 };
@@ -17,7 +20,6 @@ type UseMyTasksInput = {
 const str = (x: any) => String(x ?? "").trim();
 
 const keyFor = (t: any) => {
-  // Prefer drawing/line number. Fall back to productId, then id.
   const ln =
     t?.lineNumber ?? t?.product?.lineNumber ?? t?.drawingNumber ?? null;
   if (ln != null) return `ln:${str(ln)}`;
@@ -37,7 +39,7 @@ const progressTime = (o: any) =>
 /** Robust approval detector (camelCase + snake_case + numeric approved_by) */
 const isApproved = (o: any): boolean => {
   if (!o) return false;
-  const rawApprovedBy = o.approvedBy ?? o.approved_by ?? null; // may be object or number
+  const rawApprovedBy = o.approvedBy ?? o.approved_by ?? null;
   const rawApprovedById =
     o.approvedById ??
     o.approved_by_id ??
@@ -56,23 +58,17 @@ const isApproved = (o: any): boolean => {
   return approvedFlag || approvedById != null || approvedAt != null;
 };
 
-/** Merge progress over assigned using approval fields.
- *  - forApproval = !approved
- *  - status: pending → "blocked"; approved → "in_progress" (unless done)
- *  - always take latest progress.percent and keep assigned scheduledDate
- */
+/** Merge progress over assigned using approval fields. */
 function mergeAssignedWithProgress(assigned: MyTask[], progress: MyTask[]) {
   const byKey: Record<string, MyTask> = {};
   const latestAt: Record<string, number> = {};
 
-  // seed with assigned baseline
   for (const a of assigned) {
     const k = keyFor(a as any);
     byKey[k] = a;
     latestAt[k] = -Infinity;
   }
 
-  // apply progress rows
   for (const p of progress) {
     const k = keyFor(p as any);
     const ts = progressTime(p as any);
@@ -84,7 +80,6 @@ function mergeAssignedWithProgress(assigned: MyTask[], progress: MyTask[]) {
     const approved = isApproved(p);
     const pending = !approved;
 
-    // compute next status
     let nextStatus: MyTask["status"];
     if (pending) {
       nextStatus = "blocked";
@@ -94,12 +89,10 @@ function mergeAssignedWithProgress(assigned: MyTask[], progress: MyTask[]) {
     ) {
       nextStatus = "done";
     } else {
-      // approved but not done → show in_progress
       nextStatus = "in_progress";
     }
 
     if (!prev) {
-      // standalone progress (no assigned row)
       byKey[k] = {
         ...(p as MyTask),
         percent: pct,
@@ -111,20 +104,18 @@ function mergeAssignedWithProgress(assigned: MyTask[], progress: MyTask[]) {
       continue;
     }
 
-    // only apply if this progress is newer than what we've applied before
     if (ts < (latestAt[k] ?? -Infinity)) continue;
 
     byKey[k] = {
-      ...prev, // keep assigned baseline (e.g., scheduledDate)
-      ...(p as any), // overlay progress fields (title, product info, etc.)
-      percent: pct, // latest percent wins
+      ...prev,
+      ...(p as any),
+      percent: pct,
       status: nextStatus,
       product: {
         ...(prev.product ?? {}),
         ...(p as any).product,
         percent: pct,
       },
-      // keep assigned schedule stable if available
       scheduledDate: prev.scheduledDate || (p as any).scheduledDate,
       forApproval: pending,
     };
@@ -140,18 +131,22 @@ function mergeAssignedWithProgress(assigned: MyTask[], progress: MyTask[]) {
 export function useMyTasks({
   userId,
   progressRows,
+  progressUpdates, // legacy
   productUserAssigns,
   dayKeys,
   isLoadingProgress,
   isLoadingAssign,
 }: UseMyTasksInput) {
+  /** Support both legacy (progressUpdates) and new (progressRows) */
+  const progressInput = progressRows ?? progressUpdates ?? [];
+
   /** 1) progress rows → tasks */
   const tasksFromProgress = useMemo(
-    () => mapProgressToTasks((progressRows ?? []) as any[], userId),
-    [progressRows, userId]
+    () => mapProgressToTasks(progressInput as any[], userId),
+    [progressInput, userId]
   );
 
-  /** 2) assignment rows → AssignedItem[] (flatten minimal fields we need) */
+  /** 2) assignment rows → AssignedItem[] */
   const assignedItems = useMemo(() => {
     const rows = Array.isArray(productUserAssigns) ? productUserAssigns : [];
     return rows.map((r: any, i: number) => {
@@ -159,8 +154,13 @@ export function useMyTasks({
       const project = product.project ?? r.project ?? {};
       return {
         id: r.id ?? product.id ?? `assign-${i}`,
+        // include snake_case fallback
         assigneeId:
-          r.assigneeId ?? r.userId ?? r.user?.id ?? product.assigneeId,
+          r.assigneeId ??
+          r.userId ??
+          r.user_id ??
+          r.user?.id ??
+          product.assigneeId,
         lineNumber: product.lineNumber ?? r.lineNumber,
         percent:
           typeof product.percent === "number"
@@ -188,7 +188,7 @@ export function useMyTasks({
 
   /** 4) Keep todos inside the current window so they show */
   const windowedAssignedTasks = useMemo(() => {
-    const daySet = new Set(dayKeys); // YYYY-MM-DD
+    const daySet = new Set(dayKeys);
     return assignedTasks.map((t) => {
       const key = new Date(t.scheduledDate).toLocaleDateString("en-CA");
       if (t.status === "todo" && !daySet.has(key)) {
@@ -236,7 +236,6 @@ export function useMyTasks({
     );
   }, [buckets]);
 
-  /** Useful for “Assigned” filter/badge */
   const assignedKeys = useMemo(
     () => new Set(assignedTasks.map((t) => keyFor(t))),
     [assignedTasks]
@@ -245,9 +244,9 @@ export function useMyTasks({
   const loading = !!(isLoadingProgress || isLoadingAssign);
 
   return {
-    tasksFromProgress, // latest progress-as-tasks
-    assignedKeys, // keys for items that were explicitly assigned
-    myTasks, // merged result (before any UI dedupe/grouping)
+    tasksFromProgress,
+    assignedKeys,
+    myTasks,
     buckets,
     totals,
     list,
