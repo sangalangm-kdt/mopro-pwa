@@ -310,6 +310,109 @@ body,
 /* --------------------------------- */
 /*          ANIMATION CLASSES        */
 /* --------------------------------- */
+/* ===== Login Hero Motion ===== */
+
+@keyframes heroGradientShift {
+  0% {
+    transform: translate3d(-6%, -4%, 0) scale(1.05);
+    filter: blur(0px);
+  }
+  50% {
+    transform: translate3d(6%, 4%, 0) scale(1.08);
+    filter: blur(1px);
+  }
+  100% {
+    transform: translate3d(-6%, -4%, 0) scale(1.05);
+    filter: blur(0px);
+  }
+}
+
+@keyframes floatY {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes floatX {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(18px, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility classes */
+.hero-gradient-anim {
+  animation: heroGradientShift 14s ease-in-out infinite;
+}
+
+.hero-float-y {
+  animation: floatY 9s ease-in-out infinite;
+}
+
+.hero-float-x {
+  animation: floatX 11s ease-in-out infinite;
+}
+
+.hero-text-in {
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-gradient-anim,
+  .hero-float-y,
+  .hero-float-x,
+  .hero-text-in {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ===== Light sweep (very subtle) ===== */
+@keyframes heroLightSweep {
+  0% {
+    transform: translateX(-140%) rotate(12deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.08; /* peak brightness (keep LOW) */
+  }
+  24% {
+    transform: translateX(140%) rotate(12deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(140%) rotate(12deg);
+    opacity: 0;
+  }
+}
+
+/* Utility */
+.hero-light-sweep {
+  animation: heroLightSweep 14s ease-in-out infinite;
+}
 
 .animate-slide-left {
   animation: slideLeft 0.4s ease-out forwards;

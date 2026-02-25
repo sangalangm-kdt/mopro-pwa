@@ -22,6 +22,7 @@
     "noFallthroughCasesInSwitch": true,
 
     "baseUrl": "./src",
+
     "paths": {
       "@/*": ["*"],
       "@components/*": ["components/*"],
@@ -35,6 +36,7 @@
       "@context/*": ["context/*"],
       "@types/*": ["types/*"]
     },
+    "ignoreDeprecations": "6.0",
 
     "types": ["vite/client", "node"]
   },

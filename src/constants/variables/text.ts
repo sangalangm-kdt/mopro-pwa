@@ -46,6 +46,8 @@ export const LOGIN_TEXT_KEYS = {
   ERROR_PASSWORD_REQUIRED: "login.error.password.required",
   PWA_BANNER_TITLE: "login.pwa_banner_title",
   PWA_BANNER_DESCRIPTION: "login.pwa_banner_description",
+  WELCOME_TITLE: "login.welcome_title",
+  WELCOME_SUBTITLE: "login.welcome_subtitle",
 };
 
 // Home Text Keys

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import TextInput from "@/components/inputs/Input";
-import BoardingScreen from "@/components/BoardingScreen";
+// import BoardingScreen from "@/components/BoardingScreen";
 import LargeHeader from "@/components/Header";
 import Button from "@/components/buttons/Button";
 import RememberMeCheckbox from "@/components/Checkbox";
@@ -13,6 +13,7 @@ import { useLocalizedText } from "@/utils/localized-text";
 import TopControls from "@/components/TopControls";
 import { isInStandaloneMode } from "@/utils/standalone-mode";
 import PwaPrompt from "@/components/PwaPrompt";
+import LoginHero from "@/components/LoginHero";
 
 export default function Login() {
   const {
@@ -37,7 +38,7 @@ export default function Login() {
   useEffect(() => {
     const saved = sessionStorage.getItem("transitionDirection");
     setDirection(
-      saved === "right" ? "animate-slide-right" : "animate-slide-left"
+      saved === "right" ? "animate-slide-right" : "animate-slide-left",
     );
   }, []);
 
@@ -161,10 +162,13 @@ export default function Login() {
           </div>
         </div>
       </div>
-
+      <div className="hidden md:block w-px relative">
+        <div className="absolute inset-0 bg-white/10" />
+        <div className="absolute inset-0 blur-sm bg-white/20 opacity-40" />
+      </div>
       {/* Right: Visual */}
-      <div className="hidden md:flex flex-1 bg-gradient-to-tl from-lime-800 to-lime-950 items-center justify-center p-4">
-        <BoardingScreen />
+      <div className="hidden md:block flex-1 relative overflow-hidden">
+        <LoginHero syncDelayMs={520} />
       </div>
     </div>
   );

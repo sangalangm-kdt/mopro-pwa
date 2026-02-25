@@ -21,9 +21,10 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   // const navigate = useNavigate();
   const { t } = useTranslation("account");
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     onClose();
+    // navigate("/login", { replace: true });
   };
 
   useSidebarControls(open, onClose, sidebarRef, closeButtonRef);

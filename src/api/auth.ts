@@ -4,6 +4,7 @@ import useSWR from "swr";
 
 export const useAuth = () => {
   const csrf = () => axios.get("/sanctum/csrf-cookie");
+  // const navigate = useNavigate();
 
   const {
     data: user,
@@ -16,7 +17,7 @@ export const useAuth = () => {
       .then((res) => res.data)
       .catch((error) => {
         if (error.response.status !== 409) throw error;
-      })
+      }),
   );
 
   const login = async (data: {
@@ -86,11 +87,11 @@ export const useAuth = () => {
   };
 
   const logout = async () => {
-    if (!error) {
-      await axios.post("/logout").then(() => mutate());
+    try {
+      await axios.post("/logout");
+    } finally {
+      await mutate(null, false);
     }
-
-    window.location.pathname = "login";
   };
 
   return { user, mutate, isLoading, login, logout, changePassword };

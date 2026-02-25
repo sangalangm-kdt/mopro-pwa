@@ -146,7 +146,9 @@
     "forgotPassword": "Forgot password?",
     "requestAccount": "Request account",
     "pwa_banner_title": "Want a mobile-like experience?",
-    "pwa_banner_description": "Install the app to your home screen."
+    "pwa_banner_description": "Install the app to your home screen.",
+    "welcome_title": "Welcome to MoPro.",
+    "welcome_subtitle": "Stay informed, stay productive—track progress anytime, anywhere with MoPro."
   },
   "help": {
     "title": "Help & Support",

@@ -147,7 +147,9 @@
     "forgotPassword": "パスワードをお忘れですか？",
     "requestAccount": "アカウントをリクエスト",
     "pwa_banner_title": "モバイルのような体験をしたいですか？",
-    "pwa_banner_description": "ホーム画面にアプリを追加してインストールしましょう。"
+    "pwa_banner_description": "ホーム画面にアプリを追加してインストールしましょう。",
+    "welcome_title": "MoProへようこそ。",
+    "welcome_subtitle": "いつでも、どこでも進捗を確認し、効率的に業務を管理できます。"
   },
   "help": {
     "title": "ヘルプとサポート",
