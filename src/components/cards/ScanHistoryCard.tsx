@@ -6,6 +6,9 @@ import RadialProgress from "../RadialProgress";
 import { HOME_TEXT_KEYS, ROUTES } from "@/constants";
 
 export interface ScanEntry {
+  approvedById: any;
+  updatedAt: string | number | Date;
+  approvedAt: any;
   user: {
     firstName: string;
     lastName: string;
@@ -71,11 +74,11 @@ export default function ScanHistoryCard({
                 navigate(
                   `${ROUTES.SCAN_HISTORY_DETAIL.replace(
                     ":id",
-                    String(entry.id)
+                    String(entry.id),
                   )}`,
                   {
                     state: entry,
-                  }
+                  },
                 )
               }
               className="py-3 flex flex-row justify-between gap-3 sm:gap-1"

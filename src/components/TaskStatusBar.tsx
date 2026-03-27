@@ -1,8 +1,8 @@
-// src/components/TaskStatusBar.tsx (refactored with i18n + utils)
+// src/components/TaskStatusBar.tsx
 import type { MyTask } from "@/utils/map-progress-to-tasks";
 import { useLocalizedText } from "@/utils/localized-text";
 import { HOME_TEXT_KEYS } from "@constants/index";
-import { makeProgressIndex } from "@/utils/home-helpers";
+import { isApproved, makeProgressIndexRich } from "@/utils/home-helpers";
 
 type TaskTotals = {
   todo: number;
@@ -12,19 +12,40 @@ type TaskTotals = {
   all: number; // kept for compat if you don’t pass tasks
 };
 
+type Bucket = "todo" | "in_progress" | "done" | "for_approval";
+
 type Props = {
   title?: string;
   rangeLabel: string;
   windowDays: string | number;
   loading?: boolean;
 
-  // NEW: recount from these (preferred)
+  // recount from these (preferred)
   tasks?: MyTask[];
   progressTasks?: MyTask[];
 
-  // Fallback (kept for backward compatibility)
+  // fallback (backward compatibility)
   totals?: TaskTotals;
 };
+
+function getBucket(t: MyTask, progressIdx: any): Bucket {
+  const pr = progressIdx.get?.(t);
+
+  const approved = isApproved(pr) || isApproved(t);
+
+  const pending =
+    !approved &&
+    ((pr as any)?.forApproval === true || (t as any)?.forApproval === true);
+
+  if (pending || progressIdx.forApproval?.(t)) return "for_approval";
+
+  // normalize blocked -> in_progress (matches your list behavior)
+  if ((t as any)?.status === "blocked") return "in_progress";
+
+  const s = (t as any)?.status;
+  if (s === "in_progress" || s === "done" || s === "todo") return s;
+  return "todo";
+}
 
 export default function TaskStatusBar({
   title,
@@ -35,7 +56,6 @@ export default function TaskStatusBar({
   progressTasks,
   totals,
 }: Props) {
-  // i18n
   const TEXT = useLocalizedText("common", HOME_TEXT_KEYS);
 
   // If tasks are provided, recount from them to mirror the list
@@ -45,11 +65,16 @@ export default function TaskStatusBar({
     done = 0;
 
   if (tasks && tasks.length) {
-    const idx = makeProgressIndex(progressTasks as any);
+    const idx = makeProgressIndexRich(progressTasks as any);
+
+    // IMPORTANT:
+    // If your list dedupes tasks before rendering, pass the SAME deduped array here
+    // for 1:1 matching. Otherwise counts may differ.
     for (const t of tasks) {
-      if ((idx as any).forApproval(t as any)) blocked++;
-      else if ((t as any).status === "in_progress") in_progress++;
-      else if ((t as any).status === "done") done++;
+      const b = getBucket(t, idx as any);
+      if (b === "for_approval") blocked++;
+      else if (b === "in_progress") in_progress++;
+      else if (b === "done") done++;
       else todo++;
     }
   } else if (totals) {
@@ -68,25 +93,25 @@ export default function TaskStatusBar({
   const segments = [
     {
       key: "todo",
-      label: TEXT.STATUS_TODO, // was "To-do"
+      label: TEXT.STATUS_TODO,
       value: todo,
       cls: "bg-gray-300 dark:bg-zinc-600",
     },
     {
-      key: "in_progress",
-      label: TEXT.STATUS_IN_PROGRESS, // was "In-Progress"
-      value: in_progress,
-      cls: "bg-primary-500/90 dark:bg-primary-400/90",
-    },
-    {
       key: "blocked",
-      label: TEXT.STATUS_FOR_APPROVAL, // was "For Approval"
+      label: TEXT.STATUS_FOR_APPROVAL,
       value: blocked,
       cls: "bg-amber-500/90 dark:bg-amber-400/90",
     },
     {
+      key: "in_progress",
+      label: TEXT.STATUS_IN_PROGRESS,
+      value: in_progress,
+      cls: "bg-primary-500/90 dark:bg-primary-400/90",
+    },
+    {
       key: "done",
-      label: TEXT.STATUS_DONE, // was "Done"
+      label: TEXT.STATUS_DONE,
       value: done,
       cls: "bg-emerald-500/90 dark:bg-emerald-400/90",
     },
@@ -134,7 +159,7 @@ export default function TaskStatusBar({
                   title={`${s.label}: ${s.value} (${s.pctText}%)`}
                   aria-label={`${s.label}: ${s.value} (${s.pctText}%)`}
                 />
-              ) : null
+              ) : null,
             )}
           </div>
         </div>

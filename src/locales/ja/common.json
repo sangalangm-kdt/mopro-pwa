@@ -253,6 +253,7 @@
     "progress": "進捗",
     "status": "ステータス",
     "no_data": "データが見つかりません。スキャン履歴から移動してください。",
-    "waiting_for_approval": "承認待ち"
+    "waiting_for_approval": "承認待ち",
+    "approved_at": "承認日"
   }
 }

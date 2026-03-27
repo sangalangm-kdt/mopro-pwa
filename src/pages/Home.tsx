@@ -28,6 +28,8 @@ import {
   makeProgressIndex,
   dedupeForDisplay,
   totalsFromDisplay,
+  groupKey,
+  historyKey,
 } from "@/utils/home-helpers";
 
 export default function Home() {
@@ -36,7 +38,7 @@ export default function Home() {
   const TEXT = useLocalizedText("common", HOME_TEXT_KEYS);
 
   const { progressUpdates, isLoading: isProgressLoading } = useProgressUpdate(
-    user?.data?.id
+    user?.data?.id,
   );
   const { productUserAssigns, isLoading: isAssignLoading } =
     useProductUserAssign();
@@ -52,7 +54,7 @@ export default function Home() {
   const dayKeys = useDayKeys(windowDays);
   const { summary, rangeLabel, daysActive, latestLabel } = usePeriodSummary(
     (progressUpdates as ProgressUpdate[]) ?? [],
-    windowDays
+    windowDays,
   );
 
   const {
@@ -71,35 +73,88 @@ export default function Home() {
 
   const progressIdx = useMemo(
     () => makeProgressIndex((tasksFromProgress as BaseRow[]) ?? []),
-    [tasksFromProgress]
+    [tasksFromProgress],
   );
 
   const displayTasks = useMemo(
     () => dedupeForDisplay((myAssignedTasks as BaseRow[]) ?? [], progressIdx),
-    [myAssignedTasks, progressIdx]
+    [myAssignedTasks, progressIdx],
   );
 
   const displayTotals = useMemo(
     () => totalsFromDisplay(displayTasks, progressIdx),
-    [displayTasks, progressIdx]
+    [displayTasks, progressIdx],
   );
 
   // Handlers (stable refs)
   const handleToggleMode = useCallback(
     (m: "progress" | "myTasks") => setMode(m),
-    []
+    [],
   );
   const handleSetWindowDays = useCallback((n: 15 | 30) => setWindowDays(n), []);
   const handleOpenScanner = useCallback(
     () => navigate(ROUTES.SCANNER),
-    [navigate]
+    [navigate],
   );
   const handleOpenFullHistory = useCallback(() => setShowFullHistory(true), []);
   const handleCloseFullHistory = useCallback(
     () => setShowFullHistory(false),
-    []
+    [],
   );
 
+  const assignedNowKeys = useMemo(() => {
+    const s = new Set<string>();
+    for (const t of displayTasks ?? []) {
+      const k = groupKey(t as any);
+      if (k) s.add(k);
+    }
+    return s;
+  }, [displayTasks]);
+  // const allowedHistoryKeys = useMemo(() => {
+  //   const s = new Set<string>();
+
+  //   for (const r of progress ?? []) {
+  //     // 🔥 Only include rows belonging to current user
+  //     if (r?.userId !== user?.data?.id) continue;
+
+  //     const k = groupKey(r as any);
+  //     if (k) s.add(k);
+  //   }
+
+  //   return s;
+  // }, [progress, user?.data?.id]);
+  const filteredHistory = useMemo(() => {
+    // while loading, don't filter yet (prevents empty flash)
+    if (isProgressLoading) return progressUpdates ?? [];
+
+    return (progressUpdates ?? []).filter((u: any) => {
+      const k = historyKey(u);
+      return k ? assignedNowKeys.has(k) : false;
+    });
+  }, [progressUpdates, assignedNowKeys, isProgressLoading]);
+
+  console.log("progress", progress);
+  useMemo(() => {
+    const target = "62315-1006";
+
+    const inProgress = (progress ?? []).some(
+      (r: any) => String(r?.lineNumber ?? "").trim() === target,
+    );
+
+    const inAssignments = (productUserAssigns ?? []).some(
+      (a: any) =>
+        String(
+          a?.product?.lineNumber ?? a?.product?.drawingNumber ?? "",
+        ).trim() === target,
+    );
+
+    const inTasks = (displayTasks ?? []).some(
+      (t: any) =>
+        String(t?.lineNumber ?? t?.drawingNumber ?? "").trim() === target,
+    );
+
+    console.log("Portal check", { inProgress, inAssignments, inTasks });
+  }, [progress, productUserAssigns, displayTasks]);
   return (
     <div className="flex flex-col items-center justify-start px-1 py-4 space-y-5 bg-bg-color">
       {/* Controls row */}
@@ -114,7 +169,7 @@ export default function Home() {
                 "px-3 py-1 rounded-full border text-sm capitalize",
                 mode === m
                   ? "border-primary-500 text-primary-600 dark:text-primary-400"
-                  : "border-gray-300 dark:border-zinc-600 text-gray-600 dark:text-gray-300"
+                  : "border-gray-300 dark:border-zinc-600 text-gray-600 dark:text-gray-300",
               )}
             >
               {m === "progress" ? TEXT.PROGRESS : TEXT.MY_TASKS}
@@ -132,7 +187,7 @@ export default function Home() {
                 "px-3 py-1 rounded-full border text-sm",
                 windowDays === n
                   ? "border-primary-500 text-primary-600 dark:text-primary-400"
-                  : "border-gray-300 dark:border-zinc-600 text-gray-600 dark:text-gray-300"
+                  : "border-gray-300 dark:border-zinc-600 text-gray-600 dark:text-gray-300",
               )}
             >
               {n} {TEXT.DAYS}
@@ -146,7 +201,7 @@ export default function Home() {
         <TwoWeekProgress
           title={TEXT.PROGRESS_DAYS_TITLE.replace(
             "{{count}}",
-            String(windowDays)
+            String(windowDays),
           )}
           bars={summary.bars}
           avgPercent={summary.avgPercent}
@@ -163,14 +218,14 @@ export default function Home() {
             title={TEXT.MY_TASKS}
             rangeLabel={rangeLabel}
             tasks={displayTasks as any}
-            progressTasks={tasksFromProgress as any}
+            progressTasks={progress as any}
             windowDays={`${windowDays} ${TEXT.DAYS}`}
             totals={displayTotals as any}
             loading={myTasksLoading}
           />
           <MyTasksAssignedList
             tasks={displayTasks as any}
-            progressTasks={tasksFromProgress as any}
+            progressTasks={progress as any}
             assignedKeys={assignedKeys}
             loading={myTasksLoading}
             onOpen={() => {}}
@@ -207,7 +262,7 @@ export default function Home() {
       {mode === "progress" && (
         <div className="w-full rounded-lg border grow scrollbar border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 shadow-sm sm:max-w-md overflow-y-auto scroll-smooth max-h-[800px] sm:max-h-[500px]">
           <ScanHistoryCard
-            history={progressUpdates?.slice(0, 5)}
+            history={filteredHistory.slice(0, 5)}
             loading={isProgressLoading}
           />
           {!isProgressLoading && (
@@ -222,7 +277,7 @@ export default function Home() {
           )}
           {showFullHistory && (
             <FullscreenScanHistory
-              data={progressUpdates}
+              data={filteredHistory}
               onClose={handleCloseFullHistory}
               loading={isProgressLoading}
             />
@@ -245,7 +300,7 @@ export default function Home() {
             "active:scale-95 transition transform",
             "flex items-center justify-center",
             "text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500",
-            "dark:focus:ring-offset-zinc-900"
+            "dark:focus:ring-offset-zinc-900",
           )}
         >
           <ScanQrCode className="h-6 w-6" />

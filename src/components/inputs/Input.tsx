@@ -67,7 +67,7 @@ export default function TextInput({
           className={`w-full text-base sm:text-base px-3 py-2 sm:py-3 border ${
             error
               ? "border-red-500 dark:border-red-400"
-              : "border-gray-300 dark:border-gray-600"
+              : "border-gray-400 dark:border-gray-600"
           } bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-md shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-600/30 focus:border-primary-700 ${
             icon ? "pl-10" : ""
           } ${isPassword ? "pr-10" : ""}`}

@@ -4,7 +4,7 @@ import LargeHeader from "@/components/Header";
 import TextInput from "@/components/inputs/Input";
 import Button from "@/components/buttons/Button";
 import Icon from "@/components/icons/Icons";
-import Logo from "@assets/logo/logo v2.svg?react";
+import Logo from "@assets/logo/logo.svg?react";
 import BoardingScreen from "@/components/BoardingScreen";
 import TopControls from "@/components/TopControls";
 import { Check } from "lucide-react";
@@ -98,8 +98,8 @@ export default function RequestAccount() {
                         isCompleted
                           ? "bg-primary-700"
                           : isActive
-                          ? "bg-primary-500 scale-110 shadow-lg"
-                          : "bg-gray-400 dark:bg-zinc-600"
+                            ? "bg-primary-500 scale-110 shadow-lg"
+                            : "bg-gray-400 dark:bg-zinc-600"
                       }`}
                     >
                       {isCompleted ? <Check className="w-4 h-4" /> : current}

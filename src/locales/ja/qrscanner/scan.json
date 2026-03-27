@@ -6,5 +6,11 @@
   "scanning": "スキャン中...",
   "add_manually": "手動で追加",
   "flashlight_not_supported": "🔦 フラッシュライトはサポートされていません。",
-  "open_manual_modal": "🚀 手動エントリーモーダルを開く"
+  "open_manual_modal": "🚀 手動エントリーモーダルを開く",
+  "camera": {
+    "https_required": "カメラを使用するにはHTTPS接続が必要です。現在はHTTPで開かれています。",
+    "api_unavailable": "このブラウザ環境ではカメラAPIが利用できません。",
+    "permission_denied": "カメラにアクセスできません。ブラウザの権限をご確認ください。",
+    "no_qr": "QRコードが検出されませんでした。もう一度お試しください。"
+  }
 }

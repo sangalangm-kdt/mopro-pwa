@@ -85,7 +85,7 @@ export const itemTs = (t: BaseRow | any) =>
     toTime(t?.progressUpdatedAt),
     toTime(t?.updatedAt),
     toTime(t?.scheduledDate),
-    toTime(t?.createdAt)
+    toTime(t?.createdAt),
   );
 
 export const extractProcessName = (t: BaseRow | any): string | null =>
@@ -102,6 +102,26 @@ export const isApproved = (o: BaseRow | any) =>
   o?.approvedAt != null ||
   o?.approved === true;
 
+export const progressRowTs = (t: BaseRow | any) =>
+  Math.max(
+    itemTs(t),
+    toTime(t?.approvedAt), // ✅ critical for “approved but not updatedAt” cases
+  );
+
+export const rowUpdatedAt = (r: any) =>
+  r?.progressUpdatedAt ??
+  r?.updated_at ??
+  r?.updatedAt ??
+  r?.created_at ??
+  r?.createdAt ??
+  null;
+
+export const rowApprovedAt = (r: any) =>
+  r?.approved_at ?? r?.approvedAt ?? null;
+
+export const rowTs = (r: any) =>
+  Math.max(toTime(rowUpdatedAt(r)), toTime(rowApprovedAt(r)));
+
 /* =====================================================================================
  * Progress index
  * ===================================================================================== */
@@ -116,12 +136,17 @@ export function makeProgressIndex(progressTasks?: BaseRow[]) {
     map: Map<string, BaseRow>,
     key: unknown,
     row: BaseRow,
-    normer: (v: unknown) => string
+    normer: (v: unknown) => string,
   ) => {
     const k = normer(key);
     if (!k) return;
+
     const prev = map.get(k);
-    if (!prev || itemTs(row) >= itemTs(prev)) map.set(k, row);
+
+    // ✅ use approval-aware timestamp
+    if (!prev || progressRowTs(row) >= progressRowTs(prev)) {
+      map.set(k, row);
+    }
   };
 
   for (const p of progressTasks ?? []) {
@@ -147,35 +172,93 @@ export function makeProgressIndex(progressTasks?: BaseRow[]) {
     },
     updatedAt: (t: BaseRow) => {
       const row = get(t);
-      return row?.progressUpdatedAt ?? row?.updatedAt ?? row?.createdAt ?? null;
+      // ✅ include approvedAt so UI “last updated” aligns after approval
+      return (
+        row?.approvedAt ??
+        row?.progressUpdatedAt ??
+        row?.updatedAt ??
+        row?.createdAt ??
+        null
+      );
     },
   } as const;
 }
 
 /** A richer index that also considers generic approval flags and product name */
-export function makeProgressIndexRich(progressTasks?: BaseRow[]) {
-  const base = makeProgressIndex(progressTasks);
+export const isPendingApproval = (row: BaseRow | any) => {
+  if (!row) return false;
+  return (
+    row?.forApproval === true &&
+    row?.approvedById == null &&
+    row?.approvedAt == null &&
+    row?.approved !== true
+  );
+};
+export function makeProgressIndexRich(progressRows: any[]) {
+  const byKey = new Map<string, any>();
+
+  for (const r of progressRows ?? []) {
+    const k = groupKey(r); // ✅ LN-first: ln:41002
+    if (!k) continue;
+
+    const prev = byKey.get(k);
+    if (!prev) {
+      byKey.set(k, r);
+      continue;
+    }
+
+    // pick latest user action
+    const prevTs = itemTs(prev) ?? 0;
+    const curTs = itemTs(r) ?? 0;
+    if (curTs >= prevTs) byKey.set(k, r);
+  }
+
   return {
-    ...base,
-    forApproval: (t: BaseRow) => {
-      const row: any = base.get(t);
-      if (!row) return false;
-      return !isApproved(row) && row?.forApproval === true;
+    get: (t: any) => byKey.get(groupKey(t)),
+    has: (t: any) => byKey.has(groupKey(t)),
+
+    updatedAt: (t: any) => {
+      const r = byKey.get(groupKey(t));
+      return (
+        r?.progressUpdatedAt ??
+        r?.updatedAt ??
+        r?.updated_at ??
+        r?.createdAt ??
+        r?.created_at ??
+        null
+      );
     },
-    productName: (t: BaseRow) => {
-      const row: any = base.get(t);
-      return row?.product?.name ?? row?.title ?? null;
+
+    percent: (t: any) => {
+      const r = byKey.get(groupKey(t));
+      return typeof r?.percent === "number" ? r.percent : null;
+    },
+
+    productName: (t: any) => {
+      const r = byKey.get(groupKey(t));
+      return (
+        r?.title ?? r?.product?.productList?.name ?? r?.productName ?? null
+      );
+    },
+
+    forApproval: (t: any) => {
+      const r = byKey.get(groupKey(t));
+      if (!r) return false;
+
+      const approvedById = r?.approvedById ?? r?.approved_by_id ?? null;
+      const approvedAt = r?.approvedAt ?? r?.approved_at ?? null;
+
+      return approvedById == null && approvedAt == null;
     },
   } as const;
 }
-
 /* =====================================================================================
  * View shaping
  * ===================================================================================== */
 
 export function dedupeForDisplay(
   tasks: BaseRow[],
-  progressIdx: ReturnType<typeof makeProgressIndex>
+  progressIdx: ReturnType<typeof makeProgressIndex>,
 ) {
   const groups = new Map<string, BaseRow[]>();
   for (const t of tasks ?? []) {
@@ -187,7 +270,15 @@ export function dedupeForDisplay(
 
   const score = (t: BaseRow) => {
     const hasProg = progressIdx.has(t) ? 1 : 0;
-    const ts = Math.max(itemTs(t), toTime(progressIdx.updatedAt(t)));
+
+    // task side timestamp
+    const taskTs = itemTs(t);
+
+    // progress side timestamp (approval-aware)
+    const pr = progressIdx.get(t) as any;
+    const progTs = pr ? progressRowTs(pr) : 0;
+
+    const ts = Math.max(taskTs, progTs);
     return hasProg * 1e12 + ts;
   };
 
@@ -202,7 +293,7 @@ export function dedupeForDisplay(
 
 export function totalsFromDisplay(
   tasks: BaseRow[],
-  progressIdx: ReturnType<typeof makeProgressIndex>
+  progressIdx: ReturnType<typeof makeProgressIndex>,
 ) {
   let todo = 0,
     in_progress = 0,
@@ -217,3 +308,30 @@ export function totalsFromDisplay(
   const all = todo + in_progress + blocked + done;
   return { todo, in_progress, blocked, done, all } as const;
 }
+export const historyKey = (u: any) => {
+  // Convert history update into something BaseRow-like so groupKey/getLn/getPid work
+  const row: BaseRow = {
+    id: u?.id ?? u?.progressUpdateId ?? null,
+
+    // If your history has productId, use it (helps fallback when LN missing)
+    productId: u?.productId ?? u?.product?.id ?? null,
+
+    // Prefer drawing/line number from the history row
+    lineNumber:
+      u?.lineNumber ??
+      u?.drawingNumber ??
+      u?.product?.lineNumber ??
+      u?.product?.drawingNumber ??
+      null,
+
+    // keep also drawingNumber in case your API uses that instead
+    drawingNumber:
+      u?.drawingNumber ??
+      u?.lineNumber ??
+      u?.product?.drawingNumber ??
+      u?.product?.lineNumber ??
+      null,
+  };
+
+  return groupKey(row);
+};

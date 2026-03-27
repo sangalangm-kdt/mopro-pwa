@@ -4,13 +4,12 @@ import { useLocalizedText } from "@/utils/localized-text";
 import { HOME_TEXT_KEYS } from "@constants/index";
 import {
   cx,
-  groupKeyComposite as groupKey,
+  groupKey,
   getLnRaw,
   itemTs,
-  toTime,
   extractProcessName,
-  isApproved,
   makeProgressIndexRich,
+  progressRowTs,
 } from "@/utils/home-helpers";
 
 /* =====================================================================================
@@ -64,7 +63,7 @@ export default function MyTasksAssignedList({
 
   const progressIdx = useMemo(
     () => makeProgressIndexRich(progressTasks as any),
-    [progressTasks]
+    [progressTasks],
   );
 
   // 1) Merge redundants by composite identity
@@ -78,12 +77,16 @@ export default function MyTasksAssignedList({
       else groups.set(k, [t]);
     }
 
+    // score uses approval-aware progress timestamp
     const score = (t: MyTask) => {
       const hasProg = (progressIdx as any).has(t) ? 1 : 0;
-      const ts = Math.max(
-        itemTs(t as any),
-        toTime((progressIdx as any).updatedAt(t))
-      );
+
+      const taskTs = itemTs(t as any);
+
+      const pr = (progressIdx as any).get(t);
+      const progTs = pr ? progressRowTs(pr) : 0;
+
+      const ts = Math.max(taskTs, progTs);
       return hasProg * 1e12 + ts;
     };
 
@@ -96,6 +99,7 @@ export default function MyTasksAssignedList({
       for (const x of arr) {
         const a = extractProcessName(x as any);
         if (a) set.add(a);
+
         const pr: any = (progressIdx as any).get(x);
         const b = extractProcessName(pr);
         if (b) set.add(b);
@@ -133,8 +137,10 @@ export default function MyTasksAssignedList({
   const rows = useMemo(() => {
     const seen = new Set<string>();
     const out: Row[] = [];
+
     for (const r of filteredRows) {
       const t = r.task as any;
+
       const title =
         (progressIdx as any).productName(t) ??
         t?.title ??
@@ -146,15 +152,22 @@ export default function MyTasksAssignedList({
 
       const ln = String(getLnRaw(t) ?? "").trim();
       const proj = String(
-        t?.projectName ?? t?.product?.project?.name ?? t?.project?.name ?? ""
+        t?.projectName ?? t?.product?.project?.name ?? t?.project?.name ?? "",
       ).trim();
+
       const procs = [...r.processes].sort().join("|");
+
+      // pending flag is derived ONLY from progress index (latest row)
       const pending = (progressIdx as any).forApproval(t) ? "1" : "0";
+
+      console.log("task key", groupKey(t), "picked", progressIdx.get(t));
+
       const p = (progressIdx as any).percent(t);
       const pct =
         typeof p === "number"
           ? String(Math.round(Math.max(0, Math.min(100, p))))
           : "";
+
       const updated = String((progressIdx as any).updatedAt(t) ?? "");
 
       const sig = [
@@ -172,6 +185,7 @@ export default function MyTasksAssignedList({
         out.push(r);
       }
     }
+
     return out;
   }, [filteredRows, progressIdx, TEXT.ASSIGNED_ITEM_FALLBACK]);
 
@@ -250,26 +264,24 @@ export default function MyTasksAssignedList({
               ? `${Math.round(Math.max(0, Math.min(100, p)))}%`
               : null;
 
-          // approval-driven chip
-          const pr = (progressIdx as any).get(t);
-          const approved = isApproved(pr) || isApproved(t);
-          const pending =
-            !approved &&
-            ((pr as any)?.forApproval === true ||
-              (t as any).forApproval === true);
+          // approval-driven chip (single source of truth)
+          const pending = (progressIdx as any).forApproval(t);
 
+          // If pending → blocked chip. Otherwise show actual task status.
           const effectiveStatus: MyTask["status"] = pending
             ? "blocked"
             : t.status === "blocked"
-            ? "in_progress"
-            : t.status;
+              ? "in_progress"
+              : t.status;
 
           const chipStatus = effectiveStatus as MyTask["status"] | "blocked";
+
+          // Label must follow effectiveStatus (not raw t.status)
           const label = pending
             ? TEXT.STATUS_FOR_APPROVAL
-            : (t.status === "todo" && TEXT.STATUS_TODO) ||
-              (t.status === "in_progress" && TEXT.STATUS_IN_PROGRESS) ||
-              (t.status === "done" && TEXT.STATUS_DONE) ||
+            : (effectiveStatus === "todo" && TEXT.STATUS_TODO) ||
+              (effectiveStatus === "in_progress" && TEXT.STATUS_IN_PROGRESS) ||
+              (effectiveStatus === "done" && TEXT.STATUS_DONE) ||
               TEXT.STATUS_UNKNOWN;
 
           return (
@@ -285,7 +297,7 @@ export default function MyTasksAssignedList({
                   "transition-colors",
                   "hover:bg-gray-50 dark:hover:bg-zinc-800/60",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
-                  "active:opacity-95"
+                  "active:opacity-95",
                 )}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -334,7 +346,7 @@ export default function MyTasksAssignedList({
                     <span
                       className={cx(
                         "px-2 py-0.5 rounded-full text-[11px] leading-5",
-                        STATUS_CHIP[chipStatus]
+                        STATUS_CHIP[chipStatus],
                       )}
                       title={label}
                       aria-label={label}

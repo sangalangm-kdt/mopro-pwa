@@ -10,31 +10,18 @@ import { useQrScanner } from "@/hooks/qr-scanner";
 import { toggleFlashlight } from "@/utils/flashlight";
 import { stopCamera } from "@/utils/stop-camera";
 import { Flashlight, FlashlightOff } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import ScanResult from "./ScanResult";
 
 const QRScanner = () => {
-  const user = useAuth().user.data;
+  // ✅ Always safe access (avoid throwing during render)
+  const auth = useAuth();
+  const user = auth?.user?.data; // <-- this is the important fix
+
   const { projects } = useProject();
   const { productUserAssigns } = useProductUserAssign();
-  const projectsWithAssignments = productUserAssigns?.filter(
-    (prod: { userId: number }) => prod.userId === user?.id
-  );
-
-  const assignedLineNumbers = projectsWithAssignments?.map(
-    (assign: { lineNumber: string }) => assign.lineNumber
-  );
-
-  const flatProducts = projects?.flatMap(
-    (item: { products: unknown }) => item.products
-  );
-
-  const products = flatProducts?.filter((prod: { lineNumber: string }) =>
-    assignedLineNumbers?.includes(prod.lineNumber)
-  );
-
   const { progress } = useProgress();
 
   const { t } = useTranslation("scan");
@@ -48,12 +35,27 @@ const QRScanner = () => {
     FLASHLIGHT_NOT_SUPPORTED,
   } = QR_SCANNER_TEXT_KEYS;
 
-  console.log(products);
+  // ✅ Always return arrays (avoid products being undefined inside onResult)
+  const products = useMemo(() => {
+    if (!user?.id || !projects || !productUserAssigns) return [];
+
+    const assignedLineNumbers = productUserAssigns
+      .filter((prod: { userId: number }) => prod.userId === user.id)
+      .map((assign: { lineNumber: string }) => assign.lineNumber);
+
+    const flatProducts =
+      projects.flatMap((item: { products: any[] }) => item.products) ?? [];
+
+    return flatProducts.filter((prod: { lineNumber: string }) =>
+      assignedLineNumbers.includes(prod.lineNumber),
+    );
+  }, [user?.id, projects, productUserAssigns]);
 
   const [torchOn, setTorchOn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [qrData, setQrData] = useState<string | null>(null);
   const [showManualModal, setShowManualModal] = useState(false);
+
   const {
     videoRef,
     canvasRef,
@@ -65,7 +67,7 @@ const QRScanner = () => {
   } = useQrScanner({
     onResult: (data) => {
       const found = products.find(
-        (item: { lineNumber: string }) => item.lineNumber == data
+        (item: { lineNumber: string }) => item.lineNumber == data,
       );
 
       if (!found) {
@@ -89,7 +91,8 @@ const QRScanner = () => {
 
   const handleToggleFlashlight = async () => {
     try {
-      await toggleFlashlight(!torchOn);
+      // ✅ best: use current video stream track
+      await toggleFlashlight(!torchOn, videoRef.current);
       setTorchOn((prev) => !prev);
     } catch {
       alert(t(FLASHLIGHT_NOT_SUPPORTED));
@@ -151,13 +154,13 @@ const QRScanner = () => {
         />
       )}
 
-      {/* Manual entry modal */}
       {showManualModal && (
         <ManualEntryModal
           onClose={() => setShowManualModal(false)}
           onSubmit={({ drawingNumber }) => {
             const found = products.find(
-              (item: { lineNumber: string }) => item.lineNumber == drawingNumber
+              (item: { lineNumber: string }) =>
+                item.lineNumber == drawingNumber,
             );
 
             if (!found) {

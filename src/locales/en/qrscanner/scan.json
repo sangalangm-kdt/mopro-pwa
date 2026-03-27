@@ -6,5 +6,11 @@
   "scanning": "Scanning...",
   "add_manually": "Add manually",
   "flashlight_not_supported": "🔦 Flashlight not supported.",
-  "open_manual_modal": "🚀 Open Manual Entry Modal"
+  "open_manual_modal": "🚀 Open Manual Entry Modal",
+  "camera": {
+    "https_required": "Camera requires HTTPS. This page is currently opened via HTTP.",
+    "api_unavailable": "Camera API is not available in this browser/environment.",
+    "permission_denied": "Unable to access camera. Please check browser permissions.",
+    "no_qr": "No QR code detected. Please try again."
+  }
 }

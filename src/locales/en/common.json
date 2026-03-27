@@ -255,6 +255,7 @@
     "progress": "Progress",
     "status": "Status",
     "no_data": "No data found. Please navigate here from the scan history list.",
-    "waiting_for_approval": "Waiting for Approval"
+    "waiting_for_approval": "Waiting for Approval",
+    "approved_at": "Approval Date"
   }
 }

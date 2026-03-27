@@ -116,6 +116,13 @@ export const QR_SCANNER_TEXT_KEYS = {
   ADD_MANUALLY: "add_manually",
   FLASHLIGHT_NOT_SUPPORTED: "flashlight_not_supported",
   OPEN_MANUAL_MODAL: "open_manual_modal",
+
+  camera: {
+    HTTPS_REQUIRED: "camera.https_required",
+    API_UNAVAILABLE: "camera.api_unavailable",
+    PERMISSION_DENIED: "camera.permission_denied",
+    NO_QR: "camera.no_qr",
+  },
 };
 
 // QR Scan Result Text Keys
@@ -232,4 +239,5 @@ export const SCAN_HISTORY_DETAIL_TEXT_KEYS = {
   STATUS: "scan_history_details.status",
   NO_DATA: "scan_history_details.no_data",
   WAITING_FOR_APPROVAL: "scan_history_details.waiting_for_approval",
+  APPROVED_DATE: "scan_history_details.approved_at",
 };

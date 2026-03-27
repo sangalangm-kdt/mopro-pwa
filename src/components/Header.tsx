@@ -16,10 +16,12 @@ export default function LargeHeader({
 
   return (
     <div className="mb-6">
-      <h1 className="text-3xl text-primary-900 font-bold mb-4">{t(header)}</h1>
+      <h1 className="text-3xl md:text-4xl text-primary-900 font-bold mb-4">
+        {t(header)}
+      </h1>
 
       {subheader && (
-        <p className="text-lg text-gray-600 dark:text-gray-400 font-medium mb-2">
+        <p className="text-lg text-gray-600  dark:text-gray-400 font-medium mb-2 block md:hidden">
           <Trans
             i18nKey={subheader}
             ns={namespace}
@@ -31,7 +33,7 @@ export default function LargeHeader({
       )}
 
       {subheading && (
-        <p className="text-base text-gray-600 dark:text-gray-400 tracking-wide">
+        <p className="text-base block md:hidden  text-gray-600 dark:text-gray-400 tracking-wide">
           <Trans
             i18nKey={subheading}
             ns={namespace}

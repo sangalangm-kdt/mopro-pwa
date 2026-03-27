@@ -86,6 +86,15 @@ export default function ScanHistoryDetail() {
                       ) : null
                     }
                   />
+
+                  <DetailRow
+                    label={TEXT.APPROVED_DATE}
+                    value={
+                      entry.approvedById
+                        ? formatDate(new Date(entry.updatedAt))
+                        : "-"
+                    }
+                  />
                 </div>
               </div>
 
@@ -135,7 +144,7 @@ function DetailRow({
   const percent = isProgress
     ? Math.max(
         0,
-        Math.min(100, Number.parseInt(value.replace("%", ""), 10) || 0)
+        Math.min(100, Number.parseInt(value.replace("%", ""), 10) || 0),
       )
     : 0;
 
