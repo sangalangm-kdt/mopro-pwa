@@ -1,4 +1,6 @@
 // components/modals/ConfirmationModal.tsx
+import { useTranslation } from "react-i18next";
+
 export default function ConfirmationModal({
   open,
   title,
@@ -12,13 +14,15 @@ export default function ConfirmationModal({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation("account");
+
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-white dark:bg-zinc-900 flex flex-col items-center justify-center px-6 text-center">
       <div className="max-w-md w-full">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          {title ?? "Confirm Logout"}
+          {title ?? t("confirm_logout")}
         </h2>
         <p className="text-base text-gray-600 dark:text-gray-300 mb-6">
           {message}
@@ -28,13 +32,13 @@ export default function ConfirmationModal({
             onClick={onConfirm}
             className="w-full px-4 py-3 bg-red-600 text-white rounded-md text-base font-medium hover:bg-red-700 transition"
           >
-            Log Out
+            {t("log_out")}
           </button>
           <button
             onClick={onCancel}
             className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-700 rounded-md text-base font-medium text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 transition"
           >
-            Cancel
+            {t("cancel")}
           </button>
         </div>
       </div>

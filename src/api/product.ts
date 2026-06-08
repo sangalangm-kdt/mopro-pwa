@@ -5,13 +5,14 @@ export const useProduct = () => {
     const {
         data: products,
         mutate: mutateProducts,
-        error: productsError,
+        error,
+        isLoading,
     } = useSWR("/api/product", () =>
         axios
             .get("/api/product")
             .then((res) => res.data)
             .catch((error) => {
-                if (error.response.status !== 409) throw error;
+                if (error.response?.status !== 409) throw error;
             })
     );
 
@@ -34,6 +35,8 @@ export const useProduct = () => {
         // mutateProduct,
         mutateProducts,
         // productError,
-        productsError,
+        productsError: error,
+        error,
+        isLoading,
     };
 };

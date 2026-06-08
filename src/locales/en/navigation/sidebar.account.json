@@ -4,6 +4,9 @@
   "main_menu": "Main Menu",
   "account": "Account",
   "profile_settings": "Profile Settings",
+  "change_password": "Change Password",
+  "confirm_logout": "Confirm Logout",
   "log_out": "Log Out",
+  "cancel": "Cancel",
   "footer_copyright": "MoPro. All rights reserved."
 }

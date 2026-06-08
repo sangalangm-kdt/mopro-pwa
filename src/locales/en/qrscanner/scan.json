@@ -6,6 +6,10 @@
   "scanning": "Scanning...",
   "add_manually": "Add manually",
   "flashlight_not_supported": "🔦 Flashlight not supported.",
+  "toggle_flashlight": "Toggle flashlight",
+  "product_data_loading": "Loading product data, please wait...",
+  "product_data_load_error": "Unable to load product data. Please try again.",
+  "no_data_record_found": "No matching record found for the scanned drawing number.",
   "open_manual_modal": "🚀 Open Manual Entry Modal",
   "camera": {
     "https_required": "Camera requires HTTPS. This page is currently opened via HTTP.",

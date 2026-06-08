@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useAuthContext } from "@/context/auth/useAuth";
+import { useTranslation } from "react-i18next";
 
 export default function UserProfileDropdown() {
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuthContext();
+  const { t } = useTranslation("account");
 
   return (
     <div className="relative">
@@ -25,13 +27,13 @@ export default function UserProfileDropdown() {
               /* navigate to change password */
             }}
           >
-            Change Password
+            {t("change_password")}
           </button>
           <button
             className="block w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-zinc-700 rounded"
             onClick={logout}
           >
-            Log Out
+            {t("log_out")}
           </button>
         </div>
       )}

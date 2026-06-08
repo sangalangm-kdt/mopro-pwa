@@ -1,16 +1,14 @@
 export const LOGIN_MESSAGES = {
-  requiredEmail: "Email is required",
-  requiredPassword: "Password is required",
-  loginFailed: "Login failed. Please try again.",
+  requiredEmail: "login.error.email.required",
+  requiredPassword: "login.error.password.required",
+  loginFailed: "login.toast.server_error",
 };
 
 export const TOAST_MESSAGES = {
-  INVALID_CREDENTIALS: "Invalid email or password",
-  LOGIN_SUCCESS: "Logged in successfully!",
-  NO_RECORD_FOUND: "These credentials do not match our records.",
-  NO_DATA_RECORD_FOUND:
-    "No matching record found for the scanned drawing number.",
-  GENERIC_ERROR: "An unexpected error occurred. Please try again later.",
-  NETWORK_ERROR:
-    "Cannot connect to server. Please check your network or CORS settings.",
+  INVALID_CREDENTIALS: "login:toast.invalid_credentials",
+  LOGIN_SUCCESS: "login:toast.login_success",
+  NO_RECORD_FOUND: "login:toast.invalid_credentials",
+  NO_DATA_RECORD_FOUND: "scan:no_data_record_found",
+  GENERIC_ERROR: "login:toast.server_error",
+  NETWORK_ERROR: "login:toast.server_error",
 };

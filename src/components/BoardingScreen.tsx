@@ -15,7 +15,7 @@ interface Step {
 }
 
 export default function BoardingScreen() {
-  const { t } = useTranslation("onboarding");
+  const { i18n, t } = useTranslation("onboarding");
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [autoSlide, setAutoSlide] = useState(true);
@@ -42,7 +42,7 @@ export default function BoardingScreen() {
         image: trackImg,
       },
     ],
-    [t],
+    [i18n.language, t],
   );
 
   const step = steps[index];

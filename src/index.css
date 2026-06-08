@@ -74,8 +74,10 @@
   --color-info: var(--info);
   --color-bg-color: var(--bg-color);
 
-  --font-body: "Inter", system-ui, sans-serif;
-  --font-display: "Raleway", system-ui, sans-serif;
+  --font-body:
+    "Inter", "BIZ UDPGothic", "Noto Sans JP", system-ui, sans-serif;
+  --font-display:
+    "Raleway", "BIZ UDPGothic", "Noto Sans JP", system-ui, sans-serif;
 
   --breakpoint-xs: 300px;
   --bg-background: #ffff;
@@ -140,6 +142,29 @@ html {
   font-family: "Inter", system-ui, sans-serif;
 }
 
+html:lang(ja) {
+  font-family:
+    "BIZ UDPGothic", "Noto Sans JP", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic", "Meiryo", sans-serif;
+}
+
+html:lang(ja) body,
+html:lang(ja) input,
+html:lang(ja) textarea,
+html:lang(ja) select,
+html:lang(ja) button {
+  font-family:
+    "BIZ UDPGothic", "Noto Sans JP", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic", "Meiryo", sans-serif;
+  font-weight: 500;
+}
+
+html:lang(ja) h1,
+html:lang(ja) h2,
+html:lang(ja) h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
 html,
 body,
 #root {
@@ -407,6 +432,17 @@ body,
     transform: translateX(140%) rotate(12deg);
     opacity: 0;
   }
+}
+/* Hide browser built-in password reveal button */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-password-reveal-button {
+  display: none !important;
+  visibility: hidden;
 }
 
 /* Utility */

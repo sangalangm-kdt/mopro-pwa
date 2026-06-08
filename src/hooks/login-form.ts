@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LOGIN_FIELDS } from "@constants/variables/fieldNames";
 import { REGEX, ROUTES } from "@constants/index";
-import { TOAST_MESSAGES } from "@constants/messages";
 import { toast } from "sonner";
 import { useAuthContext } from "@/context/auth/useAuth";
 
@@ -55,16 +54,16 @@ export function useLoginForm() {
       const success = await login({ email: trimmedEmail, password });
       console.log("Login success:", success);
       if (!success) {
-        toast.error(TOAST_MESSAGES.INVALID_CREDENTIALS);
+        toast.error(t("toast.invalid_credentials"));
       } else {
-        toast.success(TOAST_MESSAGES.LOGIN_SUCCESS);
+        toast.success(t("toast.login_success"));
         setTimeout(() => {
           navigate(from, { replace: true });
         }, 500);
       }
     } catch (err) {
       console.error("Login failed:", err);
-      toast.error("Server error. Please try again later.");
+      toast.error(t("toast.server_error"));
     } finally {
       setLoading(false); // ✅ THIS ensures the loading resets
     }

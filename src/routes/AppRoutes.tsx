@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
-import { AuthProvider } from "@context/auth/AuthProvider";
 import { ROUTES } from "@constants/routes";
 
 // Lazy load pages
@@ -16,7 +15,6 @@ const ChangePass = lazy(() => import("@pages/ChangePass"));
 const RequestAccount = lazy(() => import("@pages/RequestAccount"));
 
 const Login = lazy(() => import("@/pages/Login"));
-const ScanResult = lazy(() => import("@/pages/ScanResult"));
 const EditProgress = lazy(() => import("@pages/EditProgress"));
 const UserGuidelines = lazy(() => import("@pages/UserGuidelines"));
 const HelpAndSupport = lazy(() => import("@pages/HelpAndSupport"));
@@ -92,17 +90,6 @@ const router = createBrowserRouter([
       { path: ROUTES.USER_GUIDELINES, element: <UserGuidelines /> },
       { path: ROUTES.HELP_AND_SUPPORT, element: <HelpAndSupport /> },
       { path: ROUTES.SCAN_HISTORY_DETAIL, element: <ScanHistoryDetail /> },
-      {
-        path: ROUTES.SCAN_RESULT,
-        element: (
-          <ScanResult
-            qrData={""}
-            onClose={() => {
-              throw new Error("Function not implemented.");
-            }}
-          />
-        ),
-      },
     ],
   },
 
@@ -148,9 +135,5 @@ const router = createBrowserRouter([
 ]);
 
 export default function AppRoutes() {
-  return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
-  );
+  return <RouterProvider router={router} />;
 }

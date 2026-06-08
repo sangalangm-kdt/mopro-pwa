@@ -115,7 +115,7 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
       setDetecting(false);
       toast.error(cameraText.NO_QR);
     }, 10000);
-  }, []);
+  }, [cameraText.NO_QR]);
 
   const clearNoResultTimer = useCallback(() => {
     if (noResultTimeout.current) clearTimeout(noResultTimeout.current);
@@ -342,7 +342,14 @@ export const useQrScanner = ({ onResult }: UseQrScannerProps) => {
       cancelled = true;
       stopCamera(video);
     };
-  }, [cameraOn, drawScanBoxOverlay, clearOverlay]);
+  }, [
+    cameraOn,
+    cameraText.API_UNAVAILABLE,
+    cameraText.HTTPS_REQUIRED,
+    cameraText.PERMISSION_DENIED,
+    drawScanBoxOverlay,
+    clearOverlay,
+  ]);
 
   /** ─────────────────────────────────────────────────────────────
    * Effect B: scanning loop (manual start/stop)

@@ -24,6 +24,11 @@ import scanResultJA from "@locales/ja/qrscanner/scanResult.json";
 import onboardingEN from "@locales/en/onboarding.json";
 import onboardingJA from "@locales/ja/onboarding.json";
 
+const syncDocumentLanguage = (language: string) => {
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = language || "en";
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -89,5 +94,9 @@ i18n
       caches: ["localStorage"],
     },
   });
+
+i18n.on("initialized", () => syncDocumentLanguage(i18n.language));
+i18n.on("languageChanged", syncDocumentLanguage);
+syncDocumentLanguage(i18n.language);
 
 export default i18n;

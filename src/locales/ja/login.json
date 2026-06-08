@@ -21,5 +21,10 @@
   },
   "rememberMe": "ログイン状態を保持する",
   "forgotPassword": "パスワードをお忘れですか？",
-  "requestAccount": "アカウントをリクエストする"
+  "requestAccount": "アカウントをリクエストする",
+  "toast": {
+    "invalid_credentials": "メールアドレスまたはパスワードが正しくありません。",
+    "login_success": "ログインしました。",
+    "server_error": "サーバーエラーが発生しました。もう一度お試しください。"
+  }
 }

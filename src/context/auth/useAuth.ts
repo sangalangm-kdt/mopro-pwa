@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import type { KeyedMutator } from "swr";
 
 export interface User {
   id: number;
@@ -16,10 +17,16 @@ export interface User {
 }
 
 export interface AuthContextType {
-  // isAuthenticated: boolean;
   user: User | null;
   login: (data: { email: string; password: string }) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  changePassword: (data: {
+    currentPassword: string;
+    password: string;
+    passwordConfirmation: string;
+  }) => Promise<unknown>;
+  mutate: KeyedMutator<unknown>;
+  error: unknown;
   isLoading: boolean;
 }
 

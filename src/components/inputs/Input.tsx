@@ -8,6 +8,7 @@ interface TextInputProps {
   value?: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   autoComplete?: string;
   icon?: React.ReactNode;
   error?: string;
@@ -20,6 +21,7 @@ export default function TextInput({
   value,
   placeholder,
   onChange,
+  onBlur,
   autoComplete = "off",
   icon,
   error,
@@ -63,7 +65,10 @@ export default function TextInput({
           onChange={onChange}
           autoComplete={autoComplete}
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onBlur={(e) => {
+            setFocused(false);
+            onBlur?.(e);
+          }}
           className={`w-full text-base sm:text-base px-3 py-2 sm:py-3 border ${
             error
               ? "border-red-500 dark:border-red-400"

@@ -17,6 +17,7 @@ export const useProgressUpdate = (userId?: number) => {
   const {
     data: progressUpdates,
     mutate,
+    error,
     isLoading,
   } = useSWR(
     userId ? `/api/progress-update?user_id=${userId}` : "/api/progress-update",
@@ -80,6 +81,7 @@ export const useProgressUpdate = (userId?: number) => {
   return {
     progressUpdates,
     isLoading,
+    error,
     mutate,
     addProgressUpdate,
   };

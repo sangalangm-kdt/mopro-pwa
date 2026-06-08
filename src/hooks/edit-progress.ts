@@ -1,30 +1,17 @@
-import { useAuth } from "@/api/auth";
+import { useAuthContext } from "@/context/auth/useAuth";
 import { useProduct } from "@/api/product";
 import { useProgressUpdate } from "@/api/progress-update";
 import { useProject } from "@/api/project";
 import { Process, Product, Project } from "@/types/editProgress";
 import type { RawProgressEntry } from "@/types/scan";
 import { isMatchingSerial } from "@/utils/compare-serial";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // Extract line number from URL
 function useLineNumber(): string | null {
   const { lineNumber } = useParams<{ lineNumber?: string }>();
   return useMemo(() => lineNumber ?? null, [lineNumber]);
-}
-
-// Match project by lineNumber
-function useMatchedProject(lineNumber: string | null): Project | undefined {
-  const { projects } = useProject();
-  return useMemo(() => {
-    if (!projects || !lineNumber) return undefined;
-    return projects.find((project: Project) =>
-      project.products.some((product: Product) =>
-        isMatchingSerial(product.lineNumber, lineNumber)
-      )
-    );
-  }, [projects, lineNumber]);
 }
 
 // Format process options for dropdown
@@ -41,13 +28,34 @@ function useProcessOptions(processes: Process[] | undefined) {
 
 // Main logic
 export function useEditProgress() {
-  const { addProgressUpdate, progressUpdates } = useProgressUpdate();
+  const {
+    addProgressUpdate,
+    progressUpdates,
+    isLoading: progressUpdatesLoading,
+    error: progressUpdatesError,
+  } = useProgressUpdate();
 
-  const user = useAuth().user.data;
+  const { user } = useAuthContext();
 
   const lineNumber = useLineNumber();
-  const { products } = useProduct();
-  const matchedProject = useMatchedProject(lineNumber);
+  const {
+    products,
+    isLoading: productsLoading,
+    error: productsError,
+  } = useProduct();
+  const {
+    projects,
+    isLoading: projectsLoading,
+    error: projectsError,
+  } = useProject();
+  const matchedProject = useMemo(() => {
+    if (!projects || !lineNumber) return undefined;
+    return projects.find((project: Project) =>
+      project.products.some((product: Product) =>
+        isMatchingSerial(product.lineNumber, lineNumber)
+      )
+    );
+  }, [projects, lineNumber]);
 
   // Get the specific product
   const product = products?.find(
@@ -81,20 +89,29 @@ export function useEditProgress() {
       : 0
   );
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const isValid = selectedProcess !== "" && progress > 0;
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const loading = productsLoading || projectsLoading || progressUpdatesLoading;
+  const error = productsError || projectsError || progressUpdatesError;
+  const errorMessage = error
+    ? "Unable to load product information. Please check your connection and try again."
+    : !loading && !product
+      ? "Unable to load product information."
+      : "";
+  const isValid = !error && selectedProcess !== "" && progress > 0;
 
   const handleSave = async () => {
     setSubmitted(true);
-    if (!isValid || !lineNumber || !product?.id || !matchedProject?.id) return;
+    if (
+      error ||
+      !isValid ||
+      !lineNumber ||
+      !product?.id ||
+      !matchedProject?.id ||
+      !user
+    )
+      return;
 
     setSaving(true);
     const success = await addProgressUpdate({
@@ -131,6 +148,8 @@ export function useEditProgress() {
         }
       : null,
     loading,
+    error,
+    errorMessage,
     saving,
     success,
     submitted,

@@ -21,5 +21,10 @@
   },
   "rememberMe": "Remember me",
   "forgotPassword": "Forgot password?",
-  "requestAccount": "Request account"
+  "requestAccount": "Request account",
+  "toast": {
+    "invalid_credentials": "Invalid email or password",
+    "login_success": "Logged in successfully.",
+    "server_error": "Server error. Please try again later."
+  }
 }

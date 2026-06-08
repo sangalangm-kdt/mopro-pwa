@@ -4,6 +4,9 @@
   "main_menu": "メインメニュー",
   "account": "アカウント",
   "profile_settings": "プロフィール設定",
+  "change_password": "パスワードを変更",
+  "confirm_logout": "ログアウトの確認",
   "log_out": "ログアウト",
+  "cancel": "キャンセル",
   "footer_copyright": "MoPro © 全著作権所有"
 }

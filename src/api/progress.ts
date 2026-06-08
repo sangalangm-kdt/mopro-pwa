@@ -21,6 +21,7 @@ export const useProgress = () => {
 
   const {
     data: progress,
+    error,
     isLoading,
     mutate,
   } = useSWR("/api/progress", () =>
@@ -67,5 +68,5 @@ export const useProgress = () => {
     }
   };
 
-  return { progress, isLoading, mutate, addProgress, useProgress };
+  return { progress, error, isLoading, mutate, addProgress, useProgress };
 };

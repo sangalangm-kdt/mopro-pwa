@@ -6,6 +6,10 @@
   "scanning": "スキャン中...",
   "add_manually": "手動で追加",
   "flashlight_not_supported": "🔦 フラッシュライトはサポートされていません。",
+  "toggle_flashlight": "フラッシュライトを切り替え",
+  "product_data_loading": "製品データを読み込み中です。しばらくお待ちください...",
+  "product_data_load_error": "製品データを読み込めませんでした。もう一度お試しください。",
+  "no_data_record_found": "スキャンした図面番号に一致するデータが見つかりません。",
   "open_manual_modal": "🚀 手動エントリーモーダルを開く",
   "camera": {
     "https_required": "カメラを使用するにはHTTPS接続が必要です。現在はHTTPで開かれています。",

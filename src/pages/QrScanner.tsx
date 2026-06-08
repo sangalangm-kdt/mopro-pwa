@@ -1,11 +1,11 @@
-import { useAuth } from "@/api/auth";
+import { useAuthContext } from "@/context/auth/useAuth";
 import { useProductUserAssign } from "@/api/product-user-assign";
 import { useProgress } from "@/api/progress";
 import { useProject } from "@/api/project";
 import Button from "@/components/buttons/Button";
 import ManualEntryModal from "@/components/modals/ManualEntryModal";
 import Header from "@/components/navigation/Header";
-import { QR_SCANNER_TEXT_KEYS, TOAST_MESSAGES } from "@/constants";
+import { QR_SCANNER_TEXT_KEYS } from "@/constants";
 import { useQrScanner } from "@/hooks/qr-scanner";
 import { toggleFlashlight } from "@/utils/flashlight";
 import { stopCamera } from "@/utils/stop-camera";
@@ -16,13 +16,25 @@ import { toast } from "sonner";
 import ScanResult from "./ScanResult";
 
 const QRScanner = () => {
-  // ✅ Always safe access (avoid throwing during render)
-  const auth = useAuth();
-  const user = auth?.user?.data; // <-- this is the important fix
+  const { user } = useAuthContext();
 
-  const { projects } = useProject();
-  const { productUserAssigns } = useProductUserAssign();
-  const { progress } = useProgress();
+  const {
+    projects,
+    isLoading: projectsLoading,
+    error: projectsError,
+  } = useProject();
+  const {
+    productUserAssigns,
+    isLoading: productUserAssignsLoading,
+    error: productUserAssignsError,
+  } = useProductUserAssign();
+  const {
+    progress,
+    isLoading: progressLoading,
+    error: progressError,
+  } = useProgress();
+  const scannerDataError =
+    projectsError || productUserAssignsError || progressError;
 
   const { t } = useTranslation("scan");
   const {
@@ -33,6 +45,10 @@ const QRScanner = () => {
     SCANNING,
     ADD_MANUALLY,
     FLASHLIGHT_NOT_SUPPORTED,
+    TOGGLE_FLASHLIGHT,
+    PRODUCT_DATA_LOADING,
+    PRODUCT_DATA_LOAD_ERROR,
+    NO_DATA_RECORD_FOUND,
   } = QR_SCANNER_TEXT_KEYS;
 
   // ✅ Always return arrays (avoid products being undefined inside onResult)
@@ -55,6 +71,17 @@ const QRScanner = () => {
   const [loading, setLoading] = useState(false);
   const [qrData, setQrData] = useState<string | null>(null);
   const [showManualModal, setShowManualModal] = useState(false);
+  const scannerDataLoading =
+    !user?.id ||
+    projectsLoading ||
+    productUserAssignsLoading ||
+    progressLoading ||
+    !projects;
+  const manualEntryStatusMessage = scannerDataError
+    ? t(PRODUCT_DATA_LOAD_ERROR)
+    : scannerDataLoading
+      ? t(PRODUCT_DATA_LOADING)
+      : undefined;
 
   const {
     videoRef,
@@ -66,12 +93,24 @@ const QRScanner = () => {
     setScanning,
   } = useQrScanner({
     onResult: (data) => {
+      if (scannerDataLoading) {
+        toast.info(t(PRODUCT_DATA_LOADING));
+        handleRescan();
+        return;
+      }
+
+      if (scannerDataError) {
+        toast.error(t(PRODUCT_DATA_LOAD_ERROR));
+        handleRescan();
+        return;
+      }
+
       const found = products.find(
         (item: { lineNumber: string }) => item.lineNumber == data,
       );
 
       if (!found) {
-        toast.error(TOAST_MESSAGES.NO_DATA_RECORD_FOUND);
+        toast.error(t(NO_DATA_RECORD_FOUND));
         handleRescan();
         return;
       }
@@ -85,6 +124,16 @@ const QRScanner = () => {
   });
 
   const startScan = () => {
+    if (scannerDataLoading) {
+      toast.info(t(PRODUCT_DATA_LOADING));
+      return;
+    }
+
+    if (scannerDataError) {
+      toast.error(t(PRODUCT_DATA_LOAD_ERROR));
+      return;
+    }
+
     handleRescan();
     setScanning(true);
   };
@@ -95,7 +144,7 @@ const QRScanner = () => {
       await toggleFlashlight(!torchOn, videoRef.current);
       setTorchOn((prev) => !prev);
     } catch {
-      alert(t(FLASHLIGHT_NOT_SUPPORTED));
+      toast.error(t(FLASHLIGHT_NOT_SUPPORTED));
     }
   };
 
@@ -111,7 +160,10 @@ const QRScanner = () => {
         <Header
           title={t(TITLE)}
           rightElement={
-            <button onClick={handleToggleFlashlight}>
+            <button
+              onClick={handleToggleFlashlight}
+              aria-label={t(TOGGLE_FLASHLIGHT)}
+            >
               {torchOn ? (
                 <FlashlightOff className="text-white" />
               ) : (
@@ -157,18 +209,32 @@ const QRScanner = () => {
       {showManualModal && (
         <ManualEntryModal
           onClose={() => setShowManualModal(false)}
+          submitDisabled={scannerDataLoading || Boolean(scannerDataError)}
+          statusMessage={manualEntryStatusMessage}
+          statusTone={scannerDataError ? "error" : "info"}
           onSubmit={({ drawingNumber }) => {
-            const found = products.find(
-              (item: { lineNumber: string }) =>
-                item.lineNumber == drawingNumber,
-            );
-
-            if (!found) {
-              toast.error(TOAST_MESSAGES.NO_DATA_RECORD_FOUND);
+            if (scannerDataError) {
+              toast.error(t(PRODUCT_DATA_LOAD_ERROR));
               return;
             }
 
-            setQrData(drawingNumber);
+            if (scannerDataLoading) {
+              toast.info(t(PRODUCT_DATA_LOADING));
+              return;
+            }
+
+            const trimmedDrawingNumber = drawingNumber.trim();
+            const found = products.find(
+              (item: { lineNumber: string }) =>
+                item.lineNumber == trimmedDrawingNumber,
+            );
+
+            if (!found) {
+              toast.error(t(NO_DATA_RECORD_FOUND));
+              return;
+            }
+
+            setQrData(trimmedDrawingNumber);
             stopCamera(videoRef.current);
             setShowManualModal(false);
           }}
@@ -177,14 +243,25 @@ const QRScanner = () => {
 
       <div className="fixed bottom-0 left-0 right-0 z-[150] bg-bg-color text-black rounded-t-2xl px-4 pt-4 pb-6 shadow-xl max-h-[40vh] overflow-y-auto w-full max-w-md mx-auto">
         <div className="text-center space-y-4">
+          {scannerDataError && (
+            <div
+              className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+              role="alert"
+            >
+              {t(PRODUCT_DATA_LOAD_ERROR)}
+            </div>
+          )}
+
           <p className="text-sm text-gray-600">{t(SCAN_PROMPT)}</p>
 
           <div className="space-y-3">
             <Button
               onClick={startScan}
-              disabled={scanning}
+              disabled={
+                scanning || scannerDataLoading || Boolean(scannerDataError)
+              }
               className={`w-full ${
-                scanning
+                scanning || scannerDataLoading || scannerDataError
                   ? "bg-primary-300 cursor-not-allowed"
                   : "bg-primary-600 hover:bg-primary-700 text-white"
               }`}
@@ -196,6 +273,7 @@ const QRScanner = () => {
               onClick={() => setShowManualModal(true)}
               variant="outlined"
               fullWidth
+              disabled={scannerDataLoading || Boolean(scannerDataError)}
             >
               {t(ADD_MANUALLY)}
             </Button>

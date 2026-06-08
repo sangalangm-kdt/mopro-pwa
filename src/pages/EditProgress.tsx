@@ -20,6 +20,7 @@ const EditProgress = () => {
     lineNumber,
     product,
     loading,
+    errorMessage,
     saving,
     success,
     submitted,
@@ -36,7 +37,7 @@ const EditProgress = () => {
   const navigate = useNavigate();
   const [highlight, setHighlight] = useState(false);
 
-  if (loading || !product) {
+  if (loading) {
     return (
       <div className="flex flex-col min-h-screen w-full dark:bg-zinc-900 scrollbar">
         <Header
@@ -55,6 +56,41 @@ const EditProgress = () => {
         />
         <div className="flex-1 p-4">
           <EditProgressSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (errorMessage || !product) {
+    return (
+      <div className="flex flex-col min-h-screen w-full dark:bg-zinc-900 scrollbar">
+        <Header
+          title={TEXT.TITLE}
+          showBack
+          textColorClass="text-gray-800 dark:text-white"
+          rightElement={
+            <button
+              onClick={() => navigate(ROUTES.HOME)}
+              className="p-1 cursor-pointer"
+              aria-label="Go to home"
+            >
+              <Icon name="home" />
+            </button>
+          }
+        />
+        <div className="flex-1 p-4">
+          <div
+            className="rounded-lg border border-red-200 bg-white p-5 text-center shadow-sm dark:border-red-900/60 dark:bg-zinc-900"
+            role="alert"
+          >
+            <p className="text-base font-semibold text-gray-900 dark:text-white">
+              Unable to load product information.
+            </p>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+              {errorMessage ||
+                "Please check your connection and try again."}
+            </p>
+          </div>
         </div>
       </div>
     );

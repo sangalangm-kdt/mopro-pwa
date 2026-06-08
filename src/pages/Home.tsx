@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScanQrCode } from "lucide-react";
 
-import { useAuth } from "@/api/auth";
+import { useAuthContext } from "@/context/auth/useAuth";
 import { useProgressUpdate } from "@/api/progress-update";
 import { useProductUserAssign } from "@/api/product-user-assign";
 import { useProgress } from "@/api/progress";
@@ -33,16 +33,28 @@ import {
 } from "@/utils/home-helpers";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const navigate = useNavigate();
   const TEXT = useLocalizedText("common", HOME_TEXT_KEYS);
 
-  const { progressUpdates, isLoading: isProgressLoading } = useProgressUpdate(
-    user?.data?.id,
-  );
-  const { productUserAssigns, isLoading: isAssignLoading } =
-    useProductUserAssign();
-  const { progress } = useProgress();
+  const {
+    progressUpdates,
+    isLoading: isProgressLoading,
+    error: progressUpdatesError,
+    mutate: retryProgressUpdates,
+  } = useProgressUpdate(user?.id);
+  const {
+    productUserAssigns,
+    isLoading: isAssignLoading,
+    error: productUserAssignsError,
+    mutate: retryProductUserAssigns,
+  } = useProductUserAssign();
+  const {
+    progress,
+    isLoading: isProgressRowsLoading,
+    error: progressError,
+    mutate: retryProgress,
+  } = useProgress();
 
   // UI state
   const [windowDays, setWindowDays] = useState<15 | 30>(15);
@@ -63,11 +75,11 @@ export default function Home() {
     assignedKeys, // used by list to mark "Assigned"
     loading: myTasksLoading,
   } = useMyTasks({
-    userId: user?.data?.id,
+    userId: user?.id,
     progressRows: progress, // uses new useProgress() rows
     productUserAssigns,
     dayKeys,
-    isLoadingProgress: isProgressLoading,
+    isLoadingProgress: isProgressLoading || isProgressRowsLoading,
     isLoadingAssign: isAssignLoading,
   });
 
@@ -101,6 +113,14 @@ export default function Home() {
     () => setShowFullHistory(false),
     [],
   );
+  const handleRetryDashboardData = useCallback(() => {
+    retryProgressUpdates();
+    retryProductUserAssigns();
+    retryProgress();
+  }, [retryProgress, retryProgressUpdates, retryProductUserAssigns]);
+
+  const dashboardDataError =
+    progressUpdatesError || productUserAssignsError || progressError;
 
   const assignedNowKeys = useMemo(() => {
     const s = new Set<string>();
@@ -115,14 +135,14 @@ export default function Home() {
 
   //   for (const r of progress ?? []) {
   //     // 🔥 Only include rows belonging to current user
-  //     if (r?.userId !== user?.data?.id) continue;
+  //     if (r?.userId !== user?.id) continue;
 
   //     const k = groupKey(r as any);
   //     if (k) s.add(k);
   //   }
 
   //   return s;
-  // }, [progress, user?.data?.id]);
+  // }, [progress, user?.id]);
   const filteredHistory = useMemo(() => {
     // while loading, don't filter yet (prevents empty flash)
     if (isProgressLoading) return progressUpdates ?? [];
@@ -155,6 +175,24 @@ export default function Home() {
 
     console.log("Portal check", { inProgress, inAssignments, inTasks });
   }, [progress, productUserAssigns, displayTasks]);
+  if (dashboardDataError) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-bg-color px-4 py-6">
+        <div className="w-full max-w-md rounded-lg border border-red-200 bg-white p-5 text-center shadow-sm dark:border-red-900/60 dark:bg-zinc-900">
+          <p className="text-base font-semibold text-gray-900 dark:text-white">
+            Unable to load data.
+          </p>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            Please check your connection and try again.
+          </p>
+          <Button onClick={handleRetryDashboardData} className="mt-4">
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center justify-start px-1 py-4 space-y-5 bg-bg-color">
       {/* Controls row */}

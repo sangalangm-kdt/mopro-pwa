@@ -54,6 +54,10 @@
     "save_changes": "Save changes",
     "update_password": "Update password"
   },
+  "auth": {
+    "logout_success": "Logged out successfully.",
+    "logged_out_cleared": "You have been logged out."
+  },
   "manual_entry": {
     "title": "Manual Entry",
     "description": "Fill in the drawing number manually.",
@@ -149,6 +153,86 @@
     "pwa_banner_description": "Install the app to your home screen.",
     "welcome_title": "Welcome to MoPro.",
     "welcome_subtitle": "Stay informed, stay productive—track progress anytime, anywhere with MoPro."
+  },
+  "forgot_password": {
+    "title": "Forgot Password",
+    "subheader": "Reset your password",
+    "subheading": "Enter your email address and we'll send you a reset link.",
+    "email": "Email",
+    "placeholder": {
+      "email": "Enter your email"
+    },
+    "submit": "Send Reset Link",
+    "remembered_password": "Remembered your password?",
+    "back_to_login": "Back to Login",
+    "welcome_title": "Welcome Back!",
+    "welcome_subtitle": "Reset your password and get back to your work quickly."
+  },
+  "request_account": {
+    "title": "Request an Account",
+    "subheader": "Join Us",
+    "subheading": "Fill in your details to get started.",
+    "steps": {
+      "basic_info": "Basic Info",
+      "company_info": "Manufacturer Info",
+      "manufacturer_info": "Manufacturer Info",
+      "email": "Email",
+      "password": "Password",
+      "review": "Review"
+    },
+    "fields": {
+      "employee_id": "Employee ID",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "company_name": "Manufacturer",
+      "manufacturer": "Manufacturer",
+      "email": "Email",
+      "password": "Password",
+      "confirm_password": "Confirm Password"
+    },
+    "placeholder": {
+      "employee_id": "Enter your employee ID",
+      "first_name": "Your first name",
+      "last_name": "Your last name",
+      "manufacturer": "Select or type a manufacturer",
+      "manufacturer_loading": "Loading manufacturers...",
+      "email": "you@example.com",
+      "password": "Enter your password",
+      "confirm_password": "Re-enter your password"
+    },
+    "review": {
+      "title": "Review Your Details"
+    },
+    "actions": {
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "already_have_account": "Already have an account?",
+      "login": "Log in"
+    },
+    "error": {
+      "email_registered": "This email address is already registered.",
+      "email_taken": "This email is already taken.",
+      "employee_id_required": "Employee ID is required",
+      "first_name_required": "First name is required",
+      "last_name_required": "Last name is required",
+      "company_name_required": "Manufacturer is required",
+      "manufacturer_required": "Manufacturer is required",
+      "manufacturer_load_failed": "Unable to load manufacturers.",
+      "manufacturer_empty": "No available manufacturers.",
+      "email_invalid": "Please enter a valid email",
+      "password_min": "Password must be at least 6 characters",
+      "password_mismatch": "Passwords do not match",
+      "validation_failed": "Please check the highlighted fields.",
+      "submit_failed": "Unable to submit your account request. Please check your details and try again."
+    },
+    "success": {
+      "title": "Account Request Submitted",
+      "description": "Your request has been successfully submitted. We will get back to you soon.",
+      "go_to_login": "Go to Login",
+      "stay_here": "Stay Here"
+    }
   },
   "help": {
     "title": "Help & Support",

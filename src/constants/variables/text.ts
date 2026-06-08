@@ -50,6 +50,84 @@ export const LOGIN_TEXT_KEYS = {
   WELCOME_SUBTITLE: "login.welcome_subtitle",
 };
 
+export const FORGOT_PASSWORD_TEXT_KEYS = {
+  TITLE: "forgot_password.title",
+  SUBHEADER: "forgot_password.subheader",
+  SUBHEADING: "forgot_password.subheading",
+  EMAIL: "forgot_password.email",
+  PLACEHOLDER_EMAIL: "forgot_password.placeholder.email",
+  SUBMIT: "forgot_password.submit",
+  REMEMBERED_PASSWORD: "forgot_password.remembered_password",
+  BACK_TO_LOGIN: "forgot_password.back_to_login",
+  WELCOME_TITLE: "forgot_password.welcome_title",
+  WELCOME_SUBTITLE: "forgot_password.welcome_subtitle",
+};
+
+export const REQUEST_ACCOUNT_TEXT_KEYS = {
+  TITLE: "request_account.title",
+  SUBHEADER: "request_account.subheader",
+  SUBHEADING: "request_account.subheading",
+  STEPS: {
+    BASIC_INFO: "request_account.steps.basic_info",
+    MANUFACTURER_INFO: "request_account.steps.manufacturer_info",
+    COMPANY_INFO: "request_account.steps.manufacturer_info",
+    EMAIL: "request_account.steps.email",
+    PASSWORD: "request_account.steps.password",
+    REVIEW: "request_account.steps.review",
+  },
+  FIELDS: {
+    EMPLOYEE_ID: "request_account.fields.employee_id",
+    FIRST_NAME: "request_account.fields.first_name",
+    LAST_NAME: "request_account.fields.last_name",
+    MANUFACTURER: "request_account.fields.manufacturer",
+    COMPANY_NAME: "request_account.fields.manufacturer",
+    EMAIL: "request_account.fields.email",
+    PASSWORD: "request_account.fields.password",
+    CONFIRM_PASSWORD: "request_account.fields.confirm_password",
+  },
+  PLACEHOLDER: {
+    EMPLOYEE_ID: "request_account.placeholder.employee_id",
+    FIRST_NAME: "request_account.placeholder.first_name",
+    LAST_NAME: "request_account.placeholder.last_name",
+    MANUFACTURER: "request_account.placeholder.manufacturer",
+    MANUFACTURER_LOADING: "request_account.placeholder.manufacturer_loading",
+    EMAIL: "request_account.placeholder.email",
+    PASSWORD: "request_account.placeholder.password",
+    CONFIRM_PASSWORD: "request_account.placeholder.confirm_password",
+  },
+  REVIEW_TITLE: "request_account.review.title",
+  ACTIONS: {
+    BACK: "request_account.actions.back",
+    NEXT: "request_account.actions.next",
+    SUBMIT: "request_account.actions.submit",
+    SUBMITTING: "request_account.actions.submitting",
+    ALREADY_HAVE_ACCOUNT: "request_account.actions.already_have_account",
+    LOGIN: "request_account.actions.login",
+  },
+  ERROR: {
+    EMAIL_REGISTERED: "request_account.error.email_registered",
+    EMAIL_TAKEN: "request_account.error.email_taken",
+    EMPLOYEE_ID_REQUIRED: "request_account.error.employee_id_required",
+    FIRST_NAME_REQUIRED: "request_account.error.first_name_required",
+    LAST_NAME_REQUIRED: "request_account.error.last_name_required",
+    MANUFACTURER_REQUIRED: "request_account.error.manufacturer_required",
+    MANUFACTURER_LOAD_FAILED: "request_account.error.manufacturer_load_failed",
+    MANUFACTURER_EMPTY: "request_account.error.manufacturer_empty",
+    COMPANY_NAME_REQUIRED: "request_account.error.manufacturer_required",
+    EMAIL_INVALID: "request_account.error.email_invalid",
+    PASSWORD_MIN: "request_account.error.password_min",
+    PASSWORD_MISMATCH: "request_account.error.password_mismatch",
+    VALIDATION_FAILED: "request_account.error.validation_failed",
+    SUBMIT_FAILED: "request_account.error.submit_failed",
+  },
+  SUCCESS: {
+    TITLE: "request_account.success.title",
+    DESCRIPTION: "request_account.success.description",
+    GO_TO_LOGIN: "request_account.success.go_to_login",
+    STAY_HERE: "request_account.success.stay_here",
+  },
+};
+
 // Home Text Keys
 export const HOME_TEXT_KEYS = {
   WELCOME_TITLE: "home.welcome_title",
@@ -115,6 +193,10 @@ export const QR_SCANNER_TEXT_KEYS = {
   SCANNING: "scanning",
   ADD_MANUALLY: "add_manually",
   FLASHLIGHT_NOT_SUPPORTED: "flashlight_not_supported",
+  TOGGLE_FLASHLIGHT: "toggle_flashlight",
+  PRODUCT_DATA_LOADING: "product_data_loading",
+  PRODUCT_DATA_LOAD_ERROR: "product_data_load_error",
+  NO_DATA_RECORD_FOUND: "no_data_record_found",
   OPEN_MANUAL_MODAL: "open_manual_modal",
 
   camera: {

@@ -13,23 +13,24 @@ interface ManufacturerInputProps {
   placeholder?: string;
   icon?: React.ReactNode;
   error?: string;
+  manufacturers?: Manufacturer[];
+  disabled?: boolean;
+  loading?: boolean;
+  emptyMessage?: string;
 }
-
-const KNOWN_MANUFACTURERS: Manufacturer[] = [
-  { id: "1", label: "Toyota" },
-  { id: "2", label: "Kawasaki" },
-  { id: "3", label: "Honda" },
-  { id: "4", label: "Yamaha" },
-];
 
 export default function ManufacturerInput({
   label,
   name = "manufacturerId",
   value,
   onChange,
-  placeholder = "Select or type a company",
+  placeholder,
   icon,
   error,
+  manufacturers = [],
+  disabled = false,
+  loading = false,
+  emptyMessage,
 }: ManufacturerInputProps) {
   const [focused, setFocused] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -37,16 +38,13 @@ export default function ManufacturerInput({
 
   // Sync display value when ID (value) changes
   useEffect(() => {
-    const matched = KNOWN_MANUFACTURERS.find((m) => m.id === value);
+    if (!value) return;
+    const matched = manufacturers.find((m) => m.id === value);
     setDisplayValue(matched?.label || value);
-  }, [value]);
+  }, [manufacturers, value]);
 
-  const filtered = KNOWN_MANUFACTURERS.filter((m) =>
+  const filtered = manufacturers.filter((m) =>
     m.label.toLowerCase().includes(displayValue.toLowerCase())
-  );
-
-  const exactMatch = KNOWN_MANUFACTURERS.some(
-    (m) => m.label.toLowerCase() === displayValue.toLowerCase()
   );
 
   return (
@@ -79,7 +77,9 @@ export default function ManufacturerInput({
           type="text"
           value={displayValue}
           placeholder={placeholder}
+          disabled={disabled || loading}
           onFocus={() => {
+            if (disabled || loading) return;
             setFocused(true);
             setShowDropdown(true);
           }}
@@ -87,17 +87,20 @@ export default function ManufacturerInput({
             setFocused(false);
             setTimeout(() => setShowDropdown(false), 100);
           }}
-          onChange={(e) => setDisplayValue(e.target.value)}
+          onChange={(e) => {
+            setDisplayValue(e.target.value);
+            onChange("");
+          }}
           className={`w-full text-base sm:text-base px-3 py-2 sm:py-3 border ${
             error
               ? "border-red-500 dark:border-red-400"
               : "border-gray-300 dark:border-gray-600"
-          } bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-md shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-600/30 focus:border-primary-700 ${
+          } bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-400 rounded-md shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-600/30 focus:border-primary-700 disabled:cursor-not-allowed disabled:opacity-60 ${
             icon ? "pl-10" : ""
           }`}
         />
 
-        {showDropdown && (
+        {showDropdown && !disabled && !loading && (
           <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-md shadow-md">
             {filtered.map((item) => (
               <li
@@ -106,22 +109,15 @@ export default function ManufacturerInput({
                   onChange(item.id);
                   setDisplayValue(item.label);
                 }}
-                className="px-4 py-2 text-sm hover:bg-primary-50 dark:hover:bg-zinc-700 cursor-pointer transition-colors"
+                className="px-4 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer transition-colors"
               >
                 {item.label}
               </li>
             ))}
 
-            {displayValue.trim() && !exactMatch && (
-              <li
-                onMouseDown={() => {
-                  onChange(displayValue);
-                }}
-                className="px-4 py-2 text-sm text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-zinc-800 border-t border-gray-200 dark:border-zinc-700 cursor-pointer hover:bg-yellow-100 dark:hover:bg-zinc-700 transition"
-              >
-                <span className="font-medium">Not found:</span> "
-                <span className="italic">{displayValue}</span>". Click to add
-                company.
+            {filtered.length === 0 && emptyMessage && (
+              <li className="px-4 py-2 text-sm text-gray-500 dark:text-zinc-400">
+                {emptyMessage}
               </li>
             )}
           </ul>

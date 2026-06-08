@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "@/components/navigation/Header";
 import { ScanEntry } from "@/components/cards/ScanHistoryCard";
 import { ROUTES } from "@/constants/routes";
@@ -7,11 +7,21 @@ import { formatDate } from "@/utils/format-date";
 import { useLocalizedText } from "@/utils/localized-text";
 import { SCAN_HISTORY_DETAIL_TEXT_KEYS } from "@/constants";
 import { DetailSkeletonCard } from "@/components/skeletons/DetailSkeleton";
+import { useProgressUpdate } from "@/api/progress-update";
 
 export default function ScanHistoryDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const entry = location.state as ScanEntry;
+  const { id } = useParams<{ id: string }>();
+  const stateEntry = location.state as ScanEntry | null;
+  const { progressUpdates, isLoading, error } = useProgressUpdate();
+  const entry =
+    stateEntry ??
+    progressUpdates?.find((item: ScanEntry) => String(item.id) === id) ??
+    null;
+  const invalidId = !id || Number.isNaN(Number(id));
+  const showLoading = !stateEntry && !invalidId && isLoading;
+  const showNotFound = invalidId || (!showLoading && !entry);
 
   const TEXT = useLocalizedText("common", SCAN_HISTORY_DETAIL_TEXT_KEYS);
 
@@ -117,10 +127,28 @@ export default function ScanHistoryDetail() {
                 </div>
               </div>
             </>
-          ) : (
+          ) : showLoading ? (
             <div className="space-y-6">
               <DetailSkeletonCard rows={5} />
               <DetailSkeletonCard rows={2} />
+            </div>
+          ) : (
+            <div className="w-full bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 p-6 md:p-8 text-center space-y-3">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white">
+                {showNotFound ? "Scan history not found" : "Unable to load scan history"}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {error
+                  ? "Please try again later."
+                  : "The scan history item may have been removed or the link is invalid."}
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate(ROUTES.HOME)}
+                className="inline-flex items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+              >
+                Go to home
+              </button>
             </div>
           )}
         </div>

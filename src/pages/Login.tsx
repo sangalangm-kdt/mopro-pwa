@@ -59,9 +59,9 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen relative">
+    <div className="flex min-h-screen relative flex-col lg:flex-row">
       {/* Left: Form */}
-      <div className="relative w-full md:w-[45%] lg:w-[40%] xl:w-[35%] flex items-center justify-center p-6 dark:bg-bg-color">
+      <div className="relative w-full lg:w-[42%] xl:w-[35%] flex items-center justify-center px-6 py-8 sm:py-10 lg:py-12 dark:bg-bg-color">
         {/* ✅ PWA Prompt Banner */}
         {showPwaPrompt && (
           <PwaPrompt
@@ -74,7 +74,7 @@ export default function Login() {
         )}
 
         {/* Content Block */}
-        <div className="w-full max-w-sm animate-fade-in-up pt-28">
+        <div className="w-full max-w-md lg:max-w-sm animate-fade-in-up pt-32 sm:pt-32 lg:pt-28">
           {/* Logo + Controls */}
           <div className="absolute top-10 left-0 right-0 px-6 flex items-start justify-between">
             <Logo className="h-20 w-auto" />
@@ -162,12 +162,12 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <div className="hidden md:block w-px relative">
+      <div className="hidden lg:block w-px relative">
         <div className="absolute inset-0 bg-white/10" />
         <div className="absolute inset-0 blur-sm bg-white/20 opacity-40" />
       </div>
       {/* Right: Visual */}
-      <div className="hidden md:block flex-1 relative overflow-hidden">
+      <div className="hidden lg:block flex-1 relative overflow-hidden">
         <LoginHero syncDelayMs={520} />
       </div>
     </div>

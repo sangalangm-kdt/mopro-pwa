@@ -10,7 +10,7 @@ export function usePeriodSummary(
   progressUpdates: ProgressUpdate[] | undefined,
   windowDays: 15 | 30
 ) {
-  const { t } = useTranslation("common");
+  const { i18n, t } = useTranslation("common");
 
   return useMemo(() => {
     const summary = buildPeriodSummary(progressUpdates ?? [], windowDays);
@@ -39,5 +39,5 @@ export function usePeriodSummary(
     })();
 
     return { summary, daysActive, rangeLabel, latestLabel };
-  }, [progressUpdates, windowDays, t]);
+  }, [i18n.language, progressUpdates, windowDays, t]);
 }

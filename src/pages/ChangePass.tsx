@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/api/auth";
+import { useAuthContext } from "@/context/auth/useAuth";
 import Header from "@/components/navigation/Header";
 import Button from "@/components/buttons/Button";
 import { getPasswordFields } from "@/utils/password-fields";
@@ -12,7 +12,7 @@ import { useChangePassForm } from "@/hooks/change-pass";
 
 const ChangePass = () => {
   const navigate = useNavigate();
-  const { changePassword, logout } = useAuth();
+  const { changePassword, logout } = useAuthContext();
   const { t } = useTranslation("common");
 
   const {
@@ -40,7 +40,7 @@ const ChangePass = () => {
       }, 2000);
     } catch (error) {
       console.error("Change password error:", error);
-      toast.error(t("change_pass.error_generic"));
+      toast.error(t("change_password.error.error_generic"));
     }
   };
 

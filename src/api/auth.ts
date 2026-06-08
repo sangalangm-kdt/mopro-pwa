@@ -1,24 +1,33 @@
 import axios from "@/lib/axios";
 import { isAxiosError } from "axios";
+import i18n from "@/i18n";
+import { toast } from "sonner";
 import useSWR from "swr";
 
 export const useAuth = () => {
   const csrf = () => axios.get("/sanctum/csrf-cookie");
-  // const navigate = useNavigate();
 
   const {
     data: user,
     error,
     mutate,
     isLoading,
-  } = useSWR("/api/user", () =>
-    axios
-      .get("/api/user")
-      .then((res) => res.data)
-      .catch((error) => {
-        if (error.response.status !== 409) throw error;
-      }),
-  );
+  } = useSWR("/api/user", async () => {
+    try {
+      const res = await axios.get("/api/user");
+      return res.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const status = error.response?.status;
+
+        if (status === 401 || status === 409) {
+          return null;
+        }
+      }
+
+      throw error;
+    }
+  });
 
   const login = async (data: {
     email: string;
@@ -83,16 +92,36 @@ export const useAuth = () => {
       } else {
         console.log("Unknown error", error);
       }
+
+      throw error;
     }
   };
 
   const logout = async () => {
+    let logoutError: unknown;
+
     try {
+      await csrf();
       await axios.post("/logout");
+    } catch (error) {
+      logoutError = error;
     } finally {
       await mutate(null, false);
     }
+
+    toast.success(
+      i18n.t(
+        logoutError ? "common:auth.logged_out_cleared" : "common:auth.logout_success",
+      ),
+    );
+
+    if (
+      logoutError &&
+      (!isAxiosError(logoutError) || logoutError.response?.status !== 419)
+    ) {
+      throw logoutError;
+    }
   };
 
-  return { user, mutate, isLoading, login, logout, changePassword };
+  return { user, mutate, error, isLoading, login, logout, changePassword };
 };
